@@ -1,0 +1,48 @@
+# Strategie-Konfiguration für den ICT/SMC Multi-Timeframe Trading Bot
+# Alle Parameter zentral hier — Code liest aus dieser Datei.
+
+account:
+  starting_balance_eur: 10000
+  leverage: 30
+  risk_per_trade_pct: 1.0          # Phase 9: live mit 0.25 starten
+
+symbols:
+  # MT5-Tickersymbole — exakter Name hängt vom Broker ab, in Phase 2 verifizieren.
+  - US500     # S&P 500
+  - US30      # Dow Jones
+  - US100     # Nasdaq 100
+  - US2000    # Russell 2000
+
+timeframes:
+  bias: W1                          # Weekly
+  sweep: D1                         # Daily
+  confluence: H4                    # 4-Stunden
+  entry: H1                         # 1-Stunden
+
+bias:
+  consecutive_candles_alt: 5        # Alternativ-Regel: 5 Weekly Closes in Folge
+
+confluences:
+  min_required: 2                   # mind. 2 von 4
+  ideal: 3
+  require_bos: true                 # einer davon muss der BOS sein
+
+risk:
+  sl_atr_buffer: 0.5                # 0.5 × ATR(4H) als Puffer über/unter Sweep
+  atr_period: 14
+  take_profits:
+    tp1_rr: 1.0                     # 1:1 RR
+    tp3_target: daily_liquidity     # alternativ: fib_extension
+    tp2_position: mid               # zwischen TP1 und TP3
+  partial_close_pct: [0.33, 0.33, 0.34]   # Anteile pro TP
+  move_sl_to_be_at_tp1: true
+
+news_filter:
+  source: forex_factory
+  block_minutes_before: 30
+  block_minutes_after: 15
+  high_impact_only: true
+
+execution:
+  paper_trading: true               # Phase 8: auf false setzen für Live
+  kill_switch_daily_loss_pct: 3.0
