@@ -1,2 +1,28 @@
 ~$*
 .DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+
+# Data caches (raw market data, large)
+data/raw/
+data/cache/
+*.parquet
+*.csv
+
+# Backtest outputs
+backtest/results/
+*.log
+
+# Dashboard
+dashboard/frontend/node_modules/
+dashboard/frontend/dist/
+
+# IDE
+.vscode/
+.idea/
