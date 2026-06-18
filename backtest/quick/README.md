@@ -21,4 +21,24 @@ python -m backtest.quick.run
 ## Output
 
 - Console-Log: Bias, gefundene Sweeps, Trades, P&L pro Symbol, Gesamtbilanz.
-- CSV: `backtest/quick/results/trades.csv` (gitignored).
+- CSV: `backtest/quick/results/trades.csv`
+- HTML viewer: `backtest/quick/results/trades.html`
+- PNGs: `backtest/quick/results/pngs/`
+
+## 8-Jahres Backtest (Daily-Variante)
+
+Da yfinance 1H-Daten nur ~730 Tage zurückreicht, wird für den Long-Term-Backtest
+die Strategie auf Daily ausgeführt (Daily statt 4H für Confluences, statt 1H für Entry).
+Selbe Logik, gröbere Granularität.
+
+```bash
+python -m backtest.quick.run_8y
+python -m backtest.quick.screenshots_8y
+python -m backtest.quick.screenshot_png_8y
+```
+
+Output:
+- `results/trades_8y.csv` — alle 227 Trades
+- `results/yearly_8y.csv` — Performance pro Jahr
+- `results/trades_8y.html` — Interaktiver Viewer (Equity Curve + Yearly + alle Trades)
+- `results/pngs_8y/` — Einzel-PNG pro Trade + Equity-Curve + Yearly

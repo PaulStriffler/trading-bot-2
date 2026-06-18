@@ -69,6 +69,22 @@ def fetch(symbol: str, weeks: int = 3) -> Bars:
     return Bars(symbol=symbol, h1=h1, h4=h4, d1=d1, w1=w1)
 
 
+def fetch_long(symbol: str, years: int = 8) -> Bars:
+    """Fetch Weekly + Daily for a long-term backtest.
+
+    yfinance 1H is capped at ~730 days, so for 8y we run the strategy in
+    "Daily mode": Daily acts as both the confluence- and the entry-timeframe.
+    `h4` and `h1` are populated with the daily series so the existing
+    strategy/engine code keeps working unchanged.
+    """
+    ticker = SYMBOL_MAP[symbol]
+    end = datetime.utcnow()
+    start = end - timedelta(days=years * 365 + 30)
+    w1 = _normalize(yf.download(ticker, start=start, end=end, interval="1wk", progress=False, auto_adjust=False))
+    d1 = _normalize(yf.download(ticker, start=start, end=end, interval="1d", progress=False, auto_adjust=False))
+    return Bars(symbol=symbol, h1=d1.copy(), h4=d1.copy(), d1=d1, w1=w1)
+
+
 if __name__ == "__main__":
     for sym in SYMBOL_MAP:
         bars = fetch(sym, weeks=3)
