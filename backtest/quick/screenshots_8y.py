@@ -66,12 +66,16 @@ def build(trades_csv: Path, out_html: Path) -> Path:
         slc = _bars_for_trade(d1, t["entry_time"], t["exit_time"])
         if slc.empty:
             continue
+        margin = float(t.get("margin_required", 0)) if "margin_required" in trades.columns else 0
+        lev_used = float(t.get("leverage_used", 0)) if "leverage_used" in trades.columns else 0
+        pos_size = float(t.get("position_size", 0)) if "position_size" in trades.columns else 0
         panels.append({
             "id": f"chart-{i}",
             "n": i + 1,
             "title": f"#{i+1} · {sym} · {t['direction'].upper()} · {t['exit_reason']} · "
                      f"R={t['rr_realized']:+.2f} · ${t['pnl_dollar']:+.0f}",
-            "subtitle": f"{t['confluences']} · {t['entry_time']:%Y-%m-%d} → {t['exit_time']:%Y-%m-%d}",
+            "subtitle": f"{t['confluences']} · {t['entry_time']:%Y-%m-%d} → {t['exit_time']:%Y-%m-%d} · "
+                        f"size {pos_size:.3f} · margin ${margin:,.0f} ({lev_used:.1f}x)",
             "tv_symbol": TV_SYMBOL[sym],
             "candles": _candles_json(slc),
             "entry_time": int(t["entry_time"].timestamp()),
@@ -84,17 +88,22 @@ def build(trades_csv: Path, out_html: Path) -> Path:
             "win": float(t["pnl_dollar"]) > 0,
         })
 
+    avg_lev = float(trades["leverage_used"].mean()) if "leverage_used" in trades.columns else 0
+    max_lev = float(trades["leverage_used"].max()) if "leverage_used" in trades.columns else 0
+    avg_margin = float(trades["margin_required"].mean()) if "margin_required" in trades.columns else 0
     html = _render(panels, equity_points, yearly,
                    total_pnl=float(trades["pnl_dollar"].sum()),
                    winrate=float((trades["pnl_dollar"] > 0).mean() * 100),
                    total_r=float(trades["rr_realized"].sum()),
-                   n_trades=len(trades))
+                   n_trades=len(trades),
+                   avg_lev=avg_lev, max_lev=max_lev, avg_margin=avg_margin)
     out_html.parent.mkdir(parents=True, exist_ok=True)
     out_html.write_text(html, encoding="utf-8")
     return out_html
 
 
-def _render(panels, equity_points, yearly, *, total_pnl, winrate, total_r, n_trades) -> str:
+def _render(panels, equity_points, yearly, *, total_pnl, winrate, total_r, n_trades,
+            avg_lev=0.0, max_lev=0.0, avg_margin=0.0) -> str:
     pj, eqj, yj = json.dumps(panels), json.dumps(equity_points), json.dumps(yearly)
     return f"""<!DOCTYPE html>
 <html lang="de">
@@ -142,7 +151,7 @@ def _render(panels, equity_points, yearly, *, total_pnl, winrate, total_r, n_tra
 </head>
 <body>
 <h1>Trading-Bot · 8-Jahres Backtest (Daily Variant)</h1>
-<p class="sub">US500 · US30 · US100 · US2000 · Account $10.000 · 1 % Risk · 3 TPs · Daten via yfinance</p>
+<p class="sub">US500 · US30 · US100 · US2000 · Account $10.000 · 1 % Risk · <b>Hebel 1:30</b> · 3 TPs · Daten via yfinance</p>
 
 <div class="kpis">
   <div class="kpi"><div class="kpi-label">Trades</div><div class="kpi-value">{n_trades}</div></div>
@@ -150,6 +159,9 @@ def _render(panels, equity_points, yearly, *, total_pnl, winrate, total_r, n_tra
   <div class="kpi"><div class="kpi-label">Total R</div><div class="kpi-value {'win' if total_r > 0 else 'loss'}">{total_r:+.1f}</div></div>
   <div class="kpi"><div class="kpi-label">Total P&L</div><div class="kpi-value {'win' if total_pnl > 0 else 'loss'}">${total_pnl:+,.0f}</div></div>
   <div class="kpi"><div class="kpi-label">End Equity</div><div class="kpi-value">${10000 + total_pnl:,.0f}</div></div>
+  <div class="kpi"><div class="kpi-label">Avg Leverage</div><div class="kpi-value">{avg_lev:.1f}x</div></div>
+  <div class="kpi"><div class="kpi-label">Max Leverage</div><div class="kpi-value">{max_lev:.1f}x</div></div>
+  <div class="kpi"><div class="kpi-label">Avg Margin</div><div class="kpi-value">${avg_margin:,.0f}</div></div>
 </div>
 
 <div class="panel"><h2>Equity Curve</h2><div id="equity"></div></div>

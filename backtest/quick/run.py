@@ -15,6 +15,7 @@ warnings.filterwarnings("ignore")
 
 ACCOUNT = 10_000
 RISK_PCT = 1.0
+LEVERAGE = 30.0
 WEEKS = 3
 MIN_CONFLUENCES = 2
 
@@ -47,7 +48,7 @@ def run() -> list:
             if trade is None:
                 log_lines.append(f"  sweep@{sweep.time.date()} {sweep.direction}: setup ok ({'+'.join(setup.confluences)}), no entry trigger")
                 continue
-            result = simulate(trade, bars.h1, balance=ACCOUNT, risk_pct=RISK_PCT)
+            result = simulate(trade, bars.h1, balance=ACCOUNT, risk_pct=RISK_PCT, leverage=LEVERAGE)
             results.append(result)
             log_lines.append(f"  TRADE {trade.direction} @ {trade.entry_time}  exit={result.exit_reason}  R={result.rr_realized:.2f}  $={result.pnl_dollar:+.2f}  [{result.confluences}]")
 
@@ -57,7 +58,7 @@ def run() -> list:
     print("\n" + "=" * 60)
     print("SUMMARY — 3-Week POC Backtest")
     print("=" * 60)
-    print(f"Account: ${ACCOUNT:,}  Risk: {RISK_PCT}%/trade  Period: last {WEEKS} weeks")
+    print(f"Account: ${ACCOUNT:,}  Risk: {RISK_PCT}%/trade  Leverage: 1:{int(LEVERAGE)}  Period: last {WEEKS} weeks")
     print(f"Total trades: {len(results)}")
     if results:
         total_pnl = sum(r.pnl_dollar for r in results)

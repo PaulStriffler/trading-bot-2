@@ -19,6 +19,7 @@ warnings.filterwarnings("ignore")
 
 ACCOUNT = 10_000
 RISK_PCT = 1.0
+LEVERAGE = 30.0
 YEARS = 8
 MIN_CONFLUENCES = 2
 
@@ -73,7 +74,7 @@ def run() -> list:
                 # Skip trades that would re-enter same week as previous open
                 if all_results and all_results[-1].symbol == symbol and trade.entry_time <= all_results[-1].exit_time:
                     continue
-                result = simulate(trade, bars.d1, balance=ACCOUNT, risk_pct=RISK_PCT)
+                result = simulate(trade, bars.d1, balance=ACCOUNT, risk_pct=RISK_PCT, leverage=LEVERAGE)
                 all_results.append(result)
                 trades_for_symbol += 1
 
@@ -83,8 +84,11 @@ def run() -> list:
     print("\n" + "=" * 70)
     print(f"SUMMARY — {YEARS}-Year Backtest (Daily Variant)")
     print("=" * 70)
-    print(f"Account: ${ACCOUNT:,}  Risk: {RISK_PCT}%/trade  Symbols: {', '.join(SYMBOL_MAP)}")
+    print(f"Account: ${ACCOUNT:,}  Risk: {RISK_PCT}%/trade  Leverage: 1:{int(LEVERAGE)}  Symbols: {', '.join(SYMBOL_MAP)}")
     print(f"Total trades: {len(all_results)}")
+    rejected = sum(1 for r in all_results if r.exit_reason == "margin_rejected")
+    if rejected:
+        print(f"  ⚠ Margin-rejected: {rejected}  (position size exceeded available margin at 1:{int(LEVERAGE)})")
 
     if not all_results:
         return all_results
@@ -106,6 +110,14 @@ def run() -> list:
     print(f"Winrate: {winrate:.1f}%   Total R: {total_r:+.2f}")
     print(f"Total P&L: ${total_pnl:+,.2f}  ({100*total_pnl/ACCOUNT:+.2f}% of starting equity)")
     print(f"End equity: ${ACCOUNT + total_pnl:,.2f}   Max Drawdown: {max_dd:.1f}%")
+
+    # Leverage / margin stats
+    avg_lev = df["leverage_used"].mean()
+    max_lev = df["leverage_used"].max()
+    avg_margin = df["margin_required"].mean()
+    max_margin = df["margin_required"].max()
+    print(f"\nLeverage utilisation: avg {avg_lev:.1f}x  max {max_lev:.1f}x  (cap = 1:{int(LEVERAGE)})")
+    print(f"Margin per trade:     avg ${avg_margin:,.0f}  max ${max_margin:,.0f}  (of ${ACCOUNT:,} equity)")
 
     print("\nBy year:")
     yearly = df.groupby("year").agg(trades=("year", "count"),
