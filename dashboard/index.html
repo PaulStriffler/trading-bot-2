@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trading-Bot · Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="data.js"></script>
+<style>
+  :root {
+    --bg: #0a0d12;
+    --panel: #131720;
+    --panel-2: #1a1f2b;
+    --border: #232936;
+    --border-soft: #1d222d;
+    --text: #e4e6eb;
+    --text-dim: #8a93a4;
+    --text-faint: #5d6473;
+    --accent: #26a69a;
+    --accent-soft: rgba(38,166,154,0.12);
+    --win: #26a69a;
+    --loss: #ef5350;
+    --warn: #f59e0b;
+  }
+  html, body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+  body { letter-spacing: -0.01em; }
+  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; }
+  .panel-soft { background: var(--panel-2); border: 1px solid var(--border-soft); border-radius: 10px; }
+  .kpi-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-faint); font-weight: 500; }
+  .kpi-value { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; margin-top: 4px; }
+  .kpi-value.small { font-size: 22px; }
+  .win { color: var(--win); }
+  .loss { color: var(--loss); }
+  .nav-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 14px; border-radius: 8px; cursor: pointer;
+    color: var(--text-dim); font-size: 14px; font-weight: 500;
+    transition: all 0.15s;
+  }
+  .nav-item:hover { background: var(--panel-2); color: var(--text); }
+  .nav-item.active { background: var(--accent-soft); color: var(--accent); }
+  .nav-item.active .nav-icon { color: var(--accent); }
+  .nav-icon { width: 18px; height: 18px; flex-shrink: 0; }
+  .badge { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; }
+  .badge-active { background: var(--accent-soft); color: var(--accent); }
+  .badge-planned { background: rgba(245,158,11,0.12); color: var(--warn); }
+  .badge-win { background: rgba(38,166,154,0.15); color: var(--win); }
+  .badge-loss { background: rgba(239,83,80,0.15); color: var(--loss); }
+  .badge-neutral { background: var(--panel-2); color: var(--text-dim); }
+  .scroll-thin::-webkit-scrollbar { width: 8px; height: 8px; }
+  .scroll-thin::-webkit-scrollbar-track { background: transparent; }
+  .scroll-thin::-webkit-scrollbar-thumb { background: #2a3140; border-radius: 4px; }
+  .scroll-thin::-webkit-scrollbar-thumb:hover { background: #364055; }
+  .data-row:hover { background: var(--panel-2); }
+  .pill { padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 500; background: var(--panel-2); color: var(--text-dim); }
+  input.field, select.field, textarea.field {
+    background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
+    padding: 6px 10px; color: var(--text); font-size: 13px;
+    outline: none; transition: border-color 0.15s;
+  }
+  input.field:focus, select.field:focus { border-color: var(--accent); }
+  .btn {
+    background: var(--accent); color: white; padding: 8px 16px; border-radius: 6px;
+    font-size: 13px; font-weight: 500; cursor: pointer; border: none;
+    transition: opacity 0.15s;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn-ghost {
+    background: transparent; color: var(--text-dim); border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { color: var(--text); border-color: var(--text-dim); background: var(--panel-2); }
+  table.trades { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table.trades th { text-align: left; font-weight: 500; color: var(--text-faint); padding: 10px 12px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--panel); cursor: pointer; user-select: none; }
+  table.trades th:hover { color: var(--text); }
+  table.trades td { padding: 10px 12px; border-bottom: 1px solid var(--border-soft); }
+  table.trades tbody tr:hover { background: var(--panel-2); }
+  .num { font-variant-numeric: tabular-nums; }
+  .mono { font-family: 'JetBrains Mono', 'Menlo', monospace; font-size: 12px; }
+</style>
+</head>
+<body class="min-h-screen">
+
+<div class="flex min-h-screen">
+  <!-- Sidebar -->
+  <aside class="w-60 flex-shrink-0 border-r" style="border-color: var(--border); background: var(--panel);">
+    <div class="p-5 border-b" style="border-color: var(--border);">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: var(--accent);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" class="w-4 h-4"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        </div>
+        <div>
+          <div class="font-semibold text-sm">Trading Bot 2</div>
+          <div class="text-xs" style="color: var(--text-faint)">ICT/SMC</div>
+        </div>
+      </div>
+    </div>
+    <nav class="p-3 space-y-1">
+      <a class="nav-item" data-route="dashboard">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+      <a class="nav-item" data-route="strategien">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        Strategien
+      </a>
+      <a class="nav-item" data-route="trades">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        Trades
+      </a>
+      <a class="nav-item" data-route="bots">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg>
+        Bots
+      </a>
+    </nav>
+
+    <div class="absolute bottom-0 w-60 p-4 text-xs" style="color: var(--text-faint)">
+      <div>POC Backtest</div>
+      <div class="mt-1" id="footer-period"></div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="flex-1 p-8 overflow-x-auto scroll-thin">
+    <div id="view-root"></div>
+  </main>
+</div>
+
+<script>
+// ============================================================
+// State + Router
+// ============================================================
+const STATE = {
+  bots: loadBots(),
+};
+
+function loadBots() {
+  const saved = localStorage.getItem("bots_v1");
+  if (saved) {
+    try { return JSON.parse(saved); } catch { /* fallthrough */ }
+  }
+  return JSON.parse(JSON.stringify(window.DATA.bots));
+}
+function saveBots() {
+  localStorage.setItem("bots_v1", JSON.stringify(STATE.bots));
+}
+function resetBots() {
+  localStorage.removeItem("bots_v1");
+  STATE.bots = loadBots();
+  render();
+}
+
+const ROUTES = ["dashboard", "strategien", "trades", "bots"];
+function currentRoute() {
+  const h = location.hash.replace("#", "");
+  return ROUTES.includes(h) ? h : "dashboard";
+}
+
+function navigate(route) {
+  location.hash = route;
+}
+
+window.addEventListener("hashchange", render);
+
+// ============================================================
+// Helpers
+// ============================================================
+const fmtMoney = (n, sign = false) => {
+  const s = (sign && n > 0 ? "+" : "") + "$" + Math.abs(n).toLocaleString("en-US", { maximumFractionDigits: 0 });
+  return n < 0 ? "-" + s.replace("-","") : s;
+};
+const fmtPct = (n, sign = true) => (sign && n > 0 ? "+" : "") + n.toFixed(1) + "%";
+const cls = (n) => n >= 0 ? "win" : "loss";
+
+// ============================================================
+// View: Dashboard
+// ============================================================
+function viewDashboard() {
+  const k = DATA.kpis;
+  const main = DATA.strategies[0];
+  const last3 = DATA.last3;
+  return `
+    <div class="flex items-baseline justify-between mb-8">
+      <div>
+        <h1 class="text-2xl font-semibold">Dashboard</h1>
+        <p class="text-sm mt-1" style="color: var(--text-dim)">Übersicht ${main.name} · Backtest ${k.data_period_start} → ${k.data_period_end}</p>
+      </div>
+      <div class="text-sm pill">${k.data_years} Jahre Daten</div>
+    </div>
+
+    <!-- KPI Grid -->
+    <div class="grid grid-cols-4 gap-4 mb-8">
+      <div class="panel p-5">
+        <div class="kpi-label">Trades</div>
+        <div class="kpi-value num">${k.trades}</div>
+        <div class="text-xs mt-2" style="color: var(--text-dim)">${k.wins} Wins · ${k.losses} Losses</div>
+      </div>
+      <div class="panel p-5">
+        <div class="kpi-label">Winrate</div>
+        <div class="kpi-value num">${k.winrate}%</div>
+        <div class="text-xs mt-2" style="color: var(--text-dim)">${k.wins} von ${k.trades} gewonnen</div>
+      </div>
+      <div class="panel p-5">
+        <div class="kpi-label">Total Return (compound)</div>
+        <div class="kpi-value num ${cls(k.total_return_pct)}">${fmtPct(k.total_return_pct)}</div>
+        <div class="text-xs mt-2" style="color: var(--text-dim)">End: ${fmtMoney(k.end_equity)}</div>
+      </div>
+      <div class="panel p-5">
+        <div class="kpi-label">CAGR</div>
+        <div class="kpi-value num ${cls(k.cagr_pct)}">${fmtPct(k.cagr_pct)}</div>
+        <div class="text-xs mt-2" style="color: var(--text-dim)">über ${k.data_years} Jahre</div>
+      </div>
+
+      <div class="panel p-5">
+        <div class="kpi-label">Max Drawdown</div>
+        <div class="kpi-value num loss">${k.max_dd_pct.toFixed(1)}%</div>
+        <div class="text-xs mt-2" style="color: var(--text-dim)">Peak-to-Trough</div>
+      </div>
+      <div class="panel p-5">
+        <div class="kpi-label">Märkte</div>
+        <div class="kpi-value small num">${k.n_symbols}</div>
+        <div class="text-xs mt-2 flex gap-1 flex-wrap" style="color: var(--text-dim)">
+          ${k.symbols.map(s => `<span class="pill">${s}</span>`).join("")}
+        </div>
+      </div>
+      <div class="panel p-5">
+        <div class="kpi-label">Data Points</div>
+        <div class="kpi-value small num">${(k.data_years * 252).toFixed(0)}</div>
+        <div class="text-xs mt-2" style="color: var(--text-dim)">Handelstage / Symbol</div>
+      </div>
+      <div class="panel p-5">
+        <div class="kpi-label">Account</div>
+        <div class="kpi-value small num">${fmtMoney(k.starting_equity)}</div>
+        <div class="text-xs mt-2" style="color: var(--text-dim)">Start · 1% Risk · 1:30</div>
+      </div>
+    </div>
+
+    <!-- Equity curve -->
+    <div class="panel p-6 mb-8">
+      <div class="flex items-baseline justify-between mb-4">
+        <h2 class="text-base font-semibold">Equity Curve <span class="text-xs font-normal" style="color: var(--text-faint)">· compound</span></h2>
+        <div class="text-sm num" style="color: var(--text-dim)">${fmtMoney(k.starting_equity)} → <span class="${cls(k.total_return_pct)}">${fmtMoney(k.end_equity)}</span></div>
+      </div>
+      <canvas id="equity-chart" style="max-height: 280px;"></canvas>
+    </div>
+
+    <div class="grid grid-cols-3 gap-4">
+      <!-- Last 3 trades -->
+      <div class="panel p-6 col-span-2">
+        <h2 class="text-base font-semibold mb-4">Letzte 3 Trades</h2>
+        <div class="space-y-3">
+          ${last3.map(t => `
+            <div class="panel-soft p-4 flex items-center justify-between">
+              <div>
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="font-medium text-sm">${t.symbol}</span>
+                  <span class="badge ${t.direction === 'long' ? 'badge-win' : 'badge-loss'}">${t.direction.toUpperCase()}</span>
+                  <span class="pill">${t.exit_reason}</span>
+                  <span class="text-xs" style="color: var(--text-faint)">${t.confluences}</span>
+                </div>
+                <div class="text-xs" style="color: var(--text-dim)">
+                  Entry ${t.entry_time} · Exit ${t.exit_time} · @ ${t.entry.toFixed(2)}
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="font-semibold num ${cls(t.pnl)}">${fmtMoney(t.pnl, true)}</div>
+                <div class="text-xs num" style="color: var(--text-dim)">R ${t.rr >= 0 ? '+' : ''}${t.rr.toFixed(2)}</div>
+              </div>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+
+      <!-- Quick links -->
+      <div class="panel p-6">
+        <h2 class="text-base font-semibold mb-4">Schnellzugriff</h2>
+        <div class="space-y-2">
+          <a class="nav-item" data-route="strategien">→ Strategien ansehen</a>
+          <a class="nav-item" data-route="trades">→ Alle ${k.trades} Trades</a>
+          <a class="nav-item" data-route="bots">→ Bot konfigurieren</a>
+        </div>
+        <div class="mt-6 pt-4 border-t" style="border-color: var(--border)">
+          <div class="kpi-label mb-2">Status</div>
+          <div class="flex items-center gap-2">
+            <div class="w-2 h-2 rounded-full" style="background: var(--accent)"></div>
+            <span class="text-sm">Backtest-Modus</span>
+          </div>
+          <div class="text-xs mt-2" style="color: var(--text-faint)">Live-Anbindung an MT5 in Phase 8</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderEquityChart() {
+  const ctx = document.getElementById("equity-chart");
+  if (!ctx) return;
+  const data = DATA.equity_curve;
+  new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: data.map(p => p.date),
+      datasets: [{
+        data: data.map(p => p.equity),
+        borderColor: "#26a69a",
+        backgroundColor: "rgba(38,166,154,0.12)",
+        borderWidth: 2,
+        fill: true,
+        tension: 0.2,
+        pointRadius: 0,
+        pointHoverRadius: 4,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: "#131720", borderColor: "#232936", borderWidth: 1,
+          padding: 10, displayColors: false,
+          callbacks: { label: ctx => "$" + ctx.parsed.y.toLocaleString("en-US", { maximumFractionDigits: 0 }) }
+        }
+      },
+      scales: {
+        x: { grid: { color: "#1d222d" }, ticks: { color: "#5d6473", maxTicksLimit: 10 } },
+        y: { grid: { color: "#1d222d" }, ticks: { color: "#5d6473", callback: v => "$" + v.toLocaleString("en-US") } }
+      }
+    }
+  });
+}
+
+// ============================================================
+// View: Strategien
+// ============================================================
+function viewStrategien() {
+  return `
+    <div class="mb-8">
+      <h1 class="text-2xl font-semibold">Strategien</h1>
+      <p class="text-sm mt-1" style="color: var(--text-dim)">${DATA.strategies.length} Strategien · ${DATA.strategies.filter(s=>s.status==='active').length} aktiv</p>
+    </div>
+
+    <div class="space-y-6">
+      ${DATA.strategies.map(s => `
+        <div class="panel p-6">
+          <div class="flex items-start justify-between mb-4">
+            <div>
+              <div class="flex items-center gap-3 mb-2">
+                <h2 class="text-lg font-semibold">${s.name}</h2>
+                <span class="badge ${s.status === 'active' ? 'badge-active' : 'badge-planned'}">${s.status === 'active' ? 'Aktiv' : 'Geplant'}</span>
+              </div>
+              <p class="text-sm max-w-3xl" style="color: var(--text-dim)">${s.description}</p>
+            </div>
+          </div>
+
+          ${s.status === 'active' ? `
+            <div class="grid grid-cols-4 gap-4 mb-6">
+              <div class="panel-soft p-4">
+                <div class="kpi-label">Trades</div>
+                <div class="text-xl font-semibold num mt-1">${s.trades}</div>
+              </div>
+              <div class="panel-soft p-4">
+                <div class="kpi-label">Winrate</div>
+                <div class="text-xl font-semibold num mt-1">${s.winrate}%</div>
+              </div>
+              <div class="panel-soft p-4">
+                <div class="kpi-label">Total Return</div>
+                <div class="text-xl font-semibold num mt-1 ${cls(s.return_total)}">${fmtPct(s.return_total)}</div>
+              </div>
+              <div class="panel-soft p-4">
+                <div class="kpi-label">Max DD</div>
+                <div class="text-xl font-semibold num mt-1 loss">${s.max_dd.toFixed(1)}%</div>
+              </div>
+            </div>
+          ` : ''}
+
+          <div class="grid grid-cols-2 gap-6">
+            <div>
+              <div class="kpi-label mb-3">Märkte</div>
+              <div class="flex gap-2 flex-wrap">
+                ${s.markets.map(m => `<span class="pill">${m}</span>`).join("")}
+              </div>
+              <div class="kpi-label mb-3 mt-6">Timeframes</div>
+              <div class="grid grid-cols-4 gap-2">
+                ${Object.entries(s.timeframes).map(([k,v]) => `
+                  <div class="panel-soft p-3 text-center">
+                    <div class="text-xs uppercase" style="color: var(--text-faint)">${k}</div>
+                    <div class="font-semibold text-sm mt-1">${v}</div>
+                  </div>
+                `).join("")}
+              </div>
+            </div>
+            <div>
+              <div class="kpi-label mb-3">Regeln</div>
+              <ol class="space-y-2 text-sm">
+                ${s.rules.map((r,i) => `
+                  <li class="flex gap-3">
+                    <span class="text-xs font-semibold mt-0.5" style="color: var(--accent)">${(i+1).toString().padStart(2,'0')}</span>
+                    <span style="color: var(--text-dim)">${r}</span>
+                  </li>
+                `).join("")}
+              </ol>
+            </div>
+          </div>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+// ============================================================
+// View: Trades
+// ============================================================
+const TRADES_STATE = { sort: "n", asc: true, filter: { symbol: "all", result: "all", search: "" } };
+
+function filteredTrades() {
+  let t = DATA.trades.slice();
+  const f = TRADES_STATE.filter;
+  if (f.symbol !== "all") t = t.filter(x => x.symbol === f.symbol);
+  if (f.result === "win") t = t.filter(x => x.pnl > 0);
+  if (f.result === "loss") t = t.filter(x => x.pnl < 0);
+  if (f.search) {
+    const q = f.search.toLowerCase();
+    t = t.filter(x => (x.symbol+x.exit_reason+x.confluences).toLowerCase().includes(q));
+  }
+  const key = TRADES_STATE.sort;
+  t.sort((a,b) => {
+    const va = a[key], vb = b[key];
+    if (typeof va === "string") return TRADES_STATE.asc ? va.localeCompare(vb) : vb.localeCompare(va);
+    return TRADES_STATE.asc ? va - vb : vb - va;
+  });
+  return t;
+}
+
+function viewTrades() {
+  const trades = filteredTrades();
+  const symbols = ["all", ...new Set(DATA.trades.map(t => t.symbol))];
+  const totalPnl = trades.reduce((a,b)=>a+b.pnl, 0);
+  const wins = trades.filter(t => t.pnl > 0).length;
+  return `
+    <div class="flex items-baseline justify-between mb-8">
+      <div>
+        <h1 class="text-2xl font-semibold">Trade Journal</h1>
+        <p class="text-sm mt-1" style="color: var(--text-dim)">${trades.length} von ${DATA.trades.length} Trades · ${wins} Wins · ${fmtMoney(totalPnl, true)} P&L</p>
+      </div>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="panel p-4 mb-4 flex items-center gap-3 flex-wrap">
+      <input type="text" class="field" placeholder="Suche…" value="${TRADES_STATE.filter.search}" oninput="TRADES_STATE.filter.search = this.value; render()" style="min-width: 200px">
+      <select class="field" onchange="TRADES_STATE.filter.symbol = this.value; render()">
+        ${symbols.map(s => `<option value="${s}" ${s===TRADES_STATE.filter.symbol?'selected':''}>${s === 'all' ? 'Alle Symbole' : s}</option>`).join("")}
+      </select>
+      <select class="field" onchange="TRADES_STATE.filter.result = this.value; render()">
+        <option value="all" ${TRADES_STATE.filter.result==='all'?'selected':''}>Alle Ergebnisse</option>
+        <option value="win" ${TRADES_STATE.filter.result==='win'?'selected':''}>Nur Gewinner</option>
+        <option value="loss" ${TRADES_STATE.filter.result==='loss'?'selected':''}>Nur Verlierer</option>
+      </select>
+      <div class="flex-1"></div>
+      <div class="text-xs" style="color: var(--text-faint)">Klick auf Header zum Sortieren</div>
+    </div>
+
+    <!-- Table -->
+    <div class="panel overflow-hidden">
+      <div style="max-height: 70vh; overflow-y: auto" class="scroll-thin">
+        <table class="trades">
+          <thead>
+            <tr>
+              <th onclick="sortBy('n')">#</th>
+              <th onclick="sortBy('entry_time')">Entry</th>
+              <th onclick="sortBy('exit_time')">Exit</th>
+              <th onclick="sortBy('symbol')">Symbol</th>
+              <th onclick="sortBy('direction')">Side</th>
+              <th onclick="sortBy('entry')">Preis</th>
+              <th>Conf.</th>
+              <th onclick="sortBy('exit_reason')">Exit-Grund</th>
+              <th onclick="sortBy('rr')" class="text-right">R</th>
+              <th onclick="sortBy('pnl')" class="text-right">P&L</th>
+              <th onclick="sortBy('leverage_used')" class="text-right">Hebel</th>
+              <th>Chart</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${trades.map(t => `
+              <tr>
+                <td class="num" style="color: var(--text-faint)">${t.n}</td>
+                <td class="num mono">${t.entry_time}</td>
+                <td class="num mono">${t.exit_time}</td>
+                <td class="font-medium">${t.symbol}</td>
+                <td><span class="badge ${t.direction === 'long' ? 'badge-win' : 'badge-loss'}">${t.direction === 'long' ? 'L' : 'S'}</span></td>
+                <td class="num mono">${t.entry.toFixed(1)}</td>
+                <td class="text-xs" style="color: var(--text-dim)">${t.confluences}</td>
+                <td><span class="pill">${t.exit_reason}</span></td>
+                <td class="num text-right ${cls(t.rr)}">${t.rr >= 0 ? '+' : ''}${t.rr.toFixed(2)}</td>
+                <td class="num text-right font-semibold ${cls(t.pnl)}">${fmtMoney(t.pnl, true)}</td>
+                <td class="num text-right" style="color: var(--text-dim)">${t.leverage_used.toFixed(1)}x</td>
+                <td><a href="${t.png}" target="_blank" class="text-xs" style="color: var(--accent)">PNG →</a></td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+function sortBy(key) {
+  if (TRADES_STATE.sort === key) TRADES_STATE.asc = !TRADES_STATE.asc;
+  else { TRADES_STATE.sort = key; TRADES_STATE.asc = true; }
+  render();
+}
+
+// ============================================================
+// View: Bots
+// ============================================================
+function viewBots() {
+  return `
+    <div class="flex items-baseline justify-between mb-8">
+      <div>
+        <h1 class="text-2xl font-semibold">Trading Bots</h1>
+        <p class="text-sm mt-1" style="color: var(--text-dim)">${STATE.bots.length} Bot${STATE.bots.length !== 1 ? 's' : ''} · ${STATE.bots.filter(b=>b.status==='live').length} live · ${STATE.bots.filter(b=>b.status==='backtest_only').length} im Backtest</p>
+      </div>
+      <button class="btn-ghost btn text-xs" onclick="if(confirm('Alle Bot-Änderungen zurücksetzen?')) resetBots()">Reset</button>
+    </div>
+
+    <div class="space-y-6">
+      ${STATE.bots.map((b, idx) => renderBotCard(b, idx)).join("")}
+    </div>
+  `;
+}
+
+function renderBotCard(b, idx) {
+  const p = b.performance;
+  return `
+    <div class="panel p-6">
+      <div class="flex items-start justify-between mb-6">
+        <div>
+          <div class="flex items-center gap-3 mb-1">
+            <h2 class="text-lg font-semibold">${b.name}</h2>
+            <span class="badge ${b.status === 'live' ? 'badge-active' : 'badge-neutral'}">${b.status === 'live' ? 'Live' : 'Backtest'}</span>
+          </div>
+          <p class="text-sm" style="color: var(--text-dim)">${b.description}</p>
+          <p class="text-xs mt-1" style="color: var(--text-faint)">Strategie: ${b.strategy_id}</p>
+        </div>
+        <button class="btn-ghost btn text-xs" onclick='exportBot(${idx})'>Export YAML</button>
+      </div>
+
+      <!-- Performance -->
+      <div class="grid grid-cols-5 gap-3 mb-6">
+        <div class="panel-soft p-4">
+          <div class="kpi-label">Trades</div>
+          <div class="text-lg font-semibold num mt-1">${p.trades}</div>
+        </div>
+        <div class="panel-soft p-4">
+          <div class="kpi-label">Winrate</div>
+          <div class="text-lg font-semibold num mt-1">${p.winrate}%</div>
+        </div>
+        <div class="panel-soft p-4">
+          <div class="kpi-label">Total Return</div>
+          <div class="text-lg font-semibold num mt-1 ${cls(p.total_return_pct)}">${fmtPct(p.total_return_pct)}</div>
+        </div>
+        <div class="panel-soft p-4">
+          <div class="kpi-label">CAGR</div>
+          <div class="text-lg font-semibold num mt-1 ${cls(p.cagr_pct)}">${fmtPct(p.cagr_pct)}</div>
+        </div>
+        <div class="panel-soft p-4">
+          <div class="kpi-label">Max DD</div>
+          <div class="text-lg font-semibold num mt-1 loss">${p.max_dd_pct.toFixed(1)}%</div>
+        </div>
+      </div>
+
+      <!-- Editable Params -->
+      <div>
+        <div class="kpi-label mb-3">Parameter <span style="color: var(--text-faint); text-transform: none; letter-spacing: 0; font-weight: 400">— Änderungen werden im Browser gespeichert</span></div>
+        <div class="grid grid-cols-3 gap-3">
+          ${renderParam(idx, "account_eur", "Account ($)", "number")}
+          ${renderParam(idx, "leverage", "Hebel", "number")}
+          ${renderParam(idx, "risk_per_trade_pct", "Risk / Trade (%)", "number", 0.1)}
+          ${renderParam(idx, "min_confluences", "Min. Confluences", "number")}
+          ${renderParam(idx, "sl_atr_buffer", "SL ATR-Puffer", "number", 0.1)}
+          ${renderParam(idx, "atr_period", "ATR Period", "number")}
+          ${renderParam(idx, "tp1_rr", "TP1 RR", "number", 0.1)}
+          ${renderParam(idx, "kill_switch_daily_loss_pct", "Kill-Switch (% / Tag)", "number", 0.1)}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderParam(botIdx, key, label, type, step = 1) {
+  const value = STATE.bots[botIdx].params[key];
+  return `
+    <div>
+      <label class="text-xs block mb-1" style="color: var(--text-dim)">${label}</label>
+      <input class="field w-full" type="${type}" step="${step}" value="${value}"
+             onchange="updateBotParam(${botIdx}, '${key}', this.value, '${type}')">
+    </div>
+  `;
+}
+
+function updateBotParam(botIdx, key, value, type) {
+  STATE.bots[botIdx].params[key] = type === "number" ? parseFloat(value) : value;
+  saveBots();
+}
+
+function exportBot(idx) {
+  const b = STATE.bots[idx];
+  const yaml = Object.entries(b.params).map(([k,v]) => `  ${k}: ${JSON.stringify(v)}`).join("\n");
+  const text = `# ${b.name}\n# Generated from dashboard\nstrategy: ${b.strategy_id}\nparams:\n${yaml}\n`;
+  const blob = new Blob([text], { type: "text/yaml" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = `${b.id}.yaml`; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ============================================================
+// Render
+// ============================================================
+function render() {
+  const route = currentRoute();
+  // Update active nav
+  document.querySelectorAll(".nav-item[data-route]").forEach(el => {
+    el.classList.toggle("active", el.dataset.route === route);
+    if (!el.hasAttribute("data-bound")) {
+      el.setAttribute("data-bound", "1");
+      el.addEventListener("click", () => navigate(el.dataset.route));
+    }
+  });
+
+  const root = document.getElementById("view-root");
+  if (route === "dashboard") {
+    root.innerHTML = viewDashboard();
+    renderEquityChart();
+  } else if (route === "strategien") {
+    root.innerHTML = viewStrategien();
+  } else if (route === "trades") {
+    root.innerHTML = viewTrades();
+  } else if (route === "bots") {
+    root.innerHTML = viewBots();
+  }
+
+  // Bind any nav-item links inside the view body
+  root.querySelectorAll(".nav-item[data-route]").forEach(el => {
+    el.addEventListener("click", () => navigate(el.dataset.route));
+  });
+
+  document.getElementById("footer-period").textContent =
+    `${DATA.kpis.data_period_start} → ${DATA.kpis.data_period_end}`;
+}
+
+render();
+</script>
+</body>
+</html>
