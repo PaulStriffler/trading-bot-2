@@ -115,7 +115,7 @@
     </nav>
 
     <div class="absolute bottom-0 w-60 p-4 text-xs" style="color: var(--text-faint)">
-      <div>POC Backtest</div>
+      <div id="footer-strategy">v3 FINAL · 1H Entries</div>
       <div class="mt-1" id="footer-period"></div>
     </div>
   </aside>
@@ -183,9 +183,12 @@ function viewDashboard() {
     <div class="flex items-baseline justify-between mb-8">
       <div>
         <h1 class="text-2xl font-semibold">Dashboard</h1>
-        <p class="text-sm mt-1" style="color: var(--text-dim)">Übersicht ${main.name} · Backtest ${k.data_period_start} → ${k.data_period_end}</p>
+        <p class="text-sm mt-1" style="color: var(--text-dim)">${main.name} · Entries auf ${k.timeframe_entry || '1H'} · Backtest ${k.data_period_start} → ${k.data_period_end}</p>
       </div>
-      <div class="text-sm pill">${k.data_years} Jahre Daten</div>
+      <div class="flex gap-2">
+        <span class="text-sm pill">${k.data_years} Jahre</span>
+        <span class="text-sm pill" style="background: var(--accent-soft); color: var(--accent)">${k.strategy_version || 'v3'}</span>
+      </div>
     </div>
 
     <!-- KPI Grid -->
@@ -224,9 +227,9 @@ function viewDashboard() {
         </div>
       </div>
       <div class="panel p-5">
-        <div class="kpi-label">Data Points</div>
-        <div class="kpi-value small num">${(k.data_years * 252).toFixed(0)}</div>
-        <div class="text-xs mt-2" style="color: var(--text-dim)">Handelstage / Symbol</div>
+        <div class="kpi-label">1H Bars / Symbol</div>
+        <div class="kpi-value small num">${(k.data_years * 252 * 6.5).toFixed(0)}</div>
+        <div class="text-xs mt-2" style="color: var(--text-dim)">~${(k.data_years * 252).toFixed(0)} Handelstage × 6.5h</div>
       </div>
       <div class="panel p-5">
         <div class="kpi-label">Account</div>
