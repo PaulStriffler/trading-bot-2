@@ -114,7 +114,14 @@ def find_entry_v3(df_1h: pd.DataFrame, df_d: pd.DataFrame, sweep: Sweep, symbol:
                   atr_4h: float, sl_atr_buffer: float = 0.5,
                   max_wait_bars: int = 80) -> Optional[tuple[Trade, V3Annotations]]:
     """Run the LEAVE → RE-ENTER → FVG → BOS sequence on 1H after the sweep."""
-    after = df_1h[df_1h.index > sweep.time]
+    # FIX 2: a daily sweep is only CONFIRMED at the daily candle's close.
+    # Wait for the day AFTER the sweep day before allowing entries — otherwise
+    # we'd be using the daily close to decide on an entry that happened earlier
+    # the same day (look-ahead bias).
+    sweep_day_end = (pd.Timestamp(sweep.time).normalize() + pd.Timedelta(days=1))
+    if df_1h.index.tz is not None and sweep_day_end.tz is None:
+        sweep_day_end = sweep_day_end.tz_localize(df_1h.index.tz)
+    after = df_1h[df_1h.index >= sweep_day_end]
     if len(after) < 5:
         return None
     direction = sweep.direction

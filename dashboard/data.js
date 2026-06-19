@@ -1,13 +1,13 @@
 window.DATA = {
   "kpis": {
-    "trades": 61,
-    "wins": 37,
-    "losses": 24,
-    "winrate": 60.7,
-    "total_return_pct": 17.32,
-    "cagr_pct": 8.95,
-    "max_dd_pct": -3.9,
-    "end_equity": 11732.27,
+    "trades": 57,
+    "wins": 35,
+    "losses": 22,
+    "winrate": 61.4,
+    "total_return_pct": 26.55,
+    "cagr_pct": 13.46,
+    "max_dd_pct": -7.6,
+    "end_equity": 12654.78,
     "starting_equity": 10000,
     "data_period_start": "2024-07-30",
     "data_period_end": "2026-06-11",
@@ -28,262 +28,246 @@ window.DATA = {
       "equity": 9900.0
     },
     {
-      "date": "2024-08-05",
-      "equity": 10090.16
-    },
-    {
       "date": "2024-08-29",
-      "equity": 10022.22
+      "equity": 9801.0
     },
     {
       "date": "2024-09-12",
-      "equity": 10055.29
+      "equity": 9865.79
+    },
+    {
+      "date": "2024-10-08",
+      "equity": 9799.37
     },
     {
       "date": "2024-10-15",
-      "equity": 10155.17
+      "equity": 9864.15
     },
     {
       "date": "2024-10-23",
-      "equity": 10188.68
+      "equity": 9896.7
     },
     {
       "date": "2024-10-31",
-      "equity": 10086.79
+      "equity": 9944.39
     },
     {
       "date": "2024-11-06",
-      "equity": 10413.64
+      "equity": 10718.18
     },
     {
       "date": "2024-12-18",
-      "equity": 10343.53
+      "equity": 10646.01
     },
     {
       "date": "2025-01-07",
-      "equity": 10411.91
+      "equity": 10681.14
     },
     {
       "date": "2025-01-08",
-      "equity": 10307.79
+      "equity": 10574.33
     },
     {
       "date": "2025-01-27",
-      "equity": 10404.19
+      "equity": 10675.95
     },
     {
-      "date": "2025-01-30",
-      "equity": 10300.14
+      "date": "2025-01-31",
+      "equity": 10604.06
     },
     {
-      "date": "2025-02-04",
-      "equity": 10334.14
+      "date": "2025-02-03",
+      "equity": 10569.19
+    },
+    {
+      "date": "2025-02-14",
+      "equity": 10639.06
+    },
+    {
+      "date": "2025-02-21",
+      "equity": 10532.67
     },
     {
       "date": "2025-03-11",
-      "equity": 10088.47
+      "equity": 9898.35
     },
     {
       "date": "2025-03-24",
-      "equity": 10128.49
+      "equity": 10323.07
     },
     {
       "date": "2025-03-31",
-      "equity": 10730.8
+      "equity": 10936.95
     },
     {
       "date": "2025-04-04",
-      "equity": 10839.26
+      "equity": 11047.5
     },
     {
       "date": "2025-04-23",
-      "equity": 10730.87
+      "equity": 10937.02
     },
     {
-      "date": "2025-05-05",
-      "equity": 10623.56
-    },
-    {
-      "date": "2025-05-12",
-      "equity": 10412.15
+      "date": "2025-05-08",
+      "equity": 10827.65
     },
     {
       "date": "2025-06-26",
-      "equity": 10563.64
+      "equity": 10985.19
     },
     {
       "date": "2025-06-27",
-      "equity": 10696.72
+      "equity": 11123.57
     },
     {
       "date": "2025-07-17",
-      "equity": 10987.4
-    },
-    {
-      "date": "2025-07-23",
-      "equity": 11114.73
+      "equity": 11425.85
     },
     {
       "date": "2025-08-01",
-      "equity": 10893.55
+      "equity": 11198.48
     },
     {
-      "date": "2025-09-05",
-      "equity": 11203.41
+      "date": "2025-08-12",
+      "equity": 11522.02
     },
     {
       "date": "2025-09-19",
-      "equity": 11104.44
+      "equity": 11940.79
+    },
+    {
+      "date": "2025-09-22",
+      "equity": 11714.02
     },
     {
       "date": "2025-10-10",
-      "equity": 11285.58
+      "equity": 12028.36
     },
     {
       "date": "2025-10-28",
-      "equity": 11432.8
+      "equity": 12185.27
     },
     {
-      "date": "2025-11-06",
-      "equity": 11520.05
+      "date": "2025-11-07",
+      "equity": 12281.5
     },
     {
       "date": "2025-11-13",
-      "equity": 11404.85
+      "equity": 12158.68
     },
     {
       "date": "2025-11-19",
-      "equity": 11290.8
+      "equity": 12037.1
     },
     {
       "date": "2025-12-09",
-      "equity": 11500.05
+      "equity": 12260.17
     },
     {
       "date": "2025-12-17",
-      "equity": 11650.4
+      "equity": 12420.46
     },
     {
       "date": "2025-12-26",
-      "equity": 11792.89
+      "equity": 12572.37
+    },
+    {
+      "date": "2026-01-14",
+      "equity": 12613.86
     },
     {
       "date": "2026-02-02",
-      "equity": 11674.96
-    },
-    {
-      "date": "2026-02-03",
-      "equity": 11558.21
+      "equity": 12487.72
     },
     {
       "date": "2026-02-12",
-      "equity": 11704.66
+      "equity": 12604.35
     },
     {
       "date": "2026-02-19",
-      "equity": 11587.61
+      "equity": 12353.52
     },
     {
       "date": "2026-03-02",
-      "equity": 11471.74
+      "equity": 12229.99
+    },
+    {
+      "date": "2026-03-03",
+      "equity": 12478.31
     },
     {
       "date": "2026-03-31",
-      "equity": 11651.12
+      "equity": 12421.22
     },
     {
       "date": "2026-04-01",
-      "equity": 11566.98
-    },
-    {
-      "date": "2026-05-06",
-      "equity": 11804.98
+      "equity": 12331.52
     },
     {
       "date": "2026-05-18",
-      "equity": 11839.07
+      "equity": 12451.44
     },
     {
       "date": "2026-05-22",
-      "equity": 11958.66
+      "equity": 12577.21
     },
     {
       "date": "2026-06-01",
-      "equity": 12003.29
+      "equity": 12624.15
     },
     {
       "date": "2026-06-05",
-      "equity": 11764.42
-    },
-    {
-      "date": "2026-06-09",
-      "equity": 11883.26
+      "equity": 12497.91
     },
     {
       "date": "2026-06-11",
-      "equity": 11646.78
-    },
-    {
-      "date": "2026-06-18",
-      "equity": 11732.27
+      "equity": 12654.78
     }
   ],
   "yearly": [
     {
       "year": 2024,
       "trades": 15,
-      "wins": 11,
+      "wins": 10,
       "equity_start": 10000,
-      "equity_end": 10344.0,
-      "pnl_$": 344.0,
-      "return_%": 3.4
+      "equity_end": 10646.0,
+      "pnl_$": 646.0,
+      "return_%": 6.5
     },
     {
       "year": 2025,
       "trades": 30,
-      "wins": 18,
-      "equity_start": 10344.0,
-      "equity_end": 11793.0,
-      "pnl_$": 1449.0,
-      "return_%": 14.0
+      "wins": 19,
+      "equity_start": 10646.0,
+      "equity_end": 12614.0,
+      "pnl_$": 1968.0,
+      "return_%": 18.5
     },
     {
       "year": 2026,
-      "trades": 16,
-      "wins": 8,
-      "equity_start": 11793.0,
-      "equity_end": 11732.0,
-      "pnl_$": -61.0,
-      "return_%": -0.5
+      "trades": 12,
+      "wins": 6,
+      "equity_start": 12614.0,
+      "equity_end": 12655.0,
+      "pnl_$": 41.0,
+      "return_%": 0.3
     }
   ],
   "last3": [
     {
-      "n": 61,
-      "symbol": "US30",
-      "direction": "long",
-      "entry_time": "2026-06-11 18:30",
-      "exit_time": "2026-06-18 19:30",
-      "entry": 50847.48,
-      "exit_reason": "open_close",
-      "rr": 0.73,
-      "pnl": 73.4,
-      "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS"
-    },
-    {
-      "n": 60,
+      "n": 57,
       "symbol": "US30",
       "direction": "long",
       "entry_time": "2026-06-11 16:30",
-      "exit_time": "2026-06-11 17:30",
+      "exit_time": "2026-06-11 18:30",
       "entry": 50583.53,
-      "exit_reason": "sl",
-      "rr": -1.0,
-      "pnl": -100.0,
+      "exit_reason": "tp3",
+      "rr": 1.26,
+      "pnl": 125.52,
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS"
     },
     {
-      "n": 59,
+      "n": 56,
       "symbol": "US2000",
       "direction": "long",
       "entry_time": "2026-06-04 14:30",
@@ -292,6 +276,18 @@ window.DATA = {
       "exit_reason": "sl",
       "rr": -1.0,
       "pnl": -100.0,
+      "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS"
+    },
+    {
+      "n": 55,
+      "symbol": "US100",
+      "direction": "long",
+      "entry_time": "2026-05-21 16:30",
+      "exit_time": "2026-06-01 17:30",
+      "entry": 29324.54,
+      "exit_reason": "tp3",
+      "rr": 1.39,
+      "pnl": 138.71,
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS"
     }
   ],
@@ -319,19 +315,19 @@ window.DATA = {
       "n": 2,
       "symbol": "US500",
       "direction": "short",
-      "entry_time": "2024-08-01 16:30",
-      "exit_time": "2024-08-05 13:30",
-      "entry": 5439.19,
-      "sl": 5513.92,
-      "tp1": 5364.46,
-      "tp2": 5296.33,
-      "tp3": 5228.2,
-      "exit_reason": "tp3",
-      "rr": 1.92,
-      "pnl": 192.08,
+      "entry_time": "2024-08-28 14:30",
+      "exit_time": "2024-08-29 16:30",
+      "entry": 5592.93,
+      "sl": 5646.08,
+      "tp1": 5539.78,
+      "tp2": 5329.52,
+      "tp3": 5119.26,
+      "exit_reason": "sl",
+      "rr": -1.0,
+      "pnl": -100.0,
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
-      "leverage_used": 0.73,
-      "margin": 242.61,
+      "leverage_used": 1.05,
+      "margin": 350.75,
       "png": "../backtest/quick/results/pngs_v3/trade-002.png"
     },
     {
@@ -357,25 +353,6 @@ window.DATA = {
       "n": 4,
       "symbol": "US500",
       "direction": "short",
-      "entry_time": "2024-08-28 14:30",
-      "exit_time": "2024-08-29 16:30",
-      "entry": 5592.93,
-      "sl": 5646.08,
-      "tp1": 5539.78,
-      "tp2": 5329.52,
-      "tp3": 5119.26,
-      "exit_reason": "sl",
-      "rr": -1.0,
-      "pnl": -100.0,
-      "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
-      "leverage_used": 1.05,
-      "margin": 350.75,
-      "png": "../backtest/quick/results/pngs_v3/trade-004.png"
-    },
-    {
-      "n": 5,
-      "symbol": "US500",
-      "direction": "short",
       "entry_time": "2024-09-03 13:30",
       "exit_time": "2024-09-12 16:30",
       "entry": 5580.62,
@@ -389,10 +366,10 @@ window.DATA = {
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
       "leverage_used": 0.74,
       "margin": 246.68,
-      "png": "../backtest/quick/results/pngs_v3/trade-005.png"
+      "png": "../backtest/quick/results/pngs_v3/trade-004.png"
     },
     {
-      "n": 6,
+      "n": 5,
       "symbol": "US30",
       "direction": "long",
       "entry_time": "2024-09-16 13:30",
@@ -408,6 +385,25 @@ window.DATA = {
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
       "leverage_used": 0.29,
       "margin": 96.43,
+      "png": "../backtest/quick/results/pngs_v3/trade-005.png"
+    },
+    {
+      "n": 6,
+      "symbol": "US100",
+      "direction": "short",
+      "entry_time": "2024-10-07 18:30",
+      "exit_time": "2024-10-08 13:30",
+      "entry": 19807.02,
+      "sl": 19949.81,
+      "tp1": 19664.23,
+      "tp2": 19032.6,
+      "tp3": 18400.97,
+      "exit_reason": "sl",
+      "rr": -1.0,
+      "pnl": -100.0,
+      "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
+      "leverage_used": 1.39,
+      "margin": 462.37,
       "png": "../backtest/quick/results/pngs_v3/trade-006.png"
     },
     {
@@ -469,6 +465,25 @@ window.DATA = {
     },
     {
       "n": 10,
+      "symbol": "US2000",
+      "direction": "long",
+      "entry_time": "2024-10-25 13:30",
+      "exit_time": "2024-11-06 14:30",
+      "entry": 2236.42,
+      "sl": 2188.18,
+      "tp1": 2284.66,
+      "tp2": 2308.38,
+      "tp3": 2332.11,
+      "exit_reason": "tp3",
+      "rr": 1.5,
+      "pnl": 149.68,
+      "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
+      "leverage_used": 0.46,
+      "margin": 154.54,
+      "png": "../backtest/quick/results/pngs_v3/trade-010.png"
+    },
+    {
+      "n": 11,
       "symbol": "US100",
       "direction": "long",
       "entry_time": "2024-10-29 15:30",
@@ -484,10 +499,10 @@ window.DATA = {
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
       "leverage_used": 0.56,
       "margin": 186.98,
-      "png": "../backtest/quick/results/pngs_v3/trade-010.png"
+      "png": "../backtest/quick/results/pngs_v3/trade-011.png"
     },
     {
-      "n": 11,
+      "n": 12,
       "symbol": "US100",
       "direction": "long",
       "entry_time": "2024-11-05 14:30",
@@ -503,63 +518,44 @@ window.DATA = {
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
       "leverage_used": 0.68,
       "margin": 225.6,
-      "png": "../backtest/quick/results/pngs_v3/trade-011.png"
-    },
-    {
-      "n": 12,
-      "symbol": "US2000",
-      "direction": "long",
-      "entry_time": "2024-11-05 15:30",
-      "exit_time": "2024-11-06 14:30",
-      "entry": 2237.37,
-      "sl": 2187.47,
-      "tp1": 2287.27,
-      "tp2": 2288.38,
-      "tp3": 2289.49,
-      "exit_reason": "tp3",
-      "rr": 1.02,
-      "pnl": 102.24,
-      "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
-      "leverage_used": 0.45,
-      "margin": 149.45,
       "png": "../backtest/quick/results/pngs_v3/trade-012.png"
     },
     {
       "n": 13,
       "symbol": "US500",
       "direction": "long",
-      "entry_time": "2024-11-05 20:30",
+      "entry_time": "2024-11-05 14:30",
       "exit_time": "2024-11-06 14:30",
-      "entry": 5783.07,
-      "sl": 5704.11,
-      "tp1": 5862.03,
-      "tp2": 5870.24,
+      "entry": 5756.87,
+      "sl": 5746.86,
+      "tp1": 5766.88,
+      "tp2": 5822.67,
       "tp3": 5878.46,
       "exit_reason": "tp3",
-      "rr": 1.11,
-      "pnl": 110.51,
+      "rr": 6.63,
+      "pnl": 663.12,
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
-      "leverage_used": 0.73,
-      "margin": 244.14,
+      "leverage_used": 5.75,
+      "margin": 1917.67,
       "png": "../backtest/quick/results/pngs_v3/trade-013.png"
     },
     {
       "n": 14,
       "symbol": "US100",
       "direction": "long",
-      "entry_time": "2024-12-11 14:30",
+      "entry_time": "2024-12-11 15:30",
       "exit_time": "2024-12-18 19:30",
-      "entry": 21649.59,
+      "entry": 21720.64,
       "sl": 21376.41,
-      "tp1": 21922.78,
-      "tp2": 22426.98,
-      "tp3": 22931.18,
+      "tp1": 22064.87,
+      "tp2": 22533.55,
+      "tp3": 23002.22,
       "exit_reason": "tp1_sl",
       "rr": 0.33,
       "pnl": 33.0,
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
-      "leverage_used": 0.79,
-      "margin": 264.17,
+      "leverage_used": 0.63,
+      "margin": 210.33,
       "png": "../backtest/quick/results/pngs_v3/trade-014.png"
     },
     {
@@ -583,25 +579,6 @@ window.DATA = {
     },
     {
       "n": 16,
-      "symbol": "US500",
-      "direction": "long",
-      "entry_time": "2025-01-03 16:30",
-      "exit_time": "2025-01-07 17:30",
-      "entry": 5925.09,
-      "sl": 5853.23,
-      "tp1": 5996.95,
-      "tp2": 6048.46,
-      "tp3": 6099.97,
-      "exit_reason": "tp1_sl",
-      "rr": 0.33,
-      "pnl": 33.0,
-      "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
-      "leverage_used": 0.82,
-      "margin": 274.86,
-      "png": "../backtest/quick/results/pngs_v3/trade-016.png"
-    },
-    {
-      "n": 17,
       "symbol": "US100",
       "direction": "long",
       "entry_time": "2025-01-03 16:30",
@@ -617,10 +594,10 @@ window.DATA = {
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
       "leverage_used": 2.0,
       "margin": 668.14,
-      "png": "../backtest/quick/results/pngs_v3/trade-017.png"
+      "png": "../backtest/quick/results/pngs_v3/trade-016.png"
     },
     {
-      "n": 18,
+      "n": 17,
       "symbol": "US2000",
       "direction": "long",
       "entry_time": "2025-01-03 17:30",
@@ -636,86 +613,124 @@ window.DATA = {
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
       "leverage_used": 0.57,
       "margin": 189.57,
+      "png": "../backtest/quick/results/pngs_v3/trade-017.png"
+    },
+    {
+      "n": 18,
+      "symbol": "US100",
+      "direction": "long",
+      "entry_time": "2025-01-15 14:30",
+      "exit_time": "2025-01-27 14:30",
+      "entry": 21220.59,
+      "sl": 20897.43,
+      "tp1": 21543.76,
+      "tp2": 21838.49,
+      "tp3": 22133.22,
+      "exit_reason": "tp2_sl",
+      "rr": 0.96,
+      "pnl": 96.1,
+      "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
+      "leverage_used": 0.66,
+      "margin": 218.88,
       "png": "../backtest/quick/results/pngs_v3/trade-018.png"
     },
     {
       "n": 19,
-      "symbol": "US100",
-      "direction": "long",
-      "entry_time": "2025-01-15 19:30",
-      "exit_time": "2025-01-27 14:30",
-      "entry": 21273.78,
-      "sl": 20951.63,
-      "tp1": 21595.93,
-      "tp2": 21864.58,
-      "tp3": 22133.22,
-      "exit_reason": "tp2_sl",
-      "rr": 0.94,
-      "pnl": 93.52,
-      "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
-      "leverage_used": 0.66,
-      "margin": 220.12,
-      "png": "../backtest/quick/results/pngs_v3/trade-019.png"
-    },
-    {
-      "n": 20,
       "symbol": "US2000",
-      "direction": "short",
-      "entry_time": "2025-01-27 17:30",
-      "exit_time": "2025-01-30 19:30",
-      "entry": 2277.6,
-      "sl": 2320.38,
-      "tp1": 2234.82,
-      "tp2": 2196.73,
-      "tp3": 2158.63,
+      "direction": "long",
+      "entry_time": "2025-01-17 14:30",
+      "exit_time": "2025-02-03 14:30",
+      "entry": 2279.23,
+      "sl": 2229.56,
+      "tp1": 2328.89,
+      "tp2": 2397.69,
+      "tp3": 2466.49,
       "exit_reason": "sl",
       "rr": -1.0,
       "pnl": -100.0,
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
-      "leverage_used": 0.53,
-      "margin": 177.47,
+      "leverage_used": 0.46,
+      "margin": 152.98,
+      "png": "../backtest/quick/results/pngs_v3/trade-019.png"
+    },
+    {
+      "n": 20,
+      "symbol": "US100",
+      "direction": "long",
+      "entry_time": "2025-01-28 16:30",
+      "exit_time": "2025-01-31 20:30",
+      "entry": 21427.48,
+      "sl": 21047.08,
+      "tp1": 21807.87,
+      "tp2": 21970.55,
+      "tp3": 22133.22,
+      "exit_reason": "tp1_sl",
+      "rr": 0.33,
+      "pnl": 33.0,
+      "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
+      "leverage_used": 0.56,
+      "margin": 187.77,
       "png": "../backtest/quick/results/pngs_v3/trade-020.png"
     },
     {
       "n": 21,
       "symbol": "US2000",
       "direction": "short",
-      "entry_time": "2025-01-31 18:30",
-      "exit_time": "2025-02-04 20:30",
-      "entry": 2290.77,
-      "sl": 2314.57,
-      "tp1": 2266.98,
-      "tp2": 2212.81,
+      "entry_time": "2025-02-07 15:30",
+      "exit_time": "2025-02-14 14:30",
+      "entry": 2285.04,
+      "sl": 2328.94,
+      "tp1": 2241.13,
+      "tp2": 2199.88,
       "tp3": 2158.63,
       "exit_reason": "tp1_sl",
       "rr": 0.33,
       "pnl": 33.0,
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
-      "leverage_used": 0.96,
-      "margin": 320.94,
+      "leverage_used": 0.52,
+      "margin": 173.49,
       "png": "../backtest/quick/results/pngs_v3/trade-021.png"
     },
     {
       "n": 22,
-      "symbol": "US2000",
-      "direction": "short",
-      "entry_time": "2025-03-21 13:30",
-      "exit_time": "2025-03-24 13:30",
-      "entry": 2044.02,
-      "sl": 2088.28,
-      "tp1": 1999.77,
-      "tp2": 1992.34,
-      "tp3": 1984.92,
+      "symbol": "US500",
+      "direction": "long",
+      "entry_time": "2025-02-19 18:30",
+      "exit_time": "2025-02-21 18:30",
+      "entry": 6143.65,
+      "sl": 6011.28,
+      "tp1": 6276.02,
+      "tp2": 6315.33,
+      "tp3": 6354.64,
       "exit_reason": "sl",
       "rr": -1.0,
       "pnl": -100.0,
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
       "leverage_used": 0.46,
-      "margin": 153.96,
+      "margin": 154.71,
       "png": "../backtest/quick/results/pngs_v3/trade-022.png"
     },
     {
       "n": 23,
+      "symbol": "US2000",
+      "direction": "short",
+      "entry_time": "2025-03-21 13:30",
+      "exit_time": "2025-03-24 13:30",
+      "entry": 2044.02,
+      "sl": 2089.22,
+      "tp1": 1998.83,
+      "tp2": 1991.88,
+      "tp3": 1984.92,
+      "exit_reason": "sl",
+      "rr": -1.0,
+      "pnl": -100.0,
+      "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
+      "leverage_used": 0.45,
+      "margin": 150.76,
+      "png": "../backtest/quick/results/pngs_v3/trade-023.png"
+    },
+    {
+      "n": 24,
       "symbol": "US500",
       "direction": "short",
       "entry_time": "2025-03-21 13:30",
@@ -731,10 +746,10 @@ window.DATA = {
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
       "leverage_used": 0.47,
       "margin": 158.18,
-      "png": "../backtest/quick/results/pngs_v3/trade-023.png"
+      "png": "../backtest/quick/results/pngs_v3/trade-024.png"
     },
     {
-      "n": 24,
+      "n": 25,
       "symbol": "US2000",
       "direction": "short",
       "entry_time": "2025-03-25 18:30",
@@ -750,10 +765,10 @@ window.DATA = {
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
       "leverage_used": 2.05,
       "margin": 684.01,
-      "png": "../backtest/quick/results/pngs_v3/trade-024.png"
+      "png": "../backtest/quick/results/pngs_v3/trade-025.png"
     },
     {
-      "n": 25,
+      "n": 26,
       "symbol": "US30",
       "direction": "short",
       "entry_time": "2025-04-03 13:30",
@@ -769,10 +784,10 @@ window.DATA = {
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
       "leverage_used": 0.36,
       "margin": 118.65,
-      "png": "../backtest/quick/results/pngs_v3/trade-025.png"
+      "png": "../backtest/quick/results/pngs_v3/trade-026.png"
     },
     {
-      "n": 26,
+      "n": 27,
       "symbol": "US2000",
       "direction": "short",
       "entry_time": "2025-04-21 14:30",
@@ -788,67 +803,29 @@ window.DATA = {
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
       "leverage_used": 0.21,
       "margin": 70.83,
-      "png": "../backtest/quick/results/pngs_v3/trade-026.png"
+      "png": "../backtest/quick/results/pngs_v3/trade-027.png"
     },
     {
-      "n": 27,
+      "n": 28,
       "symbol": "US30",
       "direction": "short",
-      "entry_time": "2025-04-30 13:30",
-      "exit_time": "2025-05-05 15:30",
-      "entry": 40062.85,
-      "sl": 41433.64,
-      "tp1": 38692.06,
-      "tp2": 37651.92,
+      "entry_time": "2025-05-06 13:30",
+      "exit_time": "2025-05-08 13:30",
+      "entry": 41047.06,
+      "sl": 41311.83,
+      "tp1": 40782.29,
+      "tp2": 38697.04,
       "tp3": 36611.78,
       "exit_reason": "sl",
       "rr": -1.0,
       "pnl": -100.0,
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
-      "leverage_used": 0.29,
-      "margin": 97.42,
-      "png": "../backtest/quick/results/pngs_v3/trade-027.png"
-    },
-    {
-      "n": 28,
-      "symbol": "US100",
-      "direction": "short",
-      "entry_time": "2025-05-07 17:30",
-      "exit_time": "2025-05-12 13:30",
-      "entry": 19688.8,
-      "sl": 20299.79,
-      "tp1": 19077.82,
-      "tp2": 17810.01,
-      "tp3": 16542.2,
-      "exit_reason": "sl",
-      "rr": -1.0,
-      "pnl": -100.0,
-      "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
-      "leverage_used": 0.32,
-      "margin": 107.42,
+      "leverage_used": 1.55,
+      "margin": 516.76,
       "png": "../backtest/quick/results/pngs_v3/trade-028.png"
     },
     {
       "n": 29,
-      "symbol": "US500",
-      "direction": "short",
-      "entry_time": "2025-05-07 17:30",
-      "exit_time": "2025-05-12 13:30",
-      "entry": 5596.79,
-      "sl": 5728.59,
-      "tp1": 5464.99,
-      "tp2": 5150.01,
-      "tp3": 4835.04,
-      "exit_reason": "sl",
-      "rr": -1.0,
-      "pnl": -100.0,
-      "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
-      "leverage_used": 0.42,
-      "margin": 141.54,
-      "png": "../backtest/quick/results/pngs_v3/trade-029.png"
-    },
-    {
-      "n": 30,
       "symbol": "US500",
       "direction": "long",
       "entry_time": "2025-06-02 17:30",
@@ -864,10 +841,10 @@ window.DATA = {
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
       "leverage_used": 0.53,
       "margin": 177.95,
-      "png": "../backtest/quick/results/pngs_v3/trade-030.png"
+      "png": "../backtest/quick/results/pngs_v3/trade-029.png"
     },
     {
-      "n": 31,
+      "n": 30,
       "symbol": "US30",
       "direction": "long",
       "entry_time": "2025-06-03 14:30",
@@ -883,10 +860,10 @@ window.DATA = {
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
       "leverage_used": 0.55,
       "margin": 183.16,
-      "png": "../backtest/quick/results/pngs_v3/trade-031.png"
+      "png": "../backtest/quick/results/pngs_v3/trade-030.png"
     },
     {
-      "n": 32,
+      "n": 31,
       "symbol": "US100",
       "direction": "long",
       "entry_time": "2025-06-23 16:30",
@@ -902,29 +879,10 @@ window.DATA = {
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
       "leverage_used": 0.75,
       "margin": 249.5,
-      "png": "../backtest/quick/results/pngs_v3/trade-032.png"
+      "png": "../backtest/quick/results/pngs_v3/trade-031.png"
     },
     {
-      "n": 33,
-      "symbol": "US30",
-      "direction": "long",
-      "entry_time": "2025-07-17 13:30",
-      "exit_time": "2025-07-23 15:30",
-      "entry": 44315.49,
-      "sl": 43881.68,
-      "tp1": 44749.3,
-      "tp2": 44817.56,
-      "tp3": 44885.83,
-      "exit_reason": "tp3",
-      "rr": 1.16,
-      "pnl": 115.89,
-      "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
-      "leverage_used": 1.02,
-      "margin": 340.51,
-      "png": "../backtest/quick/results/pngs_v3/trade-033.png"
-    },
-    {
-      "n": 34,
+      "n": 32,
       "symbol": "US500",
       "direction": "long",
       "entry_time": "2025-07-23 19:30",
@@ -940,10 +898,10 @@ window.DATA = {
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
       "leverage_used": 0.89,
       "margin": 296.45,
-      "png": "../backtest/quick/results/pngs_v3/trade-034.png"
+      "png": "../backtest/quick/results/pngs_v3/trade-032.png"
     },
     {
-      "n": 35,
+      "n": 33,
       "symbol": "US100",
       "direction": "long",
       "entry_time": "2025-07-28 13:30",
@@ -959,6 +917,44 @@ window.DATA = {
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
       "leverage_used": 0.92,
       "margin": 305.11,
+      "png": "../backtest/quick/results/pngs_v3/trade-033.png"
+    },
+    {
+      "n": 34,
+      "symbol": "US2000",
+      "direction": "long",
+      "entry_time": "2025-08-04 14:30",
+      "exit_time": "2025-08-12 17:30",
+      "entry": 2196.29,
+      "sl": 2179.54,
+      "tp1": 2213.04,
+      "tp2": 2244.37,
+      "tp3": 2275.7,
+      "exit_reason": "tp3",
+      "rr": 2.89,
+      "pnl": 288.92,
+      "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
+      "leverage_used": 1.31,
+      "margin": 437.09,
+      "png": "../backtest/quick/results/pngs_v3/trade-034.png"
+    },
+    {
+      "n": 35,
+      "symbol": "US100",
+      "direction": "long",
+      "entry_time": "2025-08-22 13:30",
+      "exit_time": "2025-09-22 16:30",
+      "entry": 23457.31,
+      "sl": 22904.8,
+      "tp1": 24009.83,
+      "tp2": 24374.36,
+      "tp3": 24738.9,
+      "exit_reason": "tp3",
+      "rr": 1.67,
+      "pnl": 166.64,
+      "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
+      "leverage_used": 0.42,
+      "margin": 141.52,
       "png": "../backtest/quick/results/pngs_v3/trade-035.png"
     },
     {
@@ -982,25 +978,6 @@ window.DATA = {
     },
     {
       "n": 37,
-      "symbol": "US100",
-      "direction": "long",
-      "entry_time": "2025-09-04 16:30",
-      "exit_time": "2025-09-05 14:30",
-      "entry": 23535.82,
-      "sl": 23355.37,
-      "tp1": 23716.27,
-      "tp2": 23842.78,
-      "tp3": 23969.28,
-      "exit_reason": "tp2_sl",
-      "rr": 0.89,
-      "pnl": 89.13,
-      "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
-      "leverage_used": 1.3,
-      "margin": 434.75,
-      "png": "../backtest/quick/results/pngs_v3/trade-037.png"
-    },
-    {
-      "n": 38,
       "symbol": "US30",
       "direction": "long",
       "entry_time": "2025-09-11 14:30",
@@ -1016,10 +993,10 @@ window.DATA = {
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
       "leverage_used": 0.57,
       "margin": 189.76,
-      "png": "../backtest/quick/results/pngs_v3/trade-038.png"
+      "png": "../backtest/quick/results/pngs_v3/trade-037.png"
     },
     {
-      "n": 39,
+      "n": 38,
       "symbol": "US30",
       "direction": "long",
       "entry_time": "2025-10-20 13:30",
@@ -1035,29 +1012,29 @@ window.DATA = {
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
       "leverage_used": 0.64,
       "margin": 212.62,
+      "png": "../backtest/quick/results/pngs_v3/trade-038.png"
+    },
+    {
+      "n": 39,
+      "symbol": "US100",
+      "direction": "long",
+      "entry_time": "2025-10-23 15:30",
+      "exit_time": "2025-11-07 14:30",
+      "entry": 25044.55,
+      "sl": 24326.95,
+      "tp1": 25762.15,
+      "tp2": 26044.14,
+      "tp3": 26326.13,
+      "exit_reason": "tp2_sl",
+      "rr": 0.79,
+      "pnl": 78.97,
+      "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
+      "leverage_used": 0.35,
+      "margin": 116.33,
       "png": "../backtest/quick/results/pngs_v3/trade-039.png"
     },
     {
       "n": 40,
-      "symbol": "US100",
-      "direction": "long",
-      "entry_time": "2025-10-20 13:30",
-      "exit_time": "2025-11-06 16:30",
-      "entry": 25115.42,
-      "sl": 24326.95,
-      "tp1": 25903.89,
-      "tp2": 26150.44,
-      "tp3": 26397.0,
-      "exit_reason": "tp2_sl",
-      "rr": 0.76,
-      "pnl": 76.32,
-      "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
-      "leverage_used": 0.32,
-      "margin": 106.18,
-      "png": "../backtest/quick/results/pngs_v3/trade-040.png"
-    },
-    {
-      "n": 41,
       "symbol": "US2000",
       "direction": "long",
       "entry_time": "2025-10-23 16:30",
@@ -1073,10 +1050,10 @@ window.DATA = {
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
       "leverage_used": 0.26,
       "margin": 85.74,
-      "png": "../backtest/quick/results/pngs_v3/trade-041.png"
+      "png": "../backtest/quick/results/pngs_v3/trade-040.png"
     },
     {
-      "n": 42,
+      "n": 41,
       "symbol": "US100",
       "direction": "long",
       "entry_time": "2025-11-19 14:30",
@@ -1092,10 +1069,10 @@ window.DATA = {
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
       "leverage_used": 0.74,
       "margin": 247.23,
-      "png": "../backtest/quick/results/pngs_v3/trade-042.png"
+      "png": "../backtest/quick/results/pngs_v3/trade-041.png"
     },
     {
-      "n": 43,
+      "n": 42,
       "symbol": "US2000",
       "direction": "long",
       "entry_time": "2025-11-21 18:30",
@@ -1111,10 +1088,10 @@ window.DATA = {
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
       "leverage_used": 0.4,
       "margin": 134.46,
-      "png": "../backtest/quick/results/pngs_v3/trade-043.png"
+      "png": "../backtest/quick/results/pngs_v3/trade-042.png"
     },
     {
-      "n": 44,
+      "n": 43,
       "symbol": "US100",
       "direction": "long",
       "entry_time": "2025-11-24 14:30",
@@ -1130,10 +1107,10 @@ window.DATA = {
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
       "leverage_used": 0.8,
       "margin": 268.09,
-      "png": "../backtest/quick/results/pngs_v3/trade-044.png"
+      "png": "../backtest/quick/results/pngs_v3/trade-043.png"
     },
     {
-      "n": 45,
+      "n": 44,
       "symbol": "US2000",
       "direction": "long",
       "entry_time": "2025-12-19 16:30",
@@ -1149,6 +1126,25 @@ window.DATA = {
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
       "leverage_used": 1.81,
       "margin": 603.39,
+      "png": "../backtest/quick/results/pngs_v3/trade-044.png"
+    },
+    {
+      "n": 45,
+      "symbol": "US500",
+      "direction": "long",
+      "entry_time": "2025-12-23 16:30",
+      "exit_time": "2026-01-14 15:30",
+      "entry": 6899.93,
+      "sl": 6819.54,
+      "tp1": 6980.32,
+      "tp2": 7045.62,
+      "tp3": 7110.92,
+      "exit_reason": "tp1_sl",
+      "rr": 0.33,
+      "pnl": 33.0,
+      "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
+      "leverage_used": 0.86,
+      "margin": 286.11,
       "png": "../backtest/quick/results/pngs_v3/trade-045.png"
     },
     {
@@ -1172,44 +1168,6 @@ window.DATA = {
     },
     {
       "n": 47,
-      "symbol": "US500",
-      "direction": "long",
-      "entry_time": "2026-02-02 16:30",
-      "exit_time": "2026-02-03 14:30",
-      "entry": 6985.27,
-      "sl": 6960.27,
-      "tp1": 7010.27,
-      "tp2": 7103.26,
-      "tp3": 7196.26,
-      "exit_reason": "sl",
-      "rr": -1.0,
-      "pnl": -100.0,
-      "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
-      "leverage_used": 2.79,
-      "margin": 931.45,
-      "png": "../backtest/quick/results/pngs_v3/trade-047.png"
-    },
-    {
-      "n": 48,
-      "symbol": "US2000",
-      "direction": "long",
-      "entry_time": "2026-02-06 14:30",
-      "exit_time": "2026-02-12 15:30",
-      "entry": 2636.95,
-      "sl": 2593.57,
-      "tp1": 2680.33,
-      "tp2": 2707.72,
-      "tp3": 2735.1,
-      "exit_reason": "tp1_sl",
-      "rr": 0.33,
-      "pnl": 33.0,
-      "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
-      "leverage_used": 0.61,
-      "margin": 202.63,
-      "png": "../backtest/quick/results/pngs_v3/trade-048.png"
-    },
-    {
-      "n": 49,
       "symbol": "US30",
       "direction": "long",
       "entry_time": "2026-02-06 14:30",
@@ -1225,10 +1183,29 @@ window.DATA = {
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
       "leverage_used": 1.13,
       "margin": 377.09,
-      "png": "../backtest/quick/results/pngs_v3/trade-049.png"
+      "png": "../backtest/quick/results/pngs_v3/trade-047.png"
     },
     {
-      "n": 50,
+      "n": 48,
+      "symbol": "US2000",
+      "direction": "long",
+      "entry_time": "2026-02-18 14:30",
+      "exit_time": "2026-03-03 14:30",
+      "entry": 2684.71,
+      "sl": 2593.57,
+      "tp1": 2775.85,
+      "tp2": 2778.13,
+      "tp3": 2780.41,
+      "exit_reason": "sl",
+      "rr": -1.0,
+      "pnl": -100.0,
+      "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
+      "leverage_used": 0.29,
+      "margin": 98.19,
+      "png": "../backtest/quick/results/pngs_v3/trade-048.png"
+    },
+    {
+      "n": 49,
       "symbol": "US30",
       "direction": "long",
       "entry_time": "2026-02-18 14:30",
@@ -1244,10 +1221,10 @@ window.DATA = {
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
       "leverage_used": 0.97,
       "margin": 323.77,
-      "png": "../backtest/quick/results/pngs_v3/trade-050.png"
+      "png": "../backtest/quick/results/pngs_v3/trade-049.png"
     },
     {
-      "n": 51,
+      "n": 50,
       "symbol": "US500",
       "direction": "long",
       "entry_time": "2026-02-24 16:30",
@@ -1263,10 +1240,10 @@ window.DATA = {
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
       "leverage_used": 0.76,
       "margin": 253.54,
-      "png": "../backtest/quick/results/pngs_v3/trade-051.png"
+      "png": "../backtest/quick/results/pngs_v3/trade-050.png"
     },
     {
-      "n": 52,
+      "n": 51,
       "symbol": "US100",
       "direction": "short",
       "entry_time": "2026-03-26 13:30",
@@ -1282,10 +1259,10 @@ window.DATA = {
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
       "leverage_used": 0.38,
       "margin": 126.65,
-      "png": "../backtest/quick/results/pngs_v3/trade-052.png"
+      "png": "../backtest/quick/results/pngs_v3/trade-051.png"
     },
     {
-      "n": 53,
+      "n": 52,
       "symbol": "US500",
       "direction": "short",
       "entry_time": "2026-03-26 15:30",
@@ -1301,48 +1278,29 @@ window.DATA = {
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
       "leverage_used": 0.44,
       "margin": 145.11,
+      "png": "../backtest/quick/results/pngs_v3/trade-052.png"
+    },
+    {
+      "n": 53,
+      "symbol": "US30",
+      "direction": "long",
+      "entry_time": "2026-04-30 17:30",
+      "exit_time": "2026-05-22 16:30",
+      "entry": 49642.68,
+      "sl": 48866.85,
+      "tp1": 50418.51,
+      "tp2": 50615.01,
+      "tp3": 50811.51,
+      "exit_reason": "tp3",
+      "rr": 1.26,
+      "pnl": 125.58,
+      "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
+      "leverage_used": 0.64,
+      "margin": 213.29,
       "png": "../backtest/quick/results/pngs_v3/trade-053.png"
     },
     {
       "n": 54,
-      "symbol": "US500",
-      "direction": "long",
-      "entry_time": "2026-04-24 15:30",
-      "exit_time": "2026-05-06 19:30",
-      "entry": 7156.57,
-      "sl": 7027.51,
-      "tp1": 7285.63,
-      "tp2": 7326.59,
-      "tp3": 7367.56,
-      "exit_reason": "tp3",
-      "rr": 1.32,
-      "pnl": 132.06,
-      "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
-      "leverage_used": 0.55,
-      "margin": 184.84,
-      "png": "../backtest/quick/results/pngs_v3/trade-054.png"
-    },
-    {
-      "n": 55,
-      "symbol": "US30",
-      "direction": "long",
-      "entry_time": "2026-04-30 15:30",
-      "exit_time": "2026-05-22 16:30",
-      "entry": 49598.43,
-      "sl": 48866.85,
-      "tp1": 50330.01,
-      "tp2": 50548.63,
-      "tp3": 50767.26,
-      "exit_reason": "tp3",
-      "rr": 1.3,
-      "pnl": 130.18,
-      "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
-      "leverage_used": 0.68,
-      "margin": 225.99,
-      "png": "../backtest/quick/results/pngs_v3/trade-055.png"
-    },
-    {
-      "n": 56,
       "symbol": "US2000",
       "direction": "long",
       "entry_time": "2026-05-06 13:30",
@@ -1358,10 +1316,10 @@ window.DATA = {
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
       "leverage_used": 0.3,
       "margin": 100.75,
-      "png": "../backtest/quick/results/pngs_v3/trade-056.png"
+      "png": "../backtest/quick/results/pngs_v3/trade-054.png"
     },
     {
-      "n": 57,
+      "n": 55,
       "symbol": "US100",
       "direction": "long",
       "entry_time": "2026-05-21 16:30",
@@ -1377,29 +1335,10 @@ window.DATA = {
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
       "leverage_used": 0.4,
       "margin": 134.73,
-      "png": "../backtest/quick/results/pngs_v3/trade-057.png"
+      "png": "../backtest/quick/results/pngs_v3/trade-055.png"
     },
     {
-      "n": 58,
-      "symbol": "US30",
-      "direction": "long",
-      "entry_time": "2026-05-29 14:30",
-      "exit_time": "2026-06-09 15:30",
-      "entry": 51041.49,
-      "sl": 50419.53,
-      "tp1": 51663.45,
-      "tp2": 51936.88,
-      "tp3": 52210.32,
-      "exit_reason": "sl",
-      "rr": -1.0,
-      "pnl": -100.0,
-      "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
-      "leverage_used": 0.82,
-      "margin": 273.55,
-      "png": "../backtest/quick/results/pngs_v3/trade-058.png"
-    },
-    {
-      "n": 59,
+      "n": 56,
       "symbol": "US2000",
       "direction": "long",
       "entry_time": "2026-06-04 14:30",
@@ -1415,45 +1354,26 @@ window.DATA = {
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
       "leverage_used": 0.63,
       "margin": 210.04,
-      "png": "../backtest/quick/results/pngs_v3/trade-059.png"
+      "png": "../backtest/quick/results/pngs_v3/trade-056.png"
     },
     {
-      "n": 60,
+      "n": 57,
       "symbol": "US30",
       "direction": "long",
       "entry_time": "2026-06-11 16:30",
-      "exit_time": "2026-06-11 17:30",
+      "exit_time": "2026-06-11 18:30",
       "entry": 50583.53,
-      "sl": 50543.9,
-      "tp1": 50623.16,
-      "tp2": 51141.78,
-      "tp3": 51660.4,
-      "exit_reason": "sl",
-      "rr": -1.0,
-      "pnl": -100.0,
+      "sl": 50419.53,
+      "tp1": 50747.53,
+      "tp2": 50788.97,
+      "tp3": 50830.41,
+      "exit_reason": "tp3",
+      "rr": 1.26,
+      "pnl": 125.52,
       "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
-      "leverage_used": 12.77,
-      "margin": 4255.04,
-      "png": "../backtest/quick/results/pngs_v3/trade-060.png"
-    },
-    {
-      "n": 61,
-      "symbol": "US30",
-      "direction": "long",
-      "entry_time": "2026-06-11 18:30",
-      "exit_time": "2026-06-18 19:30",
-      "entry": 50847.48,
-      "sl": 49667.71,
-      "tp1": 52027.26,
-      "tp2": 53796.92,
-      "tp3": 55566.58,
-      "exit_reason": "open_close",
-      "rr": 0.73,
-      "pnl": 73.4,
-      "confluences": "OB+OB-Leave+OB-Reenter+FVG-Inside+BOS",
-      "leverage_used": 0.43,
-      "margin": 143.66,
-      "png": "../backtest/quick/results/pngs_v3/trade-061.png"
+      "leverage_used": 3.08,
+      "margin": 1028.1,
+      "png": "../backtest/quick/results/pngs_v3/trade-057.png"
     }
   ],
   "strategies": [
@@ -1485,11 +1405,11 @@ window.DATA = {
         "SL: OB-Extrem ± 0.5 × ATR(4H)",
         "TP1 = 1R, TP3 = nächste Daily-PAL oder Fib-Extension, TP2 = Mitte"
       ],
-      "trades": 61,
-      "winrate": 60.7,
-      "return_total": 17.32,
-      "cagr": 8.95,
-      "max_dd": -3.9
+      "trades": 57,
+      "winrate": 61.4,
+      "return_total": 26.55,
+      "cagr": 13.46,
+      "max_dd": -7.6
     },
     {
       "id": "ict-smc-daytrading",
@@ -1538,14 +1458,14 @@ window.DATA = {
         "kill_switch_daily_loss_pct": 3.0
       },
       "performance": {
-        "trades": 61,
-        "winrate": 60.7,
-        "wins": 37,
-        "losses": 24,
-        "total_return_pct": 17.32,
-        "max_dd_pct": -3.9,
-        "cagr_pct": 8.95,
-        "end_equity": 11732.27
+        "trades": 57,
+        "winrate": 61.4,
+        "wins": 35,
+        "losses": 22,
+        "total_return_pct": 26.55,
+        "max_dd_pct": -7.6,
+        "cagr_pct": 13.46,
+        "end_equity": 12654.78
       }
     }
   ]

@@ -53,7 +53,9 @@ def run():
 
         trades_in_symbol = 0
         for wi in range(8, len(bars.w1)):
-            w_slice = bars.w1.iloc[: wi + 1]
+            # FIX 1: use only CLOSED weekly candles for bias
+            # The week wi is still in progress — never use its (future) close.
+            w_slice = bars.w1.iloc[: wi]
             bias = weekly_bias_v3(w_slice)
             if bias == "none":
                 diag["bias_none"] += 1
