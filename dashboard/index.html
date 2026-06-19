@@ -3,249 +3,281 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Trading Bot · Dashboard</title>
+<title>Trading Desk · Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="data.js"></script>
 <style>
   :root {
-    --bg: #000000;
-    --bg-soft: #050505;
-    --panel: #0a0a0a;
-    --panel-2: #121212;
-    --panel-3: #181818;
-    --border: #1a1a1a;
-    --border-soft: #141414;
-    --border-strong: #2a2a2a;
-    --text: #f0f0f0;
-    --text-dim: #8a8a8a;
-    --text-faint: #5a5a5a;
-    --text-ghost: #3a3a3a;
-    --accent: #ffffff;
-    --accent-soft: rgba(255,255,255,0.06);
-    --win: #c8d4c1;
-    --loss: #d4c1c4;
-    --win-soft: rgba(200,212,193,0.10);
-    --loss-soft: rgba(212,193,196,0.10);
+    --bg: #08080a;
+    --bg-soft: #0c0c10;
+    --panel: #111114;
+    --panel-2: #17171c;
+    --panel-3: #1e1e24;
+    --border: #23232b;
+    --border-soft: #1c1c22;
+    --border-strong: #2e2e38;
+    --text: #ffffff;
+    --text-mid: #b3b3bc;
+    --text-dim: #7d7d88;
+    --text-faint: #4a4a55;
+    --accent: #60a5fa;
+    --accent-soft: rgba(96,165,250,0.12);
+    --win: #34d399;
+    --win-bg: rgba(52,211,153,0.14);
+    --loss: #f87171;
+    --loss-bg: rgba(248,113,113,0.14);
+    --warn: #fbbf24;
+    --warn-bg: rgba(251,191,36,0.14);
   }
   * { box-sizing: border-box; }
-  html, body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; -webkit-font-smoothing: antialiased; }
-  body { font-weight: 400; letter-spacing: -0.005em; }
+  html, body {
+    background: var(--bg); color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+  }
+  body { font-weight: 400; font-size: 14px; letter-spacing: -0.005em; }
 
-  .serif { font-family: 'Fraunces', serif; font-weight: 400; letter-spacing: -0.02em; }
-  .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+  .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; }
 
-  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; }
-  .panel-soft { background: var(--panel-2); border: 1px solid var(--border-soft); border-radius: 4px; }
-  .panel-elevated { background: var(--panel); border: 1px solid var(--border-strong); border-radius: 4px; }
+  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; }
+  .panel-soft { background: var(--panel-2); border: 1px solid var(--border-soft); border-radius: 6px; }
 
-  .kpi-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-faint); font-weight: 500; }
-  .kpi-value { font-size: 32px; font-weight: 300; letter-spacing: -0.02em; margin-top: 8px; line-height: 1; font-feature-settings: "tnum" 1; }
-  .kpi-value.small { font-size: 22px; }
+  .kpi-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); font-weight: 600; }
+  .kpi-value {
+    font-size: 36px; font-weight: 700; letter-spacing: -0.03em;
+    margin-top: 6px; line-height: 1.05; font-feature-settings: "tnum" 1;
+  }
+  .kpi-value.small { font-size: 26px; }
+  .kpi-unit { font-size: 18px; color: var(--text-dim); font-weight: 500; margin-left: 2px; }
 
   .win { color: var(--win); }
   .loss { color: var(--loss); }
   .num { font-variant-numeric: tabular-nums; }
 
+  /* Page title */
+  h1.page-title {
+    font-size: 30px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.1;
+  }
+  .page-subtitle { font-size: 14px; color: var(--text-mid); margin-top: 6px; }
+
   /* Sidebar */
+  .sidebar { background: var(--bg-soft); border-color: var(--border); }
   .nav-item {
-    display: flex; align-items: center; gap: 14px;
+    display: flex; align-items: center; gap: 12px;
     padding: 11px 16px; cursor: pointer;
-    color: var(--text-dim); font-size: 13px; font-weight: 400;
-    letter-spacing: 0.02em;
-    border-left: 2px solid transparent;
-    transition: all 0.15s;
+    color: var(--text-mid); font-size: 14px; font-weight: 500;
+    border-left: 3px solid transparent;
+    transition: all 0.12s;
   }
   .nav-item:hover { color: var(--text); background: var(--panel-2); }
-  .nav-item.active { color: var(--text); border-left-color: var(--accent); background: var(--panel-2); }
-  .nav-item.active .nav-icon { color: var(--text); }
-  .nav-icon { width: 16px; height: 16px; flex-shrink: 0; color: var(--text-faint); }
+  .nav-item.active {
+    color: var(--text); border-left-color: var(--accent);
+    background: linear-gradient(90deg, var(--accent-soft), transparent 60%);
+  }
+  .nav-item.active .nav-icon { color: var(--accent); }
+  .nav-icon { width: 18px; height: 18px; flex-shrink: 0; color: var(--text-dim); }
 
-  /* Badges & pills */
+  .brand-logo {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent) 0%, #a855f7 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; color: #000; font-size: 14px;
+  }
+
+  /* Badges */
   .badge {
-    display: inline-flex; align-items: center; gap: 5px;
-    padding: 3px 8px; border-radius: 2px; font-size: 10px;
-    font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em;
-    border: 1px solid var(--border-strong);
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 10px; border-radius: 4px; font-size: 11px;
+    font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
   }
-  .badge-active { color: var(--text); border-color: var(--text-dim); }
-  .badge-planned { color: var(--text-faint); }
-  .badge-win { color: var(--win); border-color: rgba(200,212,193,0.3); background: var(--win-soft); }
-  .badge-loss { color: var(--loss); border-color: rgba(212,193,196,0.3); background: var(--loss-soft); }
-  .badge-neutral { color: var(--text-dim); }
+  .badge-active, .badge-live { color: var(--win); background: var(--win-bg); }
+  .badge-planned, .badge-backtest { color: var(--warn); background: var(--warn-bg); }
+  .badge-win, .badge-long { color: var(--win); background: var(--win-bg); }
+  .badge-loss, .badge-short { color: var(--loss); background: var(--loss-bg); }
+  .badge-neutral { color: var(--text-mid); background: var(--panel-3); }
   .pill {
-    padding: 3px 9px; border-radius: 999px; font-size: 10px;
-    font-weight: 500; background: var(--panel-3); color: var(--text-dim);
-    letter-spacing: 0.05em;
+    padding: 3px 9px; border-radius: 4px; font-size: 11px;
+    font-weight: 500; background: var(--panel-3); color: var(--text-mid);
   }
-  .pill-outline {
-    background: transparent; border: 1px solid var(--border-strong);
-  }
+  .pill-outline { background: transparent; border: 1px solid var(--border-strong); }
 
   /* Forms */
   input.field, select.field, textarea.field {
-    background: var(--panel-2); border: 1px solid var(--border-strong); border-radius: 3px;
-    padding: 9px 12px; color: var(--text); font-size: 13px;
+    background: var(--panel-2); border: 1px solid var(--border-strong); border-radius: 6px;
+    padding: 10px 12px; color: var(--text); font-size: 13px; font-weight: 500;
     outline: none; transition: all 0.15s;
-    font-family: inherit;
+    font-family: inherit; width: 100%;
   }
   input.field:focus, select.field:focus, textarea.field:focus {
-    border-color: var(--text-dim); background: var(--panel-3);
+    border-color: var(--accent); background: var(--panel-3);
+    box-shadow: 0 0 0 3px var(--accent-soft);
   }
-  input.field::placeholder, textarea.field::placeholder { color: var(--text-ghost); }
+  input.field::placeholder, textarea.field::placeholder { color: var(--text-faint); }
   label.field-label {
-    font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em;
-    color: var(--text-faint); font-weight: 500; margin-bottom: 6px; display: block;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--text-dim); font-weight: 600; margin-bottom: 6px; display: block;
   }
-  textarea.field { resize: vertical; min-height: 60px; line-height: 1.5; }
+  textarea.field { resize: vertical; min-height: 64px; line-height: 1.5; }
 
   /* Buttons */
   .btn {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: var(--accent); color: #000; padding: 9px 18px; border-radius: 3px;
-    font-size: 12px; font-weight: 500; cursor: pointer; border: none;
-    letter-spacing: 0.04em; text-transform: uppercase;
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--accent); color: #000; padding: 10px 18px; border-radius: 6px;
+    font-size: 13px; font-weight: 600; cursor: pointer; border: none;
     transition: all 0.15s; font-family: inherit;
   }
-  .btn:hover { background: #e5e5e5; }
+  .btn:hover { background: #3b82f6; transform: translateY(-1px); }
   .btn-ghost {
-    background: transparent; color: var(--text); border: 1px solid var(--border-strong);
+    background: var(--panel-2); color: var(--text); border: 1px solid var(--border-strong);
   }
-  .btn-ghost:hover { border-color: var(--text-dim); background: var(--panel-2); }
+  .btn-ghost:hover { border-color: var(--text-dim); background: var(--panel-3); transform: none; }
   .btn-danger {
-    background: transparent; color: var(--loss); border: 1px solid rgba(212,193,196,0.2);
+    background: var(--loss-bg); color: var(--loss); border: 1px solid rgba(248,113,113,0.25);
   }
-  .btn-danger:hover { background: var(--loss-soft); }
-  .btn-sm { padding: 6px 12px; font-size: 11px; }
+  .btn-danger:hover { background: rgba(248,113,113,0.2); transform: none; }
+  .btn-sm { padding: 7px 14px; font-size: 12px; }
 
-  /* Table */
-  table.journal-table, table.trades { width: 100%; border-collapse: collapse; font-size: 12px; }
-  table.journal-table th, table.trades th {
-    text-align: left; font-weight: 500; color: var(--text-faint); padding: 12px 14px;
-    font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em;
-    border-bottom: 1px solid var(--border); position: sticky; top: 0;
-    background: var(--panel); cursor: pointer; user-select: none;
+  /* Tables */
+  table.dt { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table.dt th {
+    text-align: left; font-weight: 600; color: var(--text-dim);
+    padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
+    border-bottom: 1px solid var(--border); background: var(--panel);
+    position: sticky; top: 0; cursor: pointer; user-select: none; white-space: nowrap;
   }
-  table.journal-table th:hover, table.trades th:hover { color: var(--text); }
-  table.journal-table td, table.trades td {
-    padding: 14px; border-bottom: 1px solid var(--border-soft);
+  table.dt th:hover { color: var(--text); }
+  table.dt td {
+    padding: 13px 14px; border-bottom: 1px solid var(--border-soft);
+    white-space: nowrap;
   }
-  table.journal-table tbody tr, table.trades tbody tr { transition: background 0.1s; }
-  table.journal-table tbody tr:hover, table.trades tbody tr:hover { background: var(--panel-2); }
+  table.dt td.wrap { white-space: normal; max-width: 220px; }
+  table.dt tbody tr { transition: background 0.1s; cursor: pointer; }
+  table.dt tbody tr:hover { background: var(--panel-2); }
+  table.dt tbody tr.expanded { background: var(--panel-2); }
 
   /* Scrollbars */
-  .scroll-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+  .scroll-thin::-webkit-scrollbar { width: 8px; height: 8px; }
   .scroll-thin::-webkit-scrollbar-track { background: transparent; }
-  .scroll-thin::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+  .scroll-thin::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
   .scroll-thin::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }
 
   /* Modal */
   .modal-bg {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+    position: fixed; inset: 0; background: rgba(0,0,0,0.75);
     display: flex; align-items: center; justify-content: center;
-    z-index: 50; padding: 32px; backdrop-filter: blur(4px);
+    z-index: 50; padding: 24px; backdrop-filter: blur(6px);
   }
   .modal {
-    background: var(--panel); border: 1px solid var(--border-strong); border-radius: 6px;
-    width: 100%; max-width: 980px; max-height: 90vh; overflow-y: auto;
+    background: var(--panel); border: 1px solid var(--border-strong); border-radius: 12px;
+    width: 100%; max-width: 1080px; max-height: 92vh; overflow-y: auto;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.5);
   }
 
-  /* Image upload zone */
+  /* Image upload */
   .img-drop {
-    border: 1px dashed var(--border-strong); border-radius: 3px;
+    border: 1px dashed var(--border-strong); border-radius: 6px;
     padding: 24px; text-align: center; cursor: pointer;
     transition: all 0.15s; background: var(--panel-2);
     min-height: 160px; display: flex; align-items: center; justify-content: center;
   }
-  .img-drop:hover { border-color: var(--text-dim); background: var(--panel-3); }
+  .img-drop:hover { border-color: var(--accent); background: var(--panel-3); }
   .img-drop.has-image { padding: 0; background: var(--bg); position: relative; overflow: hidden; }
-  .img-drop img { max-width: 100%; max-height: 240px; display: block; margin: 0 auto; }
+  .img-drop img { max-width: 100%; max-height: 240px; display: block; margin: 0 auto; border-radius: 4px; }
   .img-remove {
-    position: absolute; top: 6px; right: 6px;
-    background: rgba(0,0,0,0.75); color: white; border: none;
-    width: 24px; height: 24px; border-radius: 12px; cursor: pointer;
+    position: absolute; top: 8px; right: 8px;
+    background: rgba(0,0,0,0.85); color: white; border: 1px solid var(--border-strong);
+    width: 28px; height: 28px; border-radius: 14px; cursor: pointer;
     font-size: 14px; line-height: 1;
   }
 
-  /* Section dividers */
+  /* Section header inside modal */
   .section-title {
-    font-size: 10px; text-transform: uppercase; letter-spacing: 0.18em;
-    color: var(--text-faint); font-weight: 500; margin: 24px 0 12px;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em;
+    color: var(--accent); font-weight: 700; margin: 28px 0 14px;
     padding-bottom: 8px; border-bottom: 1px solid var(--border);
   }
   .section-title:first-child { margin-top: 0; }
 
-  /* Misc */
-  .divider { height: 1px; background: var(--border); margin: 24px 0; }
-  hr { border: none; border-top: 1px solid var(--border); margin: 0; }
+  /* Outcome cell */
+  .outcome-cell {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px; border-radius: 4px; font-weight: 600;
+    font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em;
+  }
 
-  .data-row { transition: background 0.1s; }
-  .data-row:hover { background: var(--panel-2); }
+  /* Strategy/bot card spacing */
+  .panel-stack > .panel { margin-bottom: 16px; }
+  .panel-stack > .panel:last-child { margin-bottom: 0; }
 </style>
 </head>
 <body class="min-h-screen">
 
 <div class="flex min-h-screen">
   <!-- Sidebar -->
-  <aside class="w-60 flex-shrink-0 border-r relative" style="border-color: var(--border); background: var(--bg-soft);">
-    <div class="p-6 border-b" style="border-color: var(--border);">
-      <div class="serif" style="font-size: 18px; font-weight: 500; letter-spacing: -0.02em;">Trading Desk</div>
-      <div class="kpi-label mt-1" style="font-size: 9px;">ICT/SMC · v3 Final</div>
+  <aside class="w-60 flex-shrink-0 border-r relative sidebar">
+    <div class="p-5 border-b" style="border-color: var(--border);">
+      <div class="flex items-center gap-3">
+        <div class="brand-logo">P</div>
+        <div>
+          <div class="font-bold" style="font-size: 14px; letter-spacing: -0.01em;">Trading Desk</div>
+          <div style="font-size: 11px; color: var(--text-dim); font-weight: 500;">ICT/SMC · v3 Final</div>
+        </div>
+      </div>
     </div>
-    <nav class="py-2">
+    <nav class="py-3">
       <a class="nav-item" data-route="dashboard">
-        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
         Dashboard
       </a>
       <a class="nav-item" data-route="strategien">
-        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
         Strategien
       </a>
       <a class="nav-item" data-route="trades">
-        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         Backtest Trades
       </a>
       <a class="nav-item" data-route="journal">
-        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
         Journal
       </a>
       <a class="nav-item" data-route="bots">
-        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/></svg>
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/></svg>
         Bots
       </a>
     </nav>
 
     <div class="absolute bottom-0 w-60 p-5 border-t" style="border-color: var(--border)">
-      <div class="kpi-label" style="font-size: 9px;">Account</div>
-      <div class="serif mt-1" style="font-size: 14px;">FTMO Swing $10k</div>
-      <div class="kpi-label mt-3" style="font-size: 9px;">Backtest Periode</div>
-      <div class="num text-xs mt-1" style="color: var(--text-dim);" id="footer-period"></div>
+      <div class="kpi-label" style="font-size: 10px;">Account</div>
+      <div class="font-bold mt-1" style="font-size: 14px;">FTMO Swing $10k</div>
+      <div class="kpi-label mt-3" style="font-size: 10px;">Backtest</div>
+      <div class="num text-xs mt-1" style="color: var(--text-mid); font-weight: 500;" id="footer-period"></div>
     </div>
   </aside>
 
   <!-- Main -->
   <main class="flex-1 overflow-x-auto scroll-thin">
-    <div id="view-root" class="p-10"></div>
+    <div id="view-root" class="p-8"></div>
   </main>
 </div>
 
-<!-- Journal entry modal -->
 <div id="journal-modal" style="display:none"></div>
 
 <script>
 // ============================================================
 // State & persistence
 // ============================================================
-const STATE = {
-  bots: loadBots(),
-};
+const STATE = { bots: loadBots() };
 const JOURNAL_STATE = {
   entries: loadJournal(),
   editing: null,
+  detailView: null,
   filter: { search: "", outcome: "all", instrument: "all" },
+  sort: { key: "date", asc: false },
 };
 
 function loadBots() {
@@ -258,7 +290,6 @@ function resetBots() {
   localStorage.removeItem("bots_v2");
   STATE.bots = loadBots(); render();
 }
-
 function loadJournal() {
   try { return JSON.parse(localStorage.getItem("journal_v1") || "[]"); }
   catch { return []; }
@@ -318,150 +349,246 @@ function viewDashboard() {
   const k = DATA.kpis;
   const main = DATA.strategies[0];
   const last3 = DATA.last3;
-  const journalCount = JOURNAL_STATE.entries.length;
+  const yearly = DATA.yearly || [];
+
   return `
-    <div class="mb-10">
-      <div class="kpi-label mb-2">Overview</div>
-      <h1 class="serif" style="font-size: 36px; font-weight: 400; letter-spacing: -0.025em;">Dashboard</h1>
-      <p class="text-sm mt-2" style="color: var(--text-dim)">
-        ${main.name} · Entries auf ${k.timeframe_entry || '1H'} · ${k.data_period_start} → ${k.data_period_end}
-      </p>
+    <div class="flex items-end justify-between mb-7">
+      <div>
+        <div class="kpi-label mb-2">Übersicht</div>
+        <h1 class="page-title">Dashboard</h1>
+        <p class="page-subtitle">${main.name} · Entries auf ${k.timeframe_entry || '1H'} · ${k.data_period_start} → ${k.data_period_end}</p>
+      </div>
+      <div class="flex gap-2">
+        <span class="badge badge-active">v3 FINAL</span>
+        <span class="badge badge-backtest">Backtest-Modus</span>
+      </div>
     </div>
 
-    <!-- Primary KPIs -->
-    <div class="grid grid-cols-4 gap-px panel-elevated mb-px" style="background: var(--border);">
-      <div style="background: var(--panel)" class="p-6">
+    <!-- Hero KPIs -->
+    <div class="grid grid-cols-4 gap-4 mb-4">
+      <div class="panel p-5">
         <div class="kpi-label">Total Return</div>
-        <div class="kpi-value num ${cls(k.total_return_pct)}">${arrow(k.total_return_pct)} ${Math.abs(k.total_return_pct).toFixed(2)}<span style="font-size: 18px; color: var(--text-dim);">%</span></div>
-        <div class="text-xs mt-3 num" style="color: var(--text-dim);">$${k.starting_equity.toLocaleString()} → $${k.end_equity.toLocaleString()}</div>
+        <div class="kpi-value num ${cls(k.total_return_pct)}">
+          ${arrow(k.total_return_pct)} ${Math.abs(k.total_return_pct).toFixed(2)}<span class="kpi-unit">%</span>
+        </div>
+        <div class="text-xs mt-3 num" style="color: var(--text-mid);">
+          $${k.starting_equity.toLocaleString()} → <span class="${cls(k.total_return_pct)} font-semibold">$${k.end_equity.toLocaleString()}</span>
+        </div>
       </div>
-      <div style="background: var(--panel)" class="p-6">
+      <div class="panel p-5">
         <div class="kpi-label">CAGR</div>
-        <div class="kpi-value num ${cls(k.cagr_pct)}">${arrow(k.cagr_pct)} ${Math.abs(k.cagr_pct).toFixed(2)}<span style="font-size: 18px; color: var(--text-dim);">%</span></div>
-        <div class="text-xs mt-3" style="color: var(--text-dim);">über ${k.data_years} Jahre</div>
+        <div class="kpi-value num ${cls(k.cagr_pct)}">
+          ${arrow(k.cagr_pct)} ${Math.abs(k.cagr_pct).toFixed(2)}<span class="kpi-unit">%</span>
+        </div>
+        <div class="text-xs mt-3" style="color: var(--text-mid);">über ${k.data_years} Jahre</div>
       </div>
-      <div style="background: var(--panel)" class="p-6">
+      <div class="panel p-5">
         <div class="kpi-label">Winrate</div>
-        <div class="kpi-value num">${k.winrate.toFixed(1)}<span style="font-size: 18px; color: var(--text-dim);">%</span></div>
-        <div class="text-xs mt-3" style="color: var(--text-dim);">${k.wins} W · ${k.losses} L</div>
+        <div class="kpi-value num">${k.winrate.toFixed(1)}<span class="kpi-unit">%</span></div>
+        <div class="text-xs mt-3" style="color: var(--text-mid);">
+          <span class="win font-semibold">${k.wins}W</span> · <span class="loss font-semibold">${k.losses}L</span> · ${k.trades} Trades
+        </div>
       </div>
-      <div style="background: var(--panel)" class="p-6">
+      <div class="panel p-5">
         <div class="kpi-label">Max Drawdown</div>
-        <div class="kpi-value num loss">↓ ${Math.abs(k.max_dd_pct).toFixed(1)}<span style="font-size: 18px; color: var(--text-dim);">%</span></div>
-        <div class="text-xs mt-3" style="color: var(--text-dim);">Peak to Trough</div>
+        <div class="kpi-value num loss">↓ ${Math.abs(k.max_dd_pct).toFixed(1)}<span class="kpi-unit">%</span></div>
+        <div class="text-xs mt-3" style="color: var(--text-mid);">Peak-to-Trough</div>
       </div>
     </div>
 
-    <!-- Secondary KPIs -->
-    <div class="grid grid-cols-4 gap-px panel-elevated mb-10" style="background: var(--border);">
-      <div style="background: var(--panel)" class="p-5">
-        <div class="kpi-label">Trades</div>
-        <div class="kpi-value small num">${k.trades}</div>
+    <!-- Equity Curve + Yearly grid -->
+    <div class="grid gap-4 mb-4" style="grid-template-columns: 2fr 1fr;">
+      <div class="panel p-5">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <div class="kpi-label">Equity Curve</div>
+            <div class="text-lg font-bold mt-1">Compound Wachstum</div>
+          </div>
+          <div class="text-right num">
+            <div class="kpi-label">End Equity</div>
+            <div class="text-2xl mt-1 font-bold ${cls(k.total_return_pct)}">$${k.end_equity.toLocaleString()}</div>
+          </div>
+        </div>
+        <canvas id="equity-chart" style="max-height: 280px;"></canvas>
       </div>
-      <div style="background: var(--panel)" class="p-5">
+      <div class="panel p-5">
+        <div class="kpi-label">Performance pro Jahr</div>
+        <div class="text-lg font-bold mt-1 mb-4">Yearly Returns</div>
+        <canvas id="yearly-chart" style="max-height: 280px;"></canvas>
+      </div>
+    </div>
+
+    <!-- Per-symbol breakdown + Last trades -->
+    <div class="grid gap-4 mb-4" style="grid-template-columns: 1fr 2fr;">
+      <div class="panel p-5">
+        <div class="kpi-label">Performance pro Symbol</div>
+        <div class="text-lg font-bold mt-1 mb-4">Symbol Breakdown</div>
+        <canvas id="symbol-chart" style="max-height: 280px;"></canvas>
+      </div>
+      <div class="panel p-5">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <div class="kpi-label">Recent</div>
+            <div class="text-lg font-bold mt-1">Letzte 3 Trades</div>
+          </div>
+          <a class="text-xs font-semibold" data-route="trades" style="color: var(--accent); cursor: pointer;">Alle ansehen →</a>
+        </div>
+        <div class="space-y-2">
+          ${last3.map(t => `
+            <div class="flex items-center justify-between py-3 px-4 panel-soft hover:bg-opacity-100" style="transition: background 0.1s;">
+              <div class="flex items-center gap-4">
+                <div style="min-width: 70px;">
+                  <div class="text-xs mono font-semibold">${t.entry_time.slice(0,10)}</div>
+                </div>
+                <div style="min-width: 80px;">
+                  <div class="font-bold">${t.symbol}</div>
+                </div>
+                <span class="badge ${t.direction === 'long' ? 'badge-long' : 'badge-short'}">${t.direction === 'long' ? '↑ Long' : '↓ Short'}</span>
+                <span class="pill">${escapeHtml(t.exit_reason)}</span>
+              </div>
+              <div class="text-right">
+                <div class="num font-bold ${cls(t.pnl)}" style="font-size: 16px;">${fmtMoney(t.pnl, true)}</div>
+                <div class="num text-xs mt-1" style="color: var(--text-mid);">R ${t.rr >= 0 ? '+' : ''}${t.rr.toFixed(2)}</div>
+              </div>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom mini-stats -->
+    <div class="grid grid-cols-4 gap-4">
+      <div class="panel p-4">
         <div class="kpi-label">Märkte</div>
-        <div class="kpi-value small num">${k.n_symbols}</div>
-        <div class="text-xs mt-2 flex gap-1 flex-wrap">
+        <div class="kpi-value small num mt-2">${k.n_symbols}</div>
+        <div class="flex gap-1 mt-2 flex-wrap">
           ${k.symbols.map(s => `<span class="pill">${s}</span>`).join("")}
         </div>
       </div>
-      <div style="background: var(--panel)" class="p-5">
+      <div class="panel p-4">
+        <div class="kpi-label">Bars / Symbol</div>
+        <div class="kpi-value small num mt-2">${(k.data_years * 252 * 6.5).toFixed(0)}</div>
+        <div class="text-xs mt-2" style="color: var(--text-mid);">1H · ~${(k.data_years * 252).toFixed(0)} Trading-Tage</div>
+      </div>
+      <div class="panel p-4">
         <div class="kpi-label">Journal Entries</div>
-        <div class="kpi-value small num">${journalCount}</div>
-        <div class="text-xs mt-2"><a class="nav-item" data-route="journal" style="display:inline; color: var(--text-dim); padding: 0; border: none; text-decoration: underline; text-underline-offset: 3px;">Journal öffnen →</a></div>
+        <div class="kpi-value small num mt-2">${JOURNAL_STATE.entries.length}</div>
+        <div class="text-xs mt-2"><a data-route="journal" style="color: var(--accent); font-weight: 600; cursor: pointer;">Journal →</a></div>
       </div>
-      <div style="background: var(--panel)" class="p-5">
-        <div class="kpi-label">Strategie Version</div>
-        <div class="kpi-value small">${k.strategy_version || 'v3'}</div>
-        <div class="text-xs mt-2" style="color: var(--text-dim);">${k.timeframe_entry || '1H'} Entries</div>
-      </div>
-    </div>
-
-    <!-- Equity curve -->
-    <div class="panel-elevated p-8 mb-px">
-      <div class="flex items-baseline justify-between mb-6">
-        <div>
-          <div class="kpi-label mb-2">Equity Curve</div>
-          <div class="serif" style="font-size: 22px; font-weight: 400;">Compound</div>
-        </div>
-        <div class="num text-right">
-          <div class="kpi-label">End Equity</div>
-          <div class="text-2xl mt-1 ${cls(k.total_return_pct)}">$${k.end_equity.toLocaleString()}</div>
-        </div>
-      </div>
-      <canvas id="equity-chart" style="max-height: 320px;"></canvas>
-    </div>
-
-    <hr class="my-px" style="border-color: var(--border-strong);">
-
-    <!-- Last 3 trades -->
-    <div class="panel-elevated p-8" style="border-top: none;">
-      <div class="kpi-label mb-2">Recent Activity</div>
-      <div class="serif mb-6" style="font-size: 22px; font-weight: 400;">Letzte 3 Trades</div>
-      <div class="space-y-2">
-        ${last3.map(t => `
-          <div class="flex items-center justify-between py-4 border-b" style="border-color: var(--border);">
-            <div class="flex items-center gap-6">
-              <div>
-                <div class="text-xs mono" style="color: var(--text-faint);">${t.entry_time}</div>
-                <div class="flex items-center gap-2 mt-1">
-                  <span class="font-medium" style="font-size: 14px;">${t.symbol}</span>
-                  <span class="badge ${t.direction === 'long' ? 'badge-win' : 'badge-loss'}">${t.direction === 'long' ? 'Long' : 'Short'}</span>
-                </div>
-              </div>
-              <div class="flex flex-col gap-1">
-                <span class="pill pill-outline" style="align-self: flex-start;">${escapeHtml(t.exit_reason)}</span>
-                <span class="text-xs" style="color: var(--text-faint);">${escapeHtml(t.confluences)}</span>
-              </div>
-            </div>
-            <div class="text-right">
-              <div class="num font-medium ${cls(t.pnl)}" style="font-size: 18px;">${fmtMoney(t.pnl, true)}</div>
-              <div class="text-xs num mt-1" style="color: var(--text-dim);">R ${t.rr >= 0 ? '+' : ''}${t.rr.toFixed(2)}</div>
-            </div>
-          </div>
-        `).join("")}
+      <div class="panel p-4">
+        <div class="kpi-label">Aktive Bots</div>
+        <div class="kpi-value small num mt-2">${STATE.bots.filter(b => b.status === 'live').length} / ${STATE.bots.length}</div>
+        <div class="text-xs mt-2"><a data-route="bots" style="color: var(--accent); font-weight: 600; cursor: pointer;">Bots verwalten →</a></div>
       </div>
     </div>
   `;
 }
 
-function renderEquityChart() {
-  const ctx = document.getElementById("equity-chart"); if (!ctx) return;
-  const data = DATA.equity_curve;
-  new Chart(ctx, {
-    type: "line",
-    data: {
-      labels: data.map(p => p.date),
-      datasets: [{
-        data: data.map(p => p.equity),
-        borderColor: "#f0f0f0",
-        backgroundColor: "rgba(240,240,240,0.04)",
-        borderWidth: 1.5,
-        fill: true,
-        tension: 0.15,
-        pointRadius: 0,
-        pointHoverRadius: 4,
-        pointHoverBackgroundColor: "#fff",
-        pointHoverBorderColor: "#fff",
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          backgroundColor: "#0a0a0a", borderColor: "#2a2a2a", borderWidth: 1, padding: 10,
-          displayColors: false, titleColor: "#8a8a8a", bodyColor: "#f0f0f0",
-          callbacks: { label: ctx => "$" + ctx.parsed.y.toLocaleString("en-US", { maximumFractionDigits: 0 }) }
-        }
+function renderDashboardCharts() {
+  // Equity
+  const eq = document.getElementById("equity-chart"); if (eq) {
+    const data = DATA.equity_curve;
+    new Chart(eq, {
+      type: "line",
+      data: {
+        labels: data.map(p => p.date),
+        datasets: [{
+          data: data.map(p => p.equity),
+          borderColor: "#60a5fa", borderWidth: 2,
+          backgroundColor: ctx => {
+            const c = ctx.chart.ctx; const g = c.createLinearGradient(0, 0, 0, 300);
+            g.addColorStop(0, "rgba(96,165,250,0.30)"); g.addColorStop(1, "rgba(96,165,250,0)");
+            return g;
+          },
+          fill: true, tension: 0.2,
+          pointRadius: 0, pointHoverRadius: 5,
+          pointHoverBackgroundColor: "#60a5fa",
+        }]
       },
-      scales: {
-        x: { grid: { color: "rgba(255,255,255,0.03)" }, ticks: { color: "#5a5a5a", maxTicksLimit: 10, font: { size: 10 } } },
-        y: { grid: { color: "rgba(255,255,255,0.03)" }, ticks: { color: "#5a5a5a", font: { size: 10 }, callback: v => "$" + v.toLocaleString("en-US") } }
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: "#111114", borderColor: "#2e2e38", borderWidth: 1, padding: 10,
+            displayColors: false, titleColor: "#b3b3bc", bodyColor: "#fff",
+            callbacks: { label: ctx => "$" + ctx.parsed.y.toLocaleString("en-US", { maximumFractionDigits: 0 }) }
+          }
+        },
+        scales: {
+          x: { grid: { color: "rgba(255,255,255,0.03)" }, ticks: { color: "#7d7d88", maxTicksLimit: 8, font: { size: 10, weight: 500 } } },
+          y: { grid: { color: "rgba(255,255,255,0.04)" }, ticks: { color: "#7d7d88", font: { size: 10, weight: 500 }, callback: v => "$" + v.toLocaleString("en-US") } }
+        }
       }
-    }
-  });
+    });
+  }
+
+  // Yearly bars
+  const yr = document.getElementById("yearly-chart");
+  if (yr && DATA.yearly) {
+    new Chart(yr, {
+      type: "bar",
+      data: {
+        labels: DATA.yearly.map(y => y.year),
+        datasets: [{
+          data: DATA.yearly.map(y => y["return_%"]),
+          backgroundColor: DATA.yearly.map(y => y["return_%"] >= 0 ? "rgba(52,211,153,0.85)" : "rgba(248,113,113,0.85)"),
+          borderRadius: 4, borderSkipped: false,
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: "#111114", borderColor: "#2e2e38", borderWidth: 1, padding: 10,
+            displayColors: false, titleColor: "#b3b3bc", bodyColor: "#fff",
+            callbacks: { label: ctx => `${ctx.parsed.y >= 0 ? '+' : ''}${ctx.parsed.y.toFixed(2)}%` }
+          }
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: "#7d7d88", font: { size: 11, weight: 600 } } },
+          y: { grid: { color: "rgba(255,255,255,0.04)" }, ticks: { color: "#7d7d88", font: { size: 10 }, callback: v => v + "%" } }
+        }
+      }
+    });
+  }
+
+  // Per-symbol
+  const sy = document.getElementById("symbol-chart");
+  if (sy) {
+    const bySym = {};
+    DATA.trades.forEach(t => { bySym[t.symbol] = (bySym[t.symbol] || 0) + t.pnl; });
+    const labels = Object.keys(bySym).sort();
+    const values = labels.map(l => bySym[l]);
+    new Chart(sy, {
+      type: "bar",
+      data: {
+        labels,
+        datasets: [{
+          data: values,
+          backgroundColor: values.map(v => v >= 0 ? "rgba(52,211,153,0.85)" : "rgba(248,113,113,0.85)"),
+          borderRadius: 4, borderSkipped: false,
+        }]
+      },
+      options: {
+        indexAxis: "y",
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: "#111114", borderColor: "#2e2e38", borderWidth: 1, padding: 10,
+            displayColors: false, titleColor: "#b3b3bc", bodyColor: "#fff",
+            callbacks: { label: ctx => "$" + ctx.parsed.x.toLocaleString("en-US", { maximumFractionDigits: 0 }) }
+          }
+        },
+        scales: {
+          x: { grid: { color: "rgba(255,255,255,0.04)" }, ticks: { color: "#7d7d88", font: { size: 10 }, callback: v => "$" + v.toLocaleString("en-US") } },
+          y: { grid: { display: false }, ticks: { color: "#fff", font: { size: 12, weight: 600 } } }
+        }
+      }
+    });
+  }
 }
 
 // ============================================================
@@ -469,41 +596,41 @@ function renderEquityChart() {
 // ============================================================
 function viewStrategien() {
   return `
-    <div class="mb-10">
+    <div class="mb-7">
       <div class="kpi-label mb-2">Library</div>
-      <h1 class="serif" style="font-size: 36px; font-weight: 400; letter-spacing: -0.025em;">Strategien</h1>
-      <p class="text-sm mt-2" style="color: var(--text-dim)">${DATA.strategies.length} Strategien · ${DATA.strategies.filter(s=>s.status==='active').length} aktiv</p>
+      <h1 class="page-title">Strategien</h1>
+      <p class="page-subtitle">${DATA.strategies.length} Strategien · ${DATA.strategies.filter(s=>s.status==='active').length} aktiv</p>
     </div>
-    <div class="space-y-px" style="background: var(--border)">
+    <div class="panel-stack">
       ${DATA.strategies.map(s => `
-        <div class="p-8" style="background: var(--panel)">
-          <div class="flex items-start justify-between mb-6">
+        <div class="panel p-7">
+          <div class="flex items-start justify-between mb-5">
             <div>
               <div class="flex items-center gap-3 mb-2">
-                <h2 class="serif" style="font-size: 24px; font-weight: 400;">${s.name}</h2>
+                <h2 class="font-bold" style="font-size: 22px; letter-spacing: -0.01em;">${s.name}</h2>
                 <span class="badge ${s.status === 'active' ? 'badge-active' : 'badge-planned'}">${s.status === 'active' ? 'Aktiv' : 'Geplant'}</span>
               </div>
-              <p class="text-sm max-w-3xl leading-relaxed" style="color: var(--text-dim)">${s.description}</p>
+              <p class="leading-relaxed max-w-3xl" style="color: var(--text-mid);">${s.description}</p>
             </div>
           </div>
           ${s.status === 'active' ? `
-            <div class="grid grid-cols-4 gap-px mb-8" style="background: var(--border)">
-              <div class="p-5" style="background: var(--panel)"><div class="kpi-label">Trades</div><div class="text-2xl font-light num mt-2">${s.trades}</div></div>
-              <div class="p-5" style="background: var(--panel)"><div class="kpi-label">Winrate</div><div class="text-2xl font-light num mt-2">${s.winrate}%</div></div>
-              <div class="p-5" style="background: var(--panel)"><div class="kpi-label">Total Return</div><div class="text-2xl font-light num mt-2 ${cls(s.return_total)}">${fmtPct(s.return_total)}</div></div>
-              <div class="p-5" style="background: var(--panel)"><div class="kpi-label">Max DD</div><div class="text-2xl font-light num mt-2 loss">${s.max_dd.toFixed(1)}%</div></div>
+            <div class="grid grid-cols-4 gap-3 mb-7">
+              <div class="panel-soft p-4"><div class="kpi-label">Trades</div><div class="text-2xl font-bold num mt-2">${s.trades}</div></div>
+              <div class="panel-soft p-4"><div class="kpi-label">Winrate</div><div class="text-2xl font-bold num mt-2">${s.winrate}%</div></div>
+              <div class="panel-soft p-4"><div class="kpi-label">Total Return</div><div class="text-2xl font-bold num mt-2 ${cls(s.return_total)}">${fmtPct(s.return_total)}</div></div>
+              <div class="panel-soft p-4"><div class="kpi-label">Max DD</div><div class="text-2xl font-bold num mt-2 loss">${s.max_dd.toFixed(1)}%</div></div>
             </div>
           ` : ''}
-          <div class="grid grid-cols-2 gap-10">
+          <div class="grid grid-cols-2 gap-8">
             <div>
               <div class="kpi-label mb-3">Märkte</div>
-              <div class="flex gap-2 flex-wrap mb-6">${s.markets.map(m => `<span class="pill pill-outline">${m}</span>`).join("")}</div>
+              <div class="flex gap-2 flex-wrap mb-5">${s.markets.map(m => `<span class="pill pill-outline">${m}</span>`).join("")}</div>
               <div class="kpi-label mb-3">Timeframes</div>
-              <div class="grid grid-cols-4 gap-px" style="background: var(--border)">
+              <div class="grid grid-cols-4 gap-2">
                 ${Object.entries(s.timeframes).map(([k,v]) => `
-                  <div class="p-3 text-center" style="background: var(--panel)">
-                    <div class="kpi-label" style="font-size: 9px;">${k}</div>
-                    <div class="font-medium text-sm mt-1">${v}</div>
+                  <div class="panel-soft p-3 text-center">
+                    <div class="kpi-label" style="font-size: 10px;">${k}</div>
+                    <div class="font-bold text-sm mt-1">${v}</div>
                   </div>
                 `).join("")}
               </div>
@@ -513,7 +640,7 @@ function viewStrategien() {
               <ol class="space-y-3 text-sm">
                 ${s.rules.map((r,i) => `
                   <li class="flex gap-4">
-                    <span class="text-xs mono font-medium" style="color: var(--text-faint); padding-top: 2px;">${(i+1).toString().padStart(2,'0')}</span>
+                    <span class="text-xs mono font-bold" style="color: var(--accent); padding-top: 1px; min-width: 22px;">${(i+1).toString().padStart(2,'0')}</span>
                     <span style="color: var(--text); line-height: 1.6;">${r}</span>
                   </li>
                 `).join("")}
@@ -556,36 +683,36 @@ function viewTrades() {
   const totalPnl = trades.reduce((a,b)=>a+b.pnl, 0);
   const wins = trades.filter(t => t.pnl > 0).length;
   return `
-    <div class="mb-10">
-      <div class="kpi-label mb-2">Backtest Log</div>
-      <h1 class="serif" style="font-size: 36px; font-weight: 400; letter-spacing: -0.025em;">Trades</h1>
-      <p class="text-sm mt-2" style="color: var(--text-dim)">${trades.length} von ${DATA.trades.length} · ${wins} Wins · <span class="${cls(totalPnl)}">${fmtMoney(totalPnl, true)}</span></p>
+    <div class="mb-7">
+      <div class="kpi-label mb-2">Backtest</div>
+      <h1 class="page-title">Trades</h1>
+      <p class="page-subtitle">${trades.length} von ${DATA.trades.length} · ${wins} Wins · <span class="${cls(totalPnl)} font-semibold">${fmtMoney(totalPnl, true)}</span></p>
     </div>
-    <div class="flex items-center gap-3 mb-6">
-      <input type="text" class="field" placeholder="Suche..." value="${TRADES_STATE.filter.search}" oninput="TRADES_STATE.filter.search = this.value; render()" style="min-width: 240px">
-      <select class="field" onchange="TRADES_STATE.filter.symbol = this.value; render()">
+    <div class="flex items-center gap-3 mb-5">
+      <input type="text" class="field" placeholder="Suche..." value="${TRADES_STATE.filter.search}" oninput="TRADES_STATE.filter.search = this.value; render()" style="max-width: 280px">
+      <select class="field" onchange="TRADES_STATE.filter.symbol = this.value; render()" style="max-width: 180px">
         ${symbols.map(s => `<option value="${s}" ${s===TRADES_STATE.filter.symbol?'selected':''}>${s === 'all' ? 'Alle Symbole' : s}</option>`).join("")}
       </select>
-      <select class="field" onchange="TRADES_STATE.filter.result = this.value; render()">
+      <select class="field" onchange="TRADES_STATE.filter.result = this.value; render()" style="max-width: 180px">
         <option value="all" ${TRADES_STATE.filter.result==='all'?'selected':''}>Alle Ergebnisse</option>
         <option value="win" ${TRADES_STATE.filter.result==='win'?'selected':''}>Gewinner</option>
         <option value="loss" ${TRADES_STATE.filter.result==='loss'?'selected':''}>Verlierer</option>
       </select>
     </div>
-    <div class="panel-elevated overflow-hidden">
-      <div style="max-height: 65vh; overflow-y: auto" class="scroll-thin">
-        <table class="trades">
+    <div class="panel overflow-hidden">
+      <div style="max-height: 70vh; overflow-y: auto" class="scroll-thin">
+        <table class="dt">
           <thead>
             <tr>
-              <th onclick="sortBy('n')">#</th>
-              <th onclick="sortBy('entry_time')">Entry</th>
-              <th onclick="sortBy('symbol')">Symbol</th>
-              <th onclick="sortBy('direction')">Side</th>
-              <th onclick="sortBy('entry')">Preis</th>
-              <th>Conf.</th>
-              <th onclick="sortBy('exit_reason')">Exit</th>
-              <th onclick="sortBy('rr')" class="text-right">R</th>
-              <th onclick="sortBy('pnl')" class="text-right">P&L</th>
+              <th onclick="sortTrades('n')">#</th>
+              <th onclick="sortTrades('entry_time')">Entry</th>
+              <th onclick="sortTrades('symbol')">Symbol</th>
+              <th onclick="sortTrades('direction')">Side</th>
+              <th onclick="sortTrades('entry')">Preis</th>
+              <th>Confluences</th>
+              <th onclick="sortTrades('exit_reason')">Exit</th>
+              <th onclick="sortTrades('rr')" style="text-align: right">R</th>
+              <th onclick="sortTrades('pnl')" style="text-align: right">P&L</th>
               <th>Chart</th>
             </tr>
           </thead>
@@ -594,14 +721,14 @@ function viewTrades() {
               <tr>
                 <td class="num" style="color: var(--text-faint)">${t.n}</td>
                 <td class="num mono">${t.entry_time}</td>
-                <td class="font-medium">${t.symbol}</td>
-                <td><span class="badge ${t.direction === 'long' ? 'badge-win' : 'badge-loss'}">${t.direction === 'long' ? 'L' : 'S'}</span></td>
+                <td class="font-bold">${t.symbol}</td>
+                <td><span class="badge ${t.direction === 'long' ? 'badge-long' : 'badge-short'}">${t.direction === 'long' ? '↑ L' : '↓ S'}</span></td>
                 <td class="num mono">${t.entry.toFixed(1)}</td>
-                <td class="text-xs" style="color: var(--text-dim)">${t.confluences}</td>
+                <td class="text-xs wrap" style="color: var(--text-mid)">${t.confluences}</td>
                 <td><span class="pill">${t.exit_reason}</span></td>
-                <td class="num text-right ${cls(t.rr)}">${t.rr >= 0 ? '+' : ''}${t.rr.toFixed(2)}</td>
-                <td class="num text-right font-medium ${cls(t.pnl)}">${fmtMoney(t.pnl, true)}</td>
-                <td><a href="${t.png}" target="_blank" class="text-xs" style="color: var(--text); text-decoration: underline; text-underline-offset: 3px;">PNG →</a></td>
+                <td class="num font-semibold ${cls(t.rr)}" style="text-align: right">${t.rr >= 0 ? '+' : ''}${t.rr.toFixed(2)}</td>
+                <td class="num font-bold ${cls(t.pnl)}" style="text-align: right">${fmtMoney(t.pnl, true)}</td>
+                <td><a href="${t.png}" target="_blank" class="font-semibold" style="color: var(--accent);">PNG →</a></td>
               </tr>
             `).join("")}
           </tbody>
@@ -610,14 +737,14 @@ function viewTrades() {
     </div>
   `;
 }
-function sortBy(key) {
+function sortTrades(key) {
   if (TRADES_STATE.sort === key) TRADES_STATE.asc = !TRADES_STATE.asc;
   else { TRADES_STATE.sort = key; TRADES_STATE.asc = true; }
   render();
 }
 
 // ============================================================
-// View: Journal (NEW)
+// View: Journal — TABLE LAYOUT
 // ============================================================
 const INSTRUMENTS = ["US500", "US30", "US100", "US2000", "ES", "YM", "NQ", "RTY", "GC", "CL", "Other"];
 const SESSIONS = ["Asia", "London", "New York AM", "New York PM", "London Close", "Other"];
@@ -636,35 +763,76 @@ function filteredJournal() {
       (e.instrument + " " + e.point_of_interest + " " + e.mistakes + " " + e.improvements + " " + e.confirmations).toLowerCase().includes(q)
     );
   }
-  entries.sort((a,b) => (b.date || "").localeCompare(a.date || ""));
+  const key = JOURNAL_STATE.sort.key;
+  entries.sort((a, b) => {
+    const va = (a[key] || ""), vb = (b[key] || "");
+    if (key === "pnl_dollar" || key === "pnl_pct") {
+      return JOURNAL_STATE.sort.asc ? (parseFloat(va) || 0) - (parseFloat(vb) || 0) : (parseFloat(vb) || 0) - (parseFloat(va) || 0);
+    }
+    return JOURNAL_STATE.sort.asc ? String(va).localeCompare(String(vb)) : String(vb).localeCompare(String(va));
+  });
   return entries;
+}
+
+function sortJournal(key) {
+  if (JOURNAL_STATE.sort.key === key) JOURNAL_STATE.sort.asc = !JOURNAL_STATE.sort.asc;
+  else { JOURNAL_STATE.sort.key = key; JOURNAL_STATE.sort.asc = false; }
+  render();
 }
 
 function viewJournal() {
   const entries = filteredJournal();
   const total = JOURNAL_STATE.entries.length;
   const wins = JOURNAL_STATE.entries.filter(e => e.outcome === "Win").length;
+  const losses = JOURNAL_STATE.entries.filter(e => e.outcome === "Loss").length;
   const totalPnl = JOURNAL_STATE.entries.reduce((s, e) => s + (parseFloat(e.pnl_dollar) || 0), 0);
+  const winrate = total > 0 ? (wins / total * 100) : 0;
+  const avgRr = total > 0
+    ? JOURNAL_STATE.entries.map(e => parseFloat(e.rr_numeric || 0)).filter(v => v > 0).reduce((a,b,_,arr) => a + b/arr.length, 0)
+    : 0;
+
   return `
-    <div class="flex items-end justify-between mb-10">
+    <div class="flex items-end justify-between mb-7">
       <div>
         <div class="kpi-label mb-2">Trade Journal</div>
-        <h1 class="serif" style="font-size: 36px; font-weight: 400; letter-spacing: -0.025em;">Journal</h1>
-        <p class="text-sm mt-2" style="color: var(--text-dim)">
-          ${total} ${total === 1 ? 'Entry' : 'Entries'}${total > 0 ? ` · ${wins} W · ${total - wins} L · <span class="${cls(totalPnl)}">${fmtMoney(totalPnl, true)}</span>` : ''}
-        </p>
+        <h1 class="page-title">Journal</h1>
+        <p class="page-subtitle">${total} ${total === 1 ? 'Eintrag' : 'Einträge'}</p>
       </div>
       <button class="btn" onclick="openJournalForm()">+ Neuer Eintrag</button>
     </div>
 
     ${total > 0 ? `
-      <div class="flex items-center gap-3 mb-6">
-        <input type="text" class="field" placeholder="Suche..." value="${escapeHtml(JOURNAL_STATE.filter.search)}" oninput="JOURNAL_STATE.filter.search = this.value; render()" style="min-width: 240px">
-        <select class="field" onchange="JOURNAL_STATE.filter.instrument = this.value; render()">
+      <!-- Journal KPIs -->
+      <div class="grid grid-cols-4 gap-4 mb-5">
+        <div class="panel p-4">
+          <div class="kpi-label">Total Entries</div>
+          <div class="kpi-value small num mt-2">${total}</div>
+        </div>
+        <div class="panel p-4">
+          <div class="kpi-label">Wins / Losses</div>
+          <div class="kpi-value small mt-2"><span class="win">${wins}</span><span style="color: var(--text-faint);"> / </span><span class="loss">${losses}</span></div>
+        </div>
+        <div class="panel p-4">
+          <div class="kpi-label">Winrate</div>
+          <div class="kpi-value small num mt-2">${winrate.toFixed(1)}<span class="kpi-unit">%</span></div>
+        </div>
+        <div class="panel p-4">
+          <div class="kpi-label">Net P&L</div>
+          <div class="kpi-value small num mt-2 ${cls(totalPnl)}">${fmtMoney(totalPnl, true)}</div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="flex items-center gap-3 mb-5">
+        <input type="text" class="field" placeholder="Suche in POI / Mistakes / Improvements..."
+               value="${escapeHtml(JOURNAL_STATE.filter.search)}"
+               oninput="JOURNAL_STATE.filter.search = this.value; render()"
+               style="max-width: 360px">
+        <select class="field" onchange="JOURNAL_STATE.filter.instrument = this.value; render()" style="max-width: 180px">
           <option value="all">Alle Instrumente</option>
           ${INSTRUMENTS.map(i => `<option value="${i}" ${i===JOURNAL_STATE.filter.instrument?'selected':''}>${i}</option>`).join("")}
         </select>
-        <select class="field" onchange="JOURNAL_STATE.filter.outcome = this.value; render()">
+        <select class="field" onchange="JOURNAL_STATE.filter.outcome = this.value; render()" style="max-width: 180px">
           <option value="all">Alle Ergebnisse</option>
           ${OUTCOMES.map(o => `<option value="${o}" ${o===JOURNAL_STATE.filter.outcome?'selected':''}>${o}</option>`).join("")}
         </select>
@@ -672,147 +840,183 @@ function viewJournal() {
     ` : ''}
 
     ${entries.length === 0 ? `
-      <div class="panel-elevated p-16 text-center">
-        <div class="serif mb-2" style="font-size: 22px; color: var(--text-dim);">${total === 0 ? 'Noch keine Einträge' : 'Keine Treffer'}</div>
-        <p class="text-sm" style="color: var(--text-faint)">${total === 0 ? 'Starte dein Trade-Journal mit dem ersten Eintrag.' : 'Filter anpassen oder zurücksetzen.'}</p>
-        ${total === 0 ? '<button class="btn mt-6" onclick="openJournalForm()">+ Ersten Eintrag erstellen</button>' : ''}
+      <div class="panel p-16 text-center">
+        <div class="text-xl font-bold mb-2" style="color: var(--text-mid);">${total === 0 ? 'Noch keine Einträge' : 'Keine Treffer'}</div>
+        <p class="text-sm mb-6" style="color: var(--text-dim)">${total === 0 ? 'Starte dein Trade-Journal mit dem ersten Eintrag.' : 'Filter anpassen oder zurücksetzen.'}</p>
+        ${total === 0 ? '<button class="btn" onclick="openJournalForm()">+ Ersten Eintrag erstellen</button>' : ''}
       </div>
     ` : `
-      <div class="space-y-px" style="background: var(--border)">
-        ${entries.map(e => renderJournalCard(e)).join("")}
+      <div class="panel overflow-hidden">
+        <div style="max-height: 70vh; overflow-y: auto; overflow-x: auto;" class="scroll-thin">
+          <table class="dt">
+            <thead>
+              <tr>
+                <th onclick="sortJournal('date')">Datum</th>
+                <th onclick="sortJournal('instrument')">Instrument</th>
+                <th onclick="sortJournal('session')">Session</th>
+                <th onclick="sortJournal('quarter')">Quarter</th>
+                <th onclick="sortJournal('direction')">Side</th>
+                <th>Point of Interest</th>
+                <th onclick="sortJournal('hold_duration')">Hold</th>
+                <th onclick="sortJournal('rr')">R:R</th>
+                <th onclick="sortJournal('outcome')">Outcome</th>
+                <th onclick="sortJournal('pnl_dollar')" style="text-align: right">P&L $</th>
+                <th onclick="sortJournal('pnl_pct')" style="text-align: right">P&L %</th>
+                <th>Charts</th>
+                <th style="text-align: right">Aktionen</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${entries.map(e => renderJournalRow(e)).join("")}
+            </tbody>
+          </table>
+        </div>
       </div>
     `}
   `;
 }
 
-function renderJournalCard(e) {
-  const isOpen = JOURNAL_STATE.openId === e.id;
+function renderJournalRow(e) {
   const pnl = parseFloat(e.pnl_dollar) || 0;
   const pnlPct = parseFloat(e.pnl_pct) || 0;
+  const chartCount = ["chart_htf", "chart_before", "chart_after"].filter(k => e[k]).length;
   return `
-    <div style="background: var(--panel)">
-      <!-- Header / Summary -->
-      <div class="p-6 cursor-pointer" onclick="toggleJournalCard('${e.id}')">
-        <div class="flex items-center justify-between gap-6">
-          <div class="flex items-center gap-6 flex-1 min-w-0">
-            <div style="min-width: 100px;">
-              <div class="text-xs mono" style="color: var(--text-faint)">${e.date || '—'}</div>
-              <div class="text-xs mt-1" style="color: var(--text-dim)">${escapeHtml(e.session || '')}</div>
-            </div>
-            <div style="min-width: 110px;">
-              <div class="font-medium">${escapeHtml(e.instrument || '—')}</div>
-              <span class="badge ${e.direction === 'Long' ? 'badge-win' : 'badge-loss'} mt-1">${e.direction || '—'}</span>
-            </div>
-            <div class="flex-1 min-w-0">
-              <div class="text-xs" style="color: var(--text-faint)">Point of Interest</div>
-              <div class="text-sm mt-1 truncate" title="${escapeHtml(e.point_of_interest || '')}">${escapeHtml(e.point_of_interest || '—')}</div>
-            </div>
-            <div>
-              <span class="badge ${e.outcome === 'Win' ? 'badge-win' : e.outcome === 'Loss' ? 'badge-loss' : 'badge-neutral'}">${e.outcome || '—'}</span>
-            </div>
-          </div>
-          <div class="text-right flex items-center gap-6">
-            <div>
-              <div class="num font-medium ${cls(pnl)}" style="font-size: 17px;">${fmtMoney(pnl, true)}</div>
-              <div class="num text-xs mt-1" style="color: var(--text-dim)">${pnlPct >= 0 ? '+' : ''}${pnlPct.toFixed(2)}%</div>
-            </div>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--text-faint); transform: rotate(${isOpen ? '180deg' : '0deg'}); transition: transform 0.2s">
-              <polyline points="6 9 12 15 18 9"/>
-            </svg>
-          </div>
-        </div>
-      </div>
-      ${isOpen ? renderJournalDetail(e) : ''}
-    </div>
+    <tr onclick="openJournalDetail('${e.id}')">
+      <td class="num mono font-semibold">${e.date || '—'}</td>
+      <td class="font-bold">${escapeHtml(e.instrument || '—')}</td>
+      <td><span class="pill">${escapeHtml(e.session || '—')}</span></td>
+      <td class="text-xs" style="color: var(--text-mid)">${escapeHtml((e.quarter || '').slice(0,2))}</td>
+      <td>${e.direction ? `<span class="badge ${e.direction === 'Long' ? 'badge-long' : 'badge-short'}">${e.direction === 'Long' ? '↑ L' : '↓ S'}</span>` : '—'}</td>
+      <td class="wrap" style="color: var(--text-mid)">${escapeHtml((e.point_of_interest || '—').slice(0,80))}${(e.point_of_interest || '').length > 80 ? '…' : ''}</td>
+      <td class="num text-xs" style="color: var(--text-mid)">${escapeHtml(e.hold_duration || '—')}</td>
+      <td class="num font-semibold">${escapeHtml(e.rr || '—')}</td>
+      <td>${e.outcome ? `<span class="badge ${e.outcome === 'Win' ? 'badge-win' : e.outcome === 'Loss' ? 'badge-loss' : 'badge-neutral'}">${e.outcome}</span>` : '—'}</td>
+      <td class="num font-bold ${cls(pnl)}" style="text-align: right">${e.pnl_dollar ? fmtMoney(pnl, true) : '—'}</td>
+      <td class="num font-semibold ${cls(pnlPct)}" style="text-align: right">${e.pnl_pct ? (pnlPct >= 0 ? '+' : '') + pnlPct.toFixed(2) + '%' : '—'}</td>
+      <td><span class="pill">${chartCount}/3</span></td>
+      <td style="text-align: right">
+        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation(); openJournalForm('${e.id}')" style="padding: 4px 10px; font-size: 11px;">Edit</button>
+      </td>
+    </tr>
   `;
 }
 
-function toggleJournalCard(id) {
-  JOURNAL_STATE.openId = (JOURNAL_STATE.openId === id) ? null : id;
-  render();
+function openJournalDetail(id) {
+  const entry = JOURNAL_STATE.entries.find(e => e.id === id);
+  if (!entry) return;
+  JOURNAL_STATE.detailView = entry;
+  renderJournalDetailModal();
 }
 
-function renderJournalDetail(e) {
+function closeJournalDetail() {
+  JOURNAL_STATE.detailView = null;
+  document.getElementById("journal-modal").style.display = "none";
+  document.getElementById("journal-modal").innerHTML = "";
+}
+
+function renderJournalDetailModal() {
+  const e = JOURNAL_STATE.detailView;
+  if (!e) return;
+  const modal = document.getElementById("journal-modal");
+  modal.style.display = "flex";
+  modal.className = "modal-bg";
+
+  const pnl = parseFloat(e.pnl_dollar) || 0;
+  const pnlPct = parseFloat(e.pnl_pct) || 0;
+
   const field = (label, value, mono = false) => `
     <div>
       <div class="kpi-label mb-2">${label}</div>
-      <div class="${mono ? 'mono num' : ''} text-sm" style="color: var(--text); line-height: 1.6;">${escapeHtml(value || '—') || '—'}</div>
+      <div class="${mono ? 'mono num font-semibold' : 'text-sm'}" style="color: ${value ? 'var(--text)' : 'var(--text-faint)'}; line-height: 1.6;">${escapeHtml(value || '—')}</div>
     </div>
   `;
   const img = (label, src) => src ? `
     <div>
       <div class="kpi-label mb-2">${label}</div>
-      <div class="panel-soft p-2"><img src="${src}" style="width: 100%; max-height: 320px; object-fit: contain; border-radius: 2px;"></div>
+      <div class="panel-soft p-2"><img src="${src}" style="width: 100%; max-height: 360px; object-fit: contain; border-radius: 4px;"></div>
     </div>
   ` : '';
-  return `
-    <div class="px-6 pb-6 border-t" style="border-color: var(--border)">
-      <!-- Trade-Info Block -->
-      <div class="grid grid-cols-4 gap-6 mt-6">
-        ${field("Datum", e.date)}
-        ${field("Session", e.session)}
-        ${field("Quarter", e.quarter)}
-        ${field("Direction", e.direction)}
-      </div>
 
-      <div class="section-title">Strategy</div>
-      <div class="grid grid-cols-2 gap-6">
-        ${field("Point of Interest", e.point_of_interest)}
-        ${field("Management Strategy", e.management)}
-        ${field("Confirmations", e.confirmations)}
-        ${field("Executions", e.executions)}
-        ${field("Stop Loss Placement", e.sl_placement)}
-        ${field("Take Profit Placement", e.tp_placement)}
-      </div>
-
-      <div class="section-title">Execution</div>
-      <div class="grid grid-cols-5 gap-6">
-        ${field("Hold Duration", e.hold_duration)}
-        ${field("Risk to Reward", e.rr)}
-        ${field("Outcome", e.outcome)}
-        ${field("P&L $", e.pnl_dollar ? '$' + parseFloat(e.pnl_dollar).toFixed(2) : '', true)}
-        ${field("P&L %", e.pnl_pct ? parseFloat(e.pnl_pct).toFixed(2) + '%' : '', true)}
-      </div>
-
-      ${(e.chart_htf || e.chart_before || e.chart_after) ? `
-        <div class="section-title">Charts</div>
-        <div class="grid grid-cols-3 gap-4">
-          ${img("Higher Time Frame", e.chart_htf)}
-          ${img("Before", e.chart_before)}
-          ${img("After", e.chart_after)}
+  modal.innerHTML = `
+    <div class="modal scroll-thin">
+      <div class="p-7 border-b" style="border-color: var(--border)">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="kpi-label mb-1">Journal Entry · ${e.date || ''}</div>
+            <div class="flex items-center gap-3">
+              <h2 class="font-bold" style="font-size: 24px;">${escapeHtml(e.instrument || '—')}</h2>
+              ${e.direction ? `<span class="badge ${e.direction === 'Long' ? 'badge-long' : 'badge-short'}">${e.direction === 'Long' ? '↑ Long' : '↓ Short'}</span>` : ''}
+              ${e.outcome ? `<span class="badge ${e.outcome === 'Win' ? 'badge-win' : e.outcome === 'Loss' ? 'badge-loss' : 'badge-neutral'}">${e.outcome}</span>` : ''}
+            </div>
+            <div class="flex items-center gap-5 mt-3">
+              <div><span class="kpi-label">P&L</span> <span class="font-bold ml-2 ${cls(pnl)}" style="font-size: 18px;">${e.pnl_dollar ? fmtMoney(pnl, true) : '—'}</span></div>
+              <div><span class="kpi-label">%</span> <span class="font-bold ml-2 ${cls(pnlPct)}" style="font-size: 16px;">${e.pnl_pct ? (pnlPct >= 0 ? '+' : '') + pnlPct.toFixed(2) + '%' : '—'}</span></div>
+              <div><span class="kpi-label">R:R</span> <span class="font-bold ml-2" style="font-size: 16px;">${escapeHtml(e.rr || '—')}</span></div>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button class="btn btn-ghost btn-sm" onclick="closeJournalDetail(); openJournalForm('${e.id}')">Bearbeiten</button>
+            <button class="btn btn-danger btn-sm" onclick="if(confirm('Löschen?')){ deleteJournalEntry('${e.id}'); closeJournalDetail(); }">Löschen</button>
+            <button class="btn btn-ghost btn-sm" onclick="closeJournalDetail()">✕</button>
+          </div>
         </div>
-      ` : ''}
-
-      <div class="section-title">Reflection</div>
-      <div class="grid grid-cols-3 gap-6">
-        ${field("Emotions", e.emotions)}
-        ${field("Mistakes", e.mistakes)}
-        ${field("Improvements", e.improvements)}
       </div>
 
-      <div class="flex justify-end gap-3 mt-8">
-        <button class="btn btn-sm btn-ghost" onclick="openJournalForm('${e.id}')">Bearbeiten</button>
-        <button class="btn btn-sm btn-danger" onclick="deleteJournalEntry('${e.id}')">Löschen</button>
+      <div class="p-7">
+        <div class="section-title">Trade Info</div>
+        <div class="grid grid-cols-4 gap-5">
+          ${field("Datum", e.date)}
+          ${field("Session", e.session)}
+          ${field("Quarter", e.quarter)}
+          ${field("Hold Duration", e.hold_duration)}
+        </div>
+
+        <div class="section-title">Strategy & Setup</div>
+        <div class="grid grid-cols-2 gap-5">
+          ${field("Point of Interest", e.point_of_interest)}
+          ${field("Management Strategy", e.management)}
+          ${field("Confirmations", e.confirmations)}
+          ${field("Executions", e.executions)}
+          ${field("Stop Loss Placement", e.sl_placement)}
+          ${field("Take Profit Placement", e.tp_placement)}
+        </div>
+
+        ${(e.chart_htf || e.chart_before || e.chart_after) ? `
+          <div class="section-title">Charts</div>
+          <div class="grid grid-cols-3 gap-4">
+            ${img("Higher Time Frame", e.chart_htf)}
+            ${img("Before", e.chart_before)}
+            ${img("After", e.chart_after)}
+          </div>
+        ` : ''}
+
+        <div class="section-title">Reflection</div>
+        <div class="grid grid-cols-3 gap-5">
+          ${field("Emotions", e.emotions)}
+          ${field("Mistakes", e.mistakes)}
+          ${field("Improvements", e.improvements)}
+        </div>
       </div>
     </div>
   `;
 }
 
 function deleteJournalEntry(id) {
-  if (!confirm("Diesen Journal-Eintrag wirklich löschen?")) return;
   JOURNAL_STATE.entries = JOURNAL_STATE.entries.filter(e => e.id !== id);
-  if (JOURNAL_STATE.openId === id) JOURNAL_STATE.openId = null;
   saveJournal();
   render();
 }
 
-// --- Form (modal) ---
+// ============================================================
+// Journal Form
+// ============================================================
 function openJournalForm(id) {
   const entry = id ? JOURNAL_STATE.entries.find(e => e.id === id) : {};
   JOURNAL_STATE.editing = { ...entry };
   if (!JOURNAL_STATE.editing.id) JOURNAL_STATE.editing.id = uid();
   if (!JOURNAL_STATE.editing.date) JOURNAL_STATE.editing.date = new Date().toISOString().slice(0,10);
-  renderJournalModal();
+  JOURNAL_STATE.detailView = null;
+  renderJournalFormModal();
 }
 
 function closeJournalForm() {
@@ -831,14 +1035,14 @@ async function uploadField(key, fileInput) {
   try {
     const dataUrl = await readImageAsBase64(fileInput.files[0]);
     JOURNAL_STATE.editing[key] = dataUrl;
-    renderJournalModal();
+    renderJournalFormModal();
   } catch (e) { alert("Bild konnte nicht geladen werden: " + e.message); }
 }
 
 function removeImageField(key) {
   if (!JOURNAL_STATE.editing) return;
   delete JOURNAL_STATE.editing[key];
-  renderJournalModal();
+  renderJournalFormModal();
 }
 
 function saveJournalEntry() {
@@ -857,7 +1061,7 @@ function saveJournalEntry() {
   render();
 }
 
-function renderJournalModal() {
+function renderJournalFormModal() {
   const e = JOURNAL_STATE.editing;
   if (!e) return;
   const modal = document.getElementById("journal-modal");
@@ -867,14 +1071,14 @@ function renderJournalModal() {
   const input = (key, label, type = "text", placeholder = "") => `
     <div>
       <label class="field-label">${label}</label>
-      <input type="${type}" class="field w-full" value="${escapeHtml(e[key] || '')}" placeholder="${placeholder}"
+      <input type="${type}" class="field" value="${escapeHtml(e[key] || '')}" placeholder="${placeholder}"
              oninput="updateField('${key}', this.value)">
     </div>
   `;
   const select = (key, label, options) => `
     <div>
       <label class="field-label">${label}</label>
-      <select class="field w-full" onchange="updateField('${key}', this.value)">
+      <select class="field" onchange="updateField('${key}', this.value)">
         <option value="">— wählen —</option>
         ${options.map(o => `<option value="${o}" ${e[key]===o?'selected':''}>${o}</option>`).join("")}
       </select>
@@ -883,7 +1087,7 @@ function renderJournalModal() {
   const textarea = (key, label, placeholder = "", rows = 3) => `
     <div>
       <label class="field-label">${label}</label>
-      <textarea class="field w-full" rows="${rows}" placeholder="${placeholder}"
+      <textarea class="field" rows="${rows}" placeholder="${placeholder}"
                 oninput="updateField('${key}', this.value)">${escapeHtml(e[key] || '')}</textarea>
     </div>
   `;
@@ -893,7 +1097,7 @@ function renderJournalModal() {
       <div class="img-drop ${e[key] ? 'has-image' : ''}" onclick="${e[key] ? '' : `document.getElementById('file-${key}').click()`}">
         ${e[key]
           ? `<img src="${e[key]}"><button class="img-remove" onclick="event.stopPropagation(); removeImageField('${key}')">×</button>`
-          : `<div><div style="color: var(--text-dim); font-size: 13px;">+ Bild hochladen</div><div style="color: var(--text-faint); font-size: 11px; margin-top: 4px;">PNG, JPG · wird auf max. 1400px komprimiert</div></div>`}
+          : `<div><div style="color: var(--text-mid); font-size: 13px; font-weight: 500;">+ Bild hochladen</div><div style="color: var(--text-dim); font-size: 11px; margin-top: 4px;">PNG, JPG · max 1400px</div></div>`}
       </div>
       <input id="file-${key}" type="file" accept="image/*" style="display: none" onchange="uploadField('${key}', this)">
     </div>
@@ -901,17 +1105,17 @@ function renderJournalModal() {
 
   modal.innerHTML = `
     <div class="modal scroll-thin">
-      <div class="p-8 border-b" style="border-color: var(--border)">
+      <div class="p-7 border-b" style="border-color: var(--border)">
         <div class="flex items-center justify-between">
           <div>
             <div class="kpi-label mb-1">Journal Entry</div>
-            <h2 class="serif" style="font-size: 26px; font-weight: 400;">${JOURNAL_STATE.entries.find(x => x.id === e.id) ? 'Eintrag bearbeiten' : 'Neuer Eintrag'}</h2>
+            <h2 class="font-bold" style="font-size: 22px;">${JOURNAL_STATE.entries.find(x => x.id === e.id) ? 'Eintrag bearbeiten' : 'Neuer Eintrag'}</h2>
           </div>
           <button class="btn-ghost btn btn-sm" onclick="closeJournalForm()">✕ Schließen</button>
         </div>
       </div>
 
-      <div class="p-8">
+      <div class="p-7">
         <div class="section-title">Trade Info</div>
         <div class="grid grid-cols-3 gap-4">
           ${input("date", "Datum", "date")}
@@ -933,11 +1137,11 @@ function renderJournalModal() {
 
         <div class="section-title">Execution</div>
         <div class="grid grid-cols-5 gap-4">
-          ${input("hold_duration", "Hold Duration", "text", "z.B. 4h 20min")}
-          ${input("rr", "Risk to Reward", "text", "z.B. 1:3")}
+          ${input("hold_duration", "Hold Duration", "text", "4h 20min")}
+          ${input("rr", "Risk to Reward", "text", "1:3")}
           ${select("outcome", "Outcome", OUTCOMES)}
-          ${input("pnl_dollar", "P&L ($)", "number", "z.B. 312.50")}
-          ${input("pnl_pct", "P&L (%)", "number", "z.B. 3.12")}
+          ${input("pnl_dollar", "P&L ($)", "number", "312.50")}
+          ${input("pnl_pct", "P&L (%)", "number", "3.12")}
         </div>
 
         <div class="section-title">Charts</div>
@@ -949,12 +1153,12 @@ function renderJournalModal() {
 
         <div class="section-title">Reflection</div>
         <div class="grid grid-cols-3 gap-4">
-          ${textarea("emotions", "Emotions", "Wie hast du dich gefühlt? Wo war die Versuchung?")}
-          ${textarea("mistakes", "Mistakes", "Was ist nicht regelkonform gelaufen?")}
+          ${textarea("emotions", "Emotions", "Wie hast du dich gefühlt?")}
+          ${textarea("mistakes", "Mistakes", "Was war nicht regelkonform?")}
           ${textarea("improvements", "Improvements", "Was machst du beim nächsten Trade besser?")}
         </div>
 
-        <div class="flex justify-end gap-3 mt-10 pt-6 border-t" style="border-color: var(--border)">
+        <div class="flex justify-end gap-3 mt-8 pt-5 border-t" style="border-color: var(--border)">
           <button class="btn btn-ghost" onclick="closeJournalForm()">Abbrechen</button>
           <button class="btn" onclick="saveJournalEntry()">Eintrag speichern</button>
         </div>
@@ -968,15 +1172,15 @@ function renderJournalModal() {
 // ============================================================
 function viewBots() {
   return `
-    <div class="flex items-end justify-between mb-10">
+    <div class="flex items-end justify-between mb-7">
       <div>
         <div class="kpi-label mb-2">Automation</div>
-        <h1 class="serif" style="font-size: 36px; font-weight: 400; letter-spacing: -0.025em;">Trading Bots</h1>
-        <p class="text-sm mt-2" style="color: var(--text-dim)">${STATE.bots.length} ${STATE.bots.length !== 1 ? 'Bots' : 'Bot'} · ${STATE.bots.filter(b=>b.status==='live').length} live · ${STATE.bots.filter(b=>b.status==='backtest_only').length} Backtest</p>
+        <h1 class="page-title">Trading Bots</h1>
+        <p class="page-subtitle">${STATE.bots.length} ${STATE.bots.length !== 1 ? 'Bots' : 'Bot'} · ${STATE.bots.filter(b=>b.status==='live').length} live · ${STATE.bots.filter(b=>b.status==='backtest_only').length} Backtest</p>
       </div>
       <button class="btn btn-ghost btn-sm" onclick="if(confirm('Alle Bot-Änderungen zurücksetzen?')) resetBots()">Reset</button>
     </div>
-    <div class="space-y-px" style="background: var(--border)">
+    <div class="panel-stack">
       ${STATE.bots.map((b, idx) => renderBotCard(b, idx)).join("")}
     </div>
   `;
@@ -985,32 +1189,32 @@ function viewBots() {
 function renderBotCard(b, idx) {
   const p = b.performance;
   return `
-    <div class="p-8" style="background: var(--panel)">
-      <div class="flex items-start justify-between mb-8">
+    <div class="panel p-7">
+      <div class="flex items-start justify-between mb-6">
         <div>
           <div class="flex items-center gap-3 mb-2">
-            <h2 class="serif" style="font-size: 22px; font-weight: 400;">${b.name}</h2>
-            <span class="badge ${b.status === 'live' ? 'badge-active' : 'badge-neutral'}">${b.status === 'live' ? 'Live' : 'Backtest'}</span>
+            <h2 class="font-bold" style="font-size: 22px; letter-spacing: -0.01em;">${b.name}</h2>
+            <span class="badge ${b.status === 'live' ? 'badge-live' : 'badge-backtest'}">${b.status === 'live' ? 'Live' : 'Backtest'}</span>
           </div>
-          <p class="text-sm" style="color: var(--text-dim)">${b.description}</p>
-          <p class="text-xs mt-2" style="color: var(--text-faint)">Strategy: ${b.strategy_id}</p>
+          <p class="text-sm" style="color: var(--text-mid)">${b.description}</p>
+          <p class="text-xs mt-2 mono" style="color: var(--text-dim)">Strategy: ${b.strategy_id}</p>
         </div>
         <button class="btn btn-ghost btn-sm" onclick='exportBot(${idx})'>Export YAML</button>
       </div>
-      <div class="grid grid-cols-5 gap-px mb-8" style="background: var(--border)">
-        <div class="p-4" style="background: var(--panel)"><div class="kpi-label">Trades</div><div class="text-xl font-light num mt-2">${p.trades}</div></div>
-        <div class="p-4" style="background: var(--panel)"><div class="kpi-label">Winrate</div><div class="text-xl font-light num mt-2">${p.winrate}%</div></div>
-        <div class="p-4" style="background: var(--panel)"><div class="kpi-label">Total Return</div><div class="text-xl font-light num mt-2 ${cls(p.total_return_pct)}">${fmtPct(p.total_return_pct)}</div></div>
-        <div class="p-4" style="background: var(--panel)"><div class="kpi-label">CAGR</div><div class="text-xl font-light num mt-2 ${cls(p.cagr_pct)}">${fmtPct(p.cagr_pct)}</div></div>
-        <div class="p-4" style="background: var(--panel)"><div class="kpi-label">Max DD</div><div class="text-xl font-light num mt-2 loss">${p.max_dd_pct.toFixed(1)}%</div></div>
+      <div class="grid grid-cols-5 gap-3 mb-6">
+        <div class="panel-soft p-4"><div class="kpi-label">Trades</div><div class="text-xl font-bold num mt-2">${p.trades}</div></div>
+        <div class="panel-soft p-4"><div class="kpi-label">Winrate</div><div class="text-xl font-bold num mt-2">${p.winrate}%</div></div>
+        <div class="panel-soft p-4"><div class="kpi-label">Total Return</div><div class="text-xl font-bold num mt-2 ${cls(p.total_return_pct)}">${fmtPct(p.total_return_pct)}</div></div>
+        <div class="panel-soft p-4"><div class="kpi-label">CAGR</div><div class="text-xl font-bold num mt-2 ${cls(p.cagr_pct)}">${fmtPct(p.cagr_pct)}</div></div>
+        <div class="panel-soft p-4"><div class="kpi-label">Max DD</div><div class="text-xl font-bold num mt-2 loss">${p.max_dd_pct.toFixed(1)}%</div></div>
       </div>
       <div>
-        <div class="kpi-label mb-3">Parameter <span style="color: var(--text-faint); text-transform: none; letter-spacing: 0; font-weight: 400">— im Browser gespeichert</span></div>
-        <div class="grid grid-cols-3 gap-4">
+        <div class="kpi-label mb-3">Parameter <span style="color: var(--text-dim); text-transform: none; letter-spacing: 0; font-weight: 500">— im Browser gespeichert</span></div>
+        <div class="grid grid-cols-3 gap-3">
           ${Object.entries(b.params).filter(([k,v]) => typeof v !== 'object').map(([k,v]) => `
             <div>
               <label class="field-label">${k}</label>
-              <input class="field w-full" type="${typeof v === 'number' ? 'number' : 'text'}" step="${typeof v === 'number' ? '0.1' : '1'}" value="${v}"
+              <input class="field" type="${typeof v === 'number' ? 'number' : 'text'}" step="${typeof v === 'number' ? '0.1' : '1'}" value="${v}"
                      onchange="updateBotParam(${idx}, '${k}', this.value, '${typeof v}')">
             </div>
           `).join("")}
@@ -1050,18 +1254,18 @@ function render() {
   });
 
   const root = document.getElementById("view-root");
-  if (route === "dashboard") { root.innerHTML = viewDashboard(); renderEquityChart(); }
+  if (route === "dashboard") { root.innerHTML = viewDashboard(); renderDashboardCharts(); }
   else if (route === "strategien") { root.innerHTML = viewStrategien(); }
   else if (route === "trades") { root.innerHTML = viewTrades(); }
   else if (route === "journal") { root.innerHTML = viewJournal(); }
   else if (route === "bots") { root.innerHTML = viewBots(); }
 
-  root.querySelectorAll(".nav-item[data-route]").forEach(el => {
+  root.querySelectorAll("[data-route]").forEach(el => {
     el.addEventListener("click", (ev) => { ev.preventDefault(); navigate(el.dataset.route); });
   });
 
   document.getElementById("footer-period").textContent =
-    `${DATA.kpis.data_period_start}\n${DATA.kpis.data_period_end}`;
+    `${DATA.kpis.data_period_start} → ${DATA.kpis.data_period_end}`;
 }
 
 render();
