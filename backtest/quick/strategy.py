@@ -217,8 +217,14 @@ def build_setup(df_4h: pd.DataFrame, sweep: Sweep, symbol: str, min_confluences:
 
 # ---------- step 4: 1H entry ----------
 
-def find_entry(df_1h: pd.DataFrame, setup: Setup, atr_4h: float) -> Trade | None:
-    """Wait for price to tap OB, then enter on the next 1H bar."""
+def find_entry(df_1h: pd.DataFrame, setup: Setup, atr_4h: float,
+               tp1_rr: float = 1.0, tp3_method: str = "swing_30",
+               tp3_r_fixed: float = 4.0) -> Trade | None:
+    """Wait for price to tap OB, then enter on the next 1H bar.
+
+    tp3_method: "swing_30" (default, recent swing extreme) or "fixed_R"
+                (entry + tp3_r_fixed × risk_unit)
+    """
     after = df_1h[df_1h.index > setup.sweep.time]
     if after.empty:
         return None
@@ -226,17 +232,19 @@ def find_entry(df_1h: pd.DataFrame, setup: Setup, atr_4h: float) -> Trade | None
         in_zone = bar["Low"] <= setup.ob_high and bar["High"] >= setup.ob_low
         if not in_zone:
             continue
-        # Entry at OB edge (conservative)
         if setup.direction == "long":
             entry = setup.ob_high
             sl = setup.sweep.extreme - 0.5 * atr_4h
             risk = entry - sl
             if risk <= 0:
                 return None
-            tp1 = entry + risk
-            tp3 = float(df_1h["High"].iloc[max(0, df_1h.index.get_loc(ts) - 30):df_1h.index.get_loc(ts)].max())
-            if tp3 <= tp1:
-                tp3 = entry + 3 * risk
+            tp1 = entry + tp1_rr * risk
+            if tp3_method == "fixed_R":
+                tp3 = entry + tp3_r_fixed * risk
+            else:
+                tp3 = float(df_1h["High"].iloc[max(0, df_1h.index.get_loc(ts) - 30):df_1h.index.get_loc(ts)].max())
+                if tp3 <= tp1:
+                    tp3 = entry + 3 * risk
             tp2 = (tp1 + tp3) / 2
         else:
             entry = setup.ob_low
@@ -244,10 +252,13 @@ def find_entry(df_1h: pd.DataFrame, setup: Setup, atr_4h: float) -> Trade | None
             risk = sl - entry
             if risk <= 0:
                 return None
-            tp1 = entry - risk
-            tp3 = float(df_1h["Low"].iloc[max(0, df_1h.index.get_loc(ts) - 30):df_1h.index.get_loc(ts)].min())
-            if tp3 >= tp1:
-                tp3 = entry - 3 * risk
+            tp1 = entry - tp1_rr * risk
+            if tp3_method == "fixed_R":
+                tp3 = entry - tp3_r_fixed * risk
+            else:
+                tp3 = float(df_1h["Low"].iloc[max(0, df_1h.index.get_loc(ts) - 30):df_1h.index.get_loc(ts)].min())
+                if tp3 >= tp1:
+                    tp3 = entry - 3 * risk
             tp2 = (tp1 + tp3) / 2
 
         return Trade(setup.symbol, setup.direction, ts, entry, sl, tp1, tp2, tp3, setup.confluences)
