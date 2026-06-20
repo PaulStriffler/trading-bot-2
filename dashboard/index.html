@@ -6,32 +6,36 @@
 <title>Trading Desk · Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="data.js"></script>
 <style>
   :root {
-    --bg: #08080a;
-    --bg-soft: #0c0c10;
-    --panel: #111114;
-    --panel-2: #17171c;
-    --panel-3: #1e1e24;
-    --border: #23232b;
-    --border-soft: #1c1c22;
-    --border-strong: #2e2e38;
+    --bg: #0a0e1a;
+    --bg-soft: #0d1220;
+    --panel: rgba(20, 27, 45, 0.55);
+    --panel-solid: #131a2c;
+    --panel-2: rgba(28, 36, 56, 0.6);
+    --panel-3: #1a2238;
+    --border: rgba(255, 255, 255, 0.07);
+    --border-strong: rgba(255, 255, 255, 0.12);
     --text: #ffffff;
-    --text-mid: #b3b3bc;
-    --text-dim: #7d7d88;
-    --text-faint: #4a4a55;
-    --accent: #60a5fa;
-    --accent-soft: rgba(96,165,250,0.12);
-    --win: #34d399;
-    --win-bg: rgba(52,211,153,0.14);
-    --loss: #f87171;
-    --loss-bg: rgba(248,113,113,0.14);
-    --warn: #fbbf24;
-    --warn-bg: rgba(251,191,36,0.14);
+    --text-mid: #a0a8c0;
+    --text-dim: #6e7892;
+    --text-faint: #4a5070;
+    --accent-1: #3b82f6;
+    --accent-2: #a855f7;
+    --accent-3: #06b6d4;
+    --brand: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+    --brand-soft: linear-gradient(135deg, rgba(59,130,246,0.18) 0%, rgba(168,85,247,0.18) 100%);
+    --win: #10b981;
+    --win-bg: rgba(16, 185, 129, 0.12);
+    --win-glow: rgba(16, 185, 129, 0.35);
+    --loss: #ef4444;
+    --loss-bg: rgba(239, 68, 68, 0.12);
+    --warn: #f59e0b;
+    --warn-bg: rgba(245, 158, 11, 0.12);
   }
   * { box-sizing: border-box; }
   html, body {
@@ -39,82 +43,125 @@
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
   }
-  body { font-weight: 400; font-size: 14px; letter-spacing: -0.005em; }
-
-  .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; }
-
-  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; }
-  .panel-soft { background: var(--panel-2); border: 1px solid var(--border-soft); border-radius: 6px; }
-
-  .kpi-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); font-weight: 600; }
-  .kpi-value {
-    font-size: 36px; font-weight: 700; letter-spacing: -0.03em;
-    margin-top: 6px; line-height: 1.05; font-feature-settings: "tnum" 1;
+  body {
+    font-weight: 400; font-size: 14px; letter-spacing: -0.005em;
+    background:
+      radial-gradient(ellipse 1200px 600px at 15% -10%, rgba(59,130,246,0.10), transparent 50%),
+      radial-gradient(ellipse 1000px 700px at 100% 15%, rgba(168,85,247,0.08), transparent 50%),
+      radial-gradient(ellipse 900px 500px at 50% 110%, rgba(6,182,212,0.05), transparent 50%),
+      var(--bg);
+    min-height: 100vh;
   }
-  .kpi-value.small { font-size: 26px; }
-  .kpi-unit { font-size: 18px; color: var(--text-dim); font-weight: 500; margin-left: 2px; }
-
-  .win { color: var(--win); }
-  .loss { color: var(--loss); }
+  .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; }
   .num { font-variant-numeric: tabular-nums; }
 
-  /* Page title */
-  h1.page-title {
-    font-size: 30px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.1;
+  /* Glass cards */
+  .glass {
+    background: var(--panel);
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    border: 1px solid var(--border);
+    border-radius: 16px;
   }
-  .page-subtitle { font-size: 14px; color: var(--text-mid); margin-top: 6px; }
+  .glass-soft {
+    background: var(--panel-2);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+  .solid { background: var(--panel-solid); border: 1px solid var(--border); border-radius: 16px; }
+
+  /* Brand-coloured accents */
+  .brand-text {
+    background: var(--brand); -webkit-background-clip: text;
+    background-clip: text; color: transparent;
+  }
+  .brand-bg { background: var(--brand); }
+  .brand-soft-bg { background: var(--brand-soft); }
+
+  /* Glow effects */
+  .glow-win {
+    box-shadow: 0 0 24px var(--win-glow), inset 0 0 1px rgba(255,255,255,0.05);
+  }
+
+  /* Typography utilities */
+  h1.page-title {
+    font-size: 32px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.1;
+  }
+  .kpi-label {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--text-dim); font-weight: 600;
+  }
+  .kpi-value {
+    font-size: 40px; font-weight: 700; letter-spacing: -0.035em;
+    margin-top: 8px; line-height: 1; font-feature-settings: "tnum" 1;
+  }
+  .kpi-value.hero {
+    font-size: 56px; font-weight: 800; letter-spacing: -0.04em;
+  }
+  .kpi-value.small { font-size: 26px; font-weight: 600; }
+  .kpi-unit { font-size: 18px; color: var(--text-dim); font-weight: 500; margin-left: 2px; }
+  .win { color: var(--win); }
+  .loss { color: var(--loss); }
 
   /* Sidebar */
-  .sidebar { background: var(--bg-soft); border-color: var(--border); }
+  .sidebar {
+    background: linear-gradient(180deg, rgba(13, 18, 32, 0.95), rgba(10, 14, 26, 0.95));
+    backdrop-filter: blur(20px);
+    border-color: var(--border);
+  }
+  .brand-logo {
+    width: 38px; height: 38px; border-radius: 10px;
+    background: var(--brand);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; color: #fff; font-size: 16px;
+    box-shadow: 0 4px 14px rgba(59,130,246,0.35);
+  }
   .nav-item {
     display: flex; align-items: center; gap: 12px;
-    padding: 11px 16px; cursor: pointer;
-    color: var(--text-mid); font-size: 14px; font-weight: 500;
-    border-left: 3px solid transparent;
-    transition: all 0.12s;
+    padding: 11px 16px; margin: 2px 10px;
+    cursor: pointer; border-radius: 10px;
+    color: var(--text-mid); font-size: 13.5px; font-weight: 500;
+    transition: all 0.18s;
   }
-  .nav-item:hover { color: var(--text); background: var(--panel-2); }
+  .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.04); }
   .nav-item.active {
-    color: var(--text); border-left-color: var(--accent);
-    background: linear-gradient(90deg, var(--accent-soft), transparent 60%);
+    color: var(--text);
+    background: var(--brand-soft);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
   }
-  .nav-item.active .nav-icon { color: var(--accent); }
+  .nav-item.active .nav-icon { color: var(--accent-1); }
   .nav-icon { width: 18px; height: 18px; flex-shrink: 0; color: var(--text-dim); }
-
-  .brand-logo {
-    width: 32px; height: 32px; border-radius: 8px;
-    background: linear-gradient(135deg, var(--accent) 0%, #a855f7 100%);
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 800; color: #000; font-size: 14px;
-  }
 
   /* Badges */
   .badge {
     display: inline-flex; align-items: center; gap: 4px;
-    padding: 3px 10px; border-radius: 4px; font-size: 11px;
+    padding: 3px 10px; border-radius: 6px; font-size: 11px;
     font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
   }
-  .badge-active, .badge-live { color: var(--win); background: var(--win-bg); }
+  .badge-active, .badge-live, .badge-win, .badge-long { color: var(--win); background: var(--win-bg); }
   .badge-planned, .badge-backtest { color: var(--warn); background: var(--warn-bg); }
-  .badge-win, .badge-long { color: var(--win); background: var(--win-bg); }
   .badge-loss, .badge-short { color: var(--loss); background: var(--loss-bg); }
-  .badge-neutral { color: var(--text-mid); background: var(--panel-3); }
+  .badge-neutral { color: var(--text-mid); background: rgba(255,255,255,0.06); }
+  .badge-brand { color: #fff; background: var(--brand-soft); border: 1px solid rgba(168,85,247,0.3); }
   .pill {
-    padding: 3px 9px; border-radius: 4px; font-size: 11px;
-    font-weight: 500; background: var(--panel-3); color: var(--text-mid);
+    padding: 3px 9px; border-radius: 6px; font-size: 11px;
+    font-weight: 500; background: rgba(255,255,255,0.05); color: var(--text-mid);
   }
-  .pill-outline { background: transparent; border: 1px solid var(--border-strong); }
+  .pill-outline {
+    background: transparent; border: 1px solid var(--border-strong);
+  }
 
   /* Forms */
   input.field, select.field, textarea.field {
-    background: var(--panel-2); border: 1px solid var(--border-strong); border-radius: 6px;
-    padding: 10px 12px; color: var(--text); font-size: 13px; font-weight: 500;
-    outline: none; transition: all 0.15s;
-    font-family: inherit; width: 100%;
+    background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 14px; color: var(--text); font-size: 13px; font-weight: 500;
+    outline: none; transition: all 0.15s; font-family: inherit; width: 100%;
   }
   input.field:focus, select.field:focus, textarea.field:focus {
-    border-color: var(--accent); background: var(--panel-3);
-    box-shadow: 0 0 0 3px var(--accent-soft);
+    border-color: var(--accent-1); background: rgba(59,130,246,0.06);
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
   }
   input.field::placeholder, textarea.field::placeholder { color: var(--text-faint); }
   label.field-label {
@@ -126,65 +173,68 @@
   /* Buttons */
   .btn {
     display: inline-flex; align-items: center; gap: 6px;
-    background: var(--accent); color: #000; padding: 10px 18px; border-radius: 6px;
+    background: var(--brand); color: #fff;
+    padding: 10px 20px; border-radius: 10px;
     font-size: 13px; font-weight: 600; cursor: pointer; border: none;
-    transition: all 0.15s; font-family: inherit;
+    transition: all 0.2s; font-family: inherit;
+    box-shadow: 0 4px 14px rgba(59,130,246,0.25);
   }
-  .btn:hover { background: #3b82f6; transform: translateY(-1px); }
+  .btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(59,130,246,0.4); }
   .btn-ghost {
-    background: var(--panel-2); color: var(--text); border: 1px solid var(--border-strong);
+    background: rgba(255,255,255,0.04); color: var(--text);
+    border: 1px solid var(--border-strong); box-shadow: none;
   }
-  .btn-ghost:hover { border-color: var(--text-dim); background: var(--panel-3); transform: none; }
+  .btn-ghost:hover { background: rgba(255,255,255,0.08); transform: none; box-shadow: none; }
   .btn-danger {
-    background: var(--loss-bg); color: var(--loss); border: 1px solid rgba(248,113,113,0.25);
+    background: var(--loss-bg); color: var(--loss); border: 1px solid rgba(239,68,68,0.25);
+    box-shadow: none;
   }
-  .btn-danger:hover { background: rgba(248,113,113,0.2); transform: none; }
+  .btn-danger:hover { background: rgba(239,68,68,0.2); transform: none; box-shadow: none; }
   .btn-sm { padding: 7px 14px; font-size: 12px; }
 
-  /* Tables */
+  /* Table */
   table.dt { width: 100%; border-collapse: collapse; font-size: 13px; }
   table.dt th {
     text-align: left; font-weight: 600; color: var(--text-dim);
-    padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
-    border-bottom: 1px solid var(--border); background: var(--panel);
+    padding: 14px 16px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
+    border-bottom: 1px solid var(--border); background: var(--panel-solid);
     position: sticky; top: 0; cursor: pointer; user-select: none; white-space: nowrap;
   }
   table.dt th:hover { color: var(--text); }
   table.dt td {
-    padding: 13px 14px; border-bottom: 1px solid var(--border-soft);
+    padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.04);
     white-space: nowrap;
   }
   table.dt td.wrap { white-space: normal; max-width: 220px; }
   table.dt tbody tr { transition: background 0.1s; cursor: pointer; }
-  table.dt tbody tr:hover { background: var(--panel-2); }
-  table.dt tbody tr.expanded { background: var(--panel-2); }
+  table.dt tbody tr:hover { background: rgba(255,255,255,0.03); }
 
   /* Scrollbars */
   .scroll-thin::-webkit-scrollbar { width: 8px; height: 8px; }
   .scroll-thin::-webkit-scrollbar-track { background: transparent; }
-  .scroll-thin::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
-  .scroll-thin::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }
+  .scroll-thin::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 4px; }
+  .scroll-thin::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
 
   /* Modal */
   .modal-bg {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+    position: fixed; inset: 0; background: rgba(5, 7, 15, 0.85);
     display: flex; align-items: center; justify-content: center;
-    z-index: 50; padding: 24px; backdrop-filter: blur(6px);
+    z-index: 50; padding: 24px; backdrop-filter: blur(8px);
   }
   .modal {
-    background: var(--panel); border: 1px solid var(--border-strong); border-radius: 12px;
+    background: var(--panel-solid); border: 1px solid var(--border-strong); border-radius: 16px;
     width: 100%; max-width: 1080px; max-height: 92vh; overflow-y: auto;
-    box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+    box-shadow: 0 32px 80px rgba(0,0,0,0.7);
   }
 
   /* Image upload */
   .img-drop {
-    border: 1px dashed var(--border-strong); border-radius: 6px;
+    border: 1px dashed var(--border-strong); border-radius: 10px;
     padding: 24px; text-align: center; cursor: pointer;
-    transition: all 0.15s; background: var(--panel-2);
+    transition: all 0.15s; background: rgba(255,255,255,0.02);
     min-height: 160px; display: flex; align-items: center; justify-content: center;
   }
-  .img-drop:hover { border-color: var(--accent); background: var(--panel-3); }
+  .img-drop:hover { border-color: var(--accent-1); background: rgba(59,130,246,0.06); }
   .img-drop.has-image { padding: 0; background: var(--bg); position: relative; overflow: hidden; }
   .img-drop img { max-width: 100%; max-height: 240px; display: block; margin: 0 auto; border-radius: 4px; }
   .img-remove {
@@ -194,24 +244,23 @@
     font-size: 14px; line-height: 1;
   }
 
-  /* Section header inside modal */
   .section-title {
     font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em;
-    color: var(--accent); font-weight: 700; margin: 28px 0 14px;
+    color: var(--accent-1); font-weight: 700; margin: 28px 0 14px;
     padding-bottom: 8px; border-bottom: 1px solid var(--border);
   }
   .section-title:first-child { margin-top: 0; }
 
-  /* Outcome cell */
-  .outcome-cell {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 4px 10px; border-radius: 4px; font-weight: 600;
-    font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em;
-  }
+  .panel-stack > .glass { margin-bottom: 16px; }
+  .panel-stack > .glass:last-child { margin-bottom: 0; }
 
-  /* Strategy/bot card spacing */
-  .panel-stack > .panel { margin-bottom: 16px; }
-  .panel-stack > .panel:last-child { margin-bottom: 0; }
+  /* Sparkline canvas height */
+  .sparkline { height: 48px !important; max-height: 48px !important; }
+
+  /* Live dot */
+  @keyframes pulse-soft { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .live-dot { width: 6px; height: 6px; border-radius: 3px; background: var(--win);
+    box-shadow: 0 0 8px var(--win); animation: pulse-soft 1.8s ease-in-out infinite; display: inline-block; }
 </style>
 </head>
 <body class="min-h-screen">
@@ -251,11 +300,16 @@
       </a>
     </nav>
 
-    <div class="absolute bottom-0 w-60 p-5 border-t" style="border-color: var(--border)">
-      <div class="kpi-label" style="font-size: 10px;">Account</div>
-      <div class="font-bold mt-1" style="font-size: 14px;">FTMO Swing $10k</div>
-      <div class="kpi-label mt-3" style="font-size: 10px;">Backtest</div>
-      <div class="num text-xs mt-1" style="color: var(--text-mid); font-weight: 500;" id="footer-period"></div>
+    <div class="absolute bottom-0 w-60 p-5">
+      <div class="glass-soft p-4">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="live-dot"></span>
+          <div class="kpi-label" style="font-size: 9px;">Status</div>
+        </div>
+        <div class="font-bold" style="font-size: 14px;">FTMO Swing $10k</div>
+        <div class="text-xs mt-1" style="color: var(--text-dim);">Backtest-Modus</div>
+        <div class="num text-xs mt-3 mono" style="color: var(--text-mid); font-size: 11px;" id="footer-period"></div>
+      </div>
     </div>
   </aside>
 
@@ -269,7 +323,7 @@
 
 <script>
 // ============================================================
-// State & persistence
+// State
 // ============================================================
 const STATE = { bots: loadBots() };
 const JOURNAL_STATE = {
@@ -286,10 +340,8 @@ function loadBots() {
   return JSON.parse(JSON.stringify(window.DATA.bots));
 }
 function saveBots() { localStorage.setItem("bots_v2", JSON.stringify(STATE.bots)); }
-function resetBots() {
-  localStorage.removeItem("bots_v2");
-  STATE.bots = loadBots(); render();
-}
+function resetBots() { localStorage.removeItem("bots_v2"); STATE.bots = loadBots(); render(); }
+
 function loadJournal() {
   try { return JSON.parse(localStorage.getItem("journal_v1") || "[]"); }
   catch { return []; }
@@ -297,16 +349,10 @@ function loadJournal() {
 function saveJournal() { localStorage.setItem("journal_v1", JSON.stringify(JOURNAL_STATE.entries)); }
 
 const ROUTES = ["dashboard", "strategien", "trades", "journal", "bots"];
-function currentRoute() {
-  const h = location.hash.replace("#", "");
-  return ROUTES.includes(h) ? h : "dashboard";
-}
+function currentRoute() { const h = location.hash.replace("#", ""); return ROUTES.includes(h) ? h : "dashboard"; }
 function navigate(route) { location.hash = route; }
 window.addEventListener("hashchange", render);
 
-// ============================================================
-// Helpers
-// ============================================================
 const fmtMoney = (n, sign = false) => {
   const num = Math.abs(n).toLocaleString("en-US", { maximumFractionDigits: 0 });
   return (n < 0 ? "-" : (sign && n > 0 ? "+" : "")) + "$" + num;
@@ -343,108 +389,261 @@ async function readImageAsBase64(file, maxWidth = 1400) {
 }
 
 // ============================================================
-// View: Dashboard
+// Chart helpers
+// ============================================================
+const chartDefaults = {
+  responsive: true, maintainAspectRatio: false,
+  plugins: {
+    legend: { display: false },
+    tooltip: {
+      backgroundColor: "rgba(13, 18, 32, 0.95)", borderColor: "rgba(255,255,255,0.12)",
+      borderWidth: 1, padding: 10, displayColors: false,
+      titleColor: "#a0a8c0", bodyColor: "#fff",
+    }
+  },
+};
+
+function makeSparkline(ctxEl, data, color) {
+  if (!ctxEl) return;
+  new Chart(ctxEl, {
+    type: "line",
+    data: {
+      labels: data.map((_, i) => i),
+      datasets: [{
+        data, borderColor: color, borderWidth: 1.8,
+        backgroundColor: ctx => {
+          const c = ctx.chart.ctx; const g = c.createLinearGradient(0, 0, 0, 50);
+          g.addColorStop(0, color.replace(")", ", 0.35)").replace("rgb", "rgba")); g.addColorStop(1, color.replace(")", ", 0)").replace("rgb", "rgba"));
+          return g;
+        },
+        fill: true, tension: 0.35, pointRadius: 0,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { enabled: false } },
+      scales: { x: { display: false }, y: { display: false } },
+      elements: { point: { radius: 0 } },
+    }
+  });
+}
+
+// ============================================================
+// Dashboard
 // ============================================================
 function viewDashboard() {
   const k = DATA.kpis;
   const main = DATA.strategies[0];
   const last3 = DATA.last3;
-  const yearly = DATA.yearly || [];
+
+  // Per-symbol P&L for the breakdown
+  const bySym = {};
+  DATA.trades.forEach(t => {
+    if (!bySym[t.symbol]) bySym[t.symbol] = { pnl: 0, wins: 0, total: 0 };
+    bySym[t.symbol].pnl += t.pnl;
+    bySym[t.symbol].total += 1;
+    if (t.pnl > 0) bySym[t.symbol].wins += 1;
+  });
+  const symbolsSorted = Object.entries(bySym).sort((a, b) => b[1].pnl - a[1].pnl);
 
   return `
-    <div class="flex items-end justify-between mb-7">
+    <!-- Top bar -->
+    <div class="flex items-center justify-between mb-7">
       <div>
-        <div class="kpi-label mb-2">Übersicht</div>
-        <h1 class="page-title">Dashboard</h1>
-        <p class="page-subtitle">${main.name} · Entries auf ${k.timeframe_entry || '1H'} · ${k.data_period_start} → ${k.data_period_end}</p>
+        <div class="kpi-label mb-2 flex items-center gap-2">
+          <span class="live-dot"></span> Live Dashboard
+        </div>
+        <h1 class="page-title">Welcome back, <span class="brand-text">Paul</span></h1>
+        <p class="text-sm mt-2" style="color: var(--text-mid);">
+          ${main.name} · ${k.timeframe_entry || '1H'} Entries · Backtest ${k.data_period_start} → ${k.data_period_end}
+        </p>
       </div>
       <div class="flex gap-2">
-        <span class="badge badge-active">v3 FINAL</span>
-        <span class="badge badge-backtest">Backtest-Modus</span>
+        <span class="badge badge-brand">v3 FINAL</span>
+        <span class="badge badge-backtest">Backtest</span>
       </div>
     </div>
 
-    <!-- Hero KPIs -->
+    <!-- Hero card: total equity + sparkline -->
+    <div class="glass p-7 mb-4 relative overflow-hidden">
+      <div class="absolute top-0 right-0 w-96 h-96 rounded-full" style="background: radial-gradient(circle, rgba(59,130,246,0.18), transparent 70%); pointer-events: none;"></div>
+      <div class="grid grid-cols-2 gap-8 relative z-10">
+        <div>
+          <div class="kpi-label">Account Equity</div>
+          <div class="kpi-value hero num mt-3 ${cls(k.total_return_pct)}">
+            $${k.end_equity.toLocaleString()}
+          </div>
+          <div class="flex items-center gap-3 mt-4">
+            <span class="badge ${cls(k.total_return_pct) === 'win' ? 'badge-win' : 'badge-loss'}" style="font-size: 13px; padding: 6px 12px;">
+              ${arrow(k.total_return_pct)} ${Math.abs(k.total_return_pct).toFixed(2)}%
+            </span>
+            <span class="text-sm num" style="color: var(--text-mid);">
+              ${arrow(k.total_return_pct)} $${Math.abs(k.end_equity - k.starting_equity).toLocaleString()} seit Start
+            </span>
+          </div>
+          <div class="flex items-center gap-6 mt-6 pt-6 border-t" style="border-color: var(--border);">
+            <div>
+              <div class="kpi-label">Start</div>
+              <div class="text-xl font-bold num mt-1">$${k.starting_equity.toLocaleString()}</div>
+            </div>
+            <div>
+              <div class="kpi-label">CAGR</div>
+              <div class="text-xl font-bold num mt-1 ${cls(k.cagr_pct)}">${arrow(k.cagr_pct)} ${Math.abs(k.cagr_pct).toFixed(2)}%</div>
+            </div>
+            <div>
+              <div class="kpi-label">Periode</div>
+              <div class="text-xl font-bold num mt-1">${k.data_years}<span class="kpi-unit">J</span></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="kpi-label">Equity Trend</div>
+          <canvas id="hero-spark" style="height: 200px; margin-top: 8px;"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 KPI cards with sparklines -->
     <div class="grid grid-cols-4 gap-4 mb-4">
-      <div class="panel p-5">
-        <div class="kpi-label">Total Return</div>
-        <div class="kpi-value num ${cls(k.total_return_pct)}">
-          ${arrow(k.total_return_pct)} ${Math.abs(k.total_return_pct).toFixed(2)}<span class="kpi-unit">%</span>
+      <div class="glass p-5">
+        <div class="flex items-start justify-between">
+          <div>
+            <div class="kpi-label">Total Trades</div>
+            <div class="kpi-value small num mt-2">${k.trades}</div>
+          </div>
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: rgba(59,130,246,0.12); color: var(--accent-1);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
         </div>
-        <div class="text-xs mt-3 num" style="color: var(--text-mid);">
-          $${k.starting_equity.toLocaleString()} → <span class="${cls(k.total_return_pct)} font-semibold">$${k.end_equity.toLocaleString()}</span>
-        </div>
-      </div>
-      <div class="panel p-5">
-        <div class="kpi-label">CAGR</div>
-        <div class="kpi-value num ${cls(k.cagr_pct)}">
-          ${arrow(k.cagr_pct)} ${Math.abs(k.cagr_pct).toFixed(2)}<span class="kpi-unit">%</span>
-        </div>
-        <div class="text-xs mt-3" style="color: var(--text-mid);">über ${k.data_years} Jahre</div>
-      </div>
-      <div class="panel p-5">
-        <div class="kpi-label">Winrate</div>
-        <div class="kpi-value num">${k.winrate.toFixed(1)}<span class="kpi-unit">%</span></div>
         <div class="text-xs mt-3" style="color: var(--text-mid);">
-          <span class="win font-semibold">${k.wins}W</span> · <span class="loss font-semibold">${k.losses}L</span> · ${k.trades} Trades
+          <span class="win font-semibold">${k.wins}W</span> · <span class="loss font-semibold">${k.losses}L</span>
         </div>
       </div>
-      <div class="panel p-5">
-        <div class="kpi-label">Max Drawdown</div>
-        <div class="kpi-value num loss">↓ ${Math.abs(k.max_dd_pct).toFixed(1)}<span class="kpi-unit">%</span></div>
+      <div class="glass p-5">
+        <div class="flex items-start justify-between">
+          <div>
+            <div class="kpi-label">Winrate</div>
+            <div class="kpi-value small num mt-2">${k.winrate.toFixed(1)}<span class="kpi-unit">%</span></div>
+          </div>
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: rgba(16,185,129,0.12); color: var(--win);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </div>
+        <canvas id="winrate-spark" class="sparkline" style="margin-top: 8px;"></canvas>
+      </div>
+      <div class="glass p-5">
+        <div class="flex items-start justify-between">
+          <div>
+            <div class="kpi-label">Max Drawdown</div>
+            <div class="kpi-value small num mt-2 loss">↓ ${Math.abs(k.max_dd_pct).toFixed(1)}<span class="kpi-unit">%</span></div>
+          </div>
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: rgba(239,68,68,0.12); color: var(--loss);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg>
+          </div>
+        </div>
         <div class="text-xs mt-3" style="color: var(--text-mid);">Peak-to-Trough</div>
       </div>
-    </div>
-
-    <!-- Equity Curve + Yearly grid -->
-    <div class="grid gap-4 mb-4" style="grid-template-columns: 2fr 1fr;">
-      <div class="panel p-5">
-        <div class="flex items-center justify-between mb-4">
+      <div class="glass p-5">
+        <div class="flex items-start justify-between">
           <div>
-            <div class="kpi-label">Equity Curve</div>
-            <div class="text-lg font-bold mt-1">Compound Wachstum</div>
+            <div class="kpi-label">Journal Entries</div>
+            <div class="kpi-value small num mt-2">${JOURNAL_STATE.entries.length}</div>
           </div>
-          <div class="text-right num">
-            <div class="kpi-label">End Equity</div>
-            <div class="text-2xl mt-1 font-bold ${cls(k.total_return_pct)}">$${k.end_equity.toLocaleString()}</div>
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: rgba(168,85,247,0.12); color: var(--accent-2);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
           </div>
         </div>
-        <canvas id="equity-chart" style="max-height: 280px;"></canvas>
-      </div>
-      <div class="panel p-5">
-        <div class="kpi-label">Performance pro Jahr</div>
-        <div class="text-lg font-bold mt-1 mb-4">Yearly Returns</div>
-        <canvas id="yearly-chart" style="max-height: 280px;"></canvas>
+        <div class="text-xs mt-3"><a data-route="journal" class="font-semibold" style="color: var(--accent-1); cursor: pointer;">Journal öffnen →</a></div>
       </div>
     </div>
 
-    <!-- Per-symbol breakdown + Last trades -->
-    <div class="grid gap-4 mb-4" style="grid-template-columns: 1fr 2fr;">
-      <div class="panel p-5">
-        <div class="kpi-label">Performance pro Symbol</div>
-        <div class="text-lg font-bold mt-1 mb-4">Symbol Breakdown</div>
-        <canvas id="symbol-chart" style="max-height: 280px;"></canvas>
+    <!-- Equity curve (big) + Performance breakdown -->
+    <div class="grid gap-4 mb-4" style="grid-template-columns: 1.6fr 1fr;">
+      <div class="glass p-6">
+        <div class="flex items-center justify-between mb-5">
+          <div>
+            <div class="kpi-label">Performance Chart</div>
+            <div class="text-lg font-bold mt-1">Equity Curve · Compound</div>
+          </div>
+          <div class="flex gap-2">
+            <span class="pill pill-outline">All</span>
+            <span class="pill">1Y</span>
+            <span class="pill">6M</span>
+          </div>
+        </div>
+        <canvas id="equity-chart" style="max-height: 300px;"></canvas>
       </div>
-      <div class="panel p-5">
-        <div class="flex items-center justify-between mb-4">
+      <div class="glass p-6">
+        <div class="flex items-center justify-between mb-5">
+          <div>
+            <div class="kpi-label">Symbol Breakdown</div>
+            <div class="text-lg font-bold mt-1">P&L pro Markt</div>
+          </div>
+        </div>
+        <div class="space-y-3">
+          ${symbolsSorted.map(([sym, s], i) => {
+            const maxAbs = Math.max(...symbolsSorted.map(([_, v]) => Math.abs(v.pnl)));
+            const widthPct = (Math.abs(s.pnl) / maxAbs) * 100;
+            return `
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs"
+                         style="background: rgba(59,130,246,0.12); color: var(--accent-1);">${sym.slice(2,4)}</div>
+                    <div>
+                      <div class="font-bold text-sm">${sym}</div>
+                      <div class="text-xs" style="color: var(--text-dim);">${s.total} Trades · ${Math.round(s.wins/s.total*100)}% WR</div>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <div class="num font-bold text-sm ${cls(s.pnl)}">${fmtMoney(s.pnl, true)}</div>
+                  </div>
+                </div>
+                <div class="w-full h-1.5 rounded-full overflow-hidden" style="background: rgba(255,255,255,0.05);">
+                  <div class="h-full rounded-full" style="width: ${widthPct}%; background: ${s.pnl >= 0 ? 'linear-gradient(90deg, var(--win), #34d399)' : 'linear-gradient(90deg, var(--loss), #f87171)'}; box-shadow: 0 0 8px ${s.pnl >= 0 ? 'rgba(16,185,129,0.5)' : 'rgba(239,68,68,0.5)'};"></div>
+                </div>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      </div>
+    </div>
+
+    <!-- Yearly chart + Recent trades -->
+    <div class="grid gap-4 mb-4" style="grid-template-columns: 1fr 1.6fr;">
+      <div class="glass p-6">
+        <div class="flex items-center justify-between mb-5">
+          <div>
+            <div class="kpi-label">Per Year</div>
+            <div class="text-lg font-bold mt-1">Yearly Returns</div>
+          </div>
+        </div>
+        <canvas id="yearly-chart" style="max-height: 280px;"></canvas>
+      </div>
+      <div class="glass p-6">
+        <div class="flex items-center justify-between mb-5">
           <div>
             <div class="kpi-label">Recent</div>
-            <div class="text-lg font-bold mt-1">Letzte 3 Trades</div>
+            <div class="text-lg font-bold mt-1">Letzte Trades</div>
           </div>
-          <a class="text-xs font-semibold" data-route="trades" style="color: var(--accent); cursor: pointer;">Alle ansehen →</a>
+          <a data-route="trades" class="text-xs font-semibold" style="color: var(--accent-1); cursor: pointer;">Alle ansehen →</a>
         </div>
         <div class="space-y-2">
           ${last3.map(t => `
-            <div class="flex items-center justify-between py-3 px-4 panel-soft hover:bg-opacity-100" style="transition: background 0.1s;">
+            <div class="glass-soft p-4 flex items-center justify-between" style="transition: all 0.15s;">
               <div class="flex items-center gap-4">
-                <div style="min-width: 70px;">
-                  <div class="text-xs mono font-semibold">${t.entry_time.slice(0,10)}</div>
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xs"
+                     style="background: ${t.direction === 'long' ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)'};
+                            color: ${t.direction === 'long' ? 'var(--win)' : 'var(--loss)'};">
+                  ${t.symbol.slice(2,4)}
                 </div>
-                <div style="min-width: 80px;">
-                  <div class="font-bold">${t.symbol}</div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="font-bold">${t.symbol}</span>
+                    <span class="badge ${t.direction === 'long' ? 'badge-long' : 'badge-short'}">${t.direction === 'long' ? '↑ Long' : '↓ Short'}</span>
+                  </div>
+                  <div class="text-xs mt-1 mono" style="color: var(--text-dim);">${t.entry_time.slice(0,10)} · ${escapeHtml(t.exit_reason)}</div>
                 </div>
-                <span class="badge ${t.direction === 'long' ? 'badge-long' : 'badge-short'}">${t.direction === 'long' ? '↑ Long' : '↓ Short'}</span>
-                <span class="pill">${escapeHtml(t.exit_reason)}</span>
               </div>
               <div class="text-right">
                 <div class="num font-bold ${cls(t.pnl)}" style="font-size: 16px;">${fmtMoney(t.pnl, true)}</div>
@@ -455,37 +654,41 @@ function viewDashboard() {
         </div>
       </div>
     </div>
-
-    <!-- Bottom mini-stats -->
-    <div class="grid grid-cols-4 gap-4">
-      <div class="panel p-4">
-        <div class="kpi-label">Märkte</div>
-        <div class="kpi-value small num mt-2">${k.n_symbols}</div>
-        <div class="flex gap-1 mt-2 flex-wrap">
-          ${k.symbols.map(s => `<span class="pill">${s}</span>`).join("")}
-        </div>
-      </div>
-      <div class="panel p-4">
-        <div class="kpi-label">Bars / Symbol</div>
-        <div class="kpi-value small num mt-2">${(k.data_years * 252 * 6.5).toFixed(0)}</div>
-        <div class="text-xs mt-2" style="color: var(--text-mid);">1H · ~${(k.data_years * 252).toFixed(0)} Trading-Tage</div>
-      </div>
-      <div class="panel p-4">
-        <div class="kpi-label">Journal Entries</div>
-        <div class="kpi-value small num mt-2">${JOURNAL_STATE.entries.length}</div>
-        <div class="text-xs mt-2"><a data-route="journal" style="color: var(--accent); font-weight: 600; cursor: pointer;">Journal →</a></div>
-      </div>
-      <div class="panel p-4">
-        <div class="kpi-label">Aktive Bots</div>
-        <div class="kpi-value small num mt-2">${STATE.bots.filter(b => b.status === 'live').length} / ${STATE.bots.length}</div>
-        <div class="text-xs mt-2"><a data-route="bots" style="color: var(--accent); font-weight: 600; cursor: pointer;">Bots verwalten →</a></div>
-      </div>
-    </div>
   `;
 }
 
 function renderDashboardCharts() {
-  // Equity
+  // Hero sparkline
+  const hero = document.getElementById("hero-spark");
+  if (hero) {
+    const data = DATA.equity_curve;
+    new Chart(hero, {
+      type: "line",
+      data: {
+        labels: data.map(p => p.date),
+        datasets: [{
+          data: data.map(p => p.equity),
+          borderColor: "#3b82f6", borderWidth: 2.5,
+          backgroundColor: ctx => {
+            const c = ctx.chart.ctx; const g = c.createLinearGradient(0, 0, 0, 200);
+            g.addColorStop(0, "rgba(59,130,246,0.45)"); g.addColorStop(1, "rgba(168,85,247,0)");
+            return g;
+          },
+          fill: true, tension: 0.3, pointRadius: 0, pointHoverRadius: 4,
+        }]
+      },
+      options: {
+        ...chartDefaults,
+        scales: { x: { display: false }, y: { display: false } },
+        plugins: { ...chartDefaults.plugins, tooltip: {
+          ...chartDefaults.plugins.tooltip,
+          callbacks: { label: ctx => "$" + ctx.parsed.y.toLocaleString("en-US", { maximumFractionDigits: 0 }) }
+        }}
+      }
+    });
+  }
+
+  // Equity curve (big)
   const eq = document.getElementById("equity-chart"); if (eq) {
     const data = DATA.equity_curve;
     new Chart(eq, {
@@ -494,30 +697,25 @@ function renderDashboardCharts() {
         labels: data.map(p => p.date),
         datasets: [{
           data: data.map(p => p.equity),
-          borderColor: "#60a5fa", borderWidth: 2,
+          borderColor: "#3b82f6", borderWidth: 2.5,
           backgroundColor: ctx => {
             const c = ctx.chart.ctx; const g = c.createLinearGradient(0, 0, 0, 300);
-            g.addColorStop(0, "rgba(96,165,250,0.30)"); g.addColorStop(1, "rgba(96,165,250,0)");
+            g.addColorStop(0, "rgba(59,130,246,0.35)"); g.addColorStop(0.5, "rgba(168,85,247,0.15)"); g.addColorStop(1, "rgba(168,85,247,0)");
             return g;
           },
-          fill: true, tension: 0.2,
-          pointRadius: 0, pointHoverRadius: 5,
-          pointHoverBackgroundColor: "#60a5fa",
+          fill: true, tension: 0.3, pointRadius: 0, pointHoverRadius: 5,
+          pointHoverBackgroundColor: "#3b82f6",
         }]
       },
       options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            backgroundColor: "#111114", borderColor: "#2e2e38", borderWidth: 1, padding: 10,
-            displayColors: false, titleColor: "#b3b3bc", bodyColor: "#fff",
-            callbacks: { label: ctx => "$" + ctx.parsed.y.toLocaleString("en-US", { maximumFractionDigits: 0 }) }
-          }
-        },
+        ...chartDefaults,
+        plugins: { ...chartDefaults.plugins, tooltip: {
+          ...chartDefaults.plugins.tooltip,
+          callbacks: { label: ctx => "$" + ctx.parsed.y.toLocaleString("en-US", { maximumFractionDigits: 0 }) }
+        }},
         scales: {
-          x: { grid: { color: "rgba(255,255,255,0.03)" }, ticks: { color: "#7d7d88", maxTicksLimit: 8, font: { size: 10, weight: 500 } } },
-          y: { grid: { color: "rgba(255,255,255,0.04)" }, ticks: { color: "#7d7d88", font: { size: 10, weight: 500 }, callback: v => "$" + v.toLocaleString("en-US") } }
+          x: { grid: { color: "rgba(255,255,255,0.03)" }, ticks: { color: "#6e7892", maxTicksLimit: 8, font: { size: 10, weight: 500 } } },
+          y: { grid: { color: "rgba(255,255,255,0.04)" }, ticks: { color: "#6e7892", font: { size: 10, weight: 500 }, callback: v => "$" + (v/1000).toFixed(1) + "K" } }
         }
       }
     });
@@ -532,78 +730,49 @@ function renderDashboardCharts() {
         labels: DATA.yearly.map(y => y.year),
         datasets: [{
           data: DATA.yearly.map(y => y["return_%"]),
-          backgroundColor: DATA.yearly.map(y => y["return_%"] >= 0 ? "rgba(52,211,153,0.85)" : "rgba(248,113,113,0.85)"),
-          borderRadius: 4, borderSkipped: false,
+          backgroundColor: DATA.yearly.map(y => y["return_%"] >= 0 ? "rgba(16,185,129,0.9)" : "rgba(239,68,68,0.9)"),
+          borderRadius: 6, borderSkipped: false,
         }]
       },
       options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            backgroundColor: "#111114", borderColor: "#2e2e38", borderWidth: 1, padding: 10,
-            displayColors: false, titleColor: "#b3b3bc", bodyColor: "#fff",
-            callbacks: { label: ctx => `${ctx.parsed.y >= 0 ? '+' : ''}${ctx.parsed.y.toFixed(2)}%` }
-          }
-        },
+        ...chartDefaults,
+        plugins: { ...chartDefaults.plugins, tooltip: {
+          ...chartDefaults.plugins.tooltip,
+          callbacks: { label: ctx => `${ctx.parsed.y >= 0 ? '+' : ''}${ctx.parsed.y.toFixed(2)}%` }
+        }},
         scales: {
-          x: { grid: { display: false }, ticks: { color: "#7d7d88", font: { size: 11, weight: 600 } } },
-          y: { grid: { color: "rgba(255,255,255,0.04)" }, ticks: { color: "#7d7d88", font: { size: 10 }, callback: v => v + "%" } }
+          x: { grid: { display: false }, ticks: { color: "#a0a8c0", font: { size: 11, weight: 600 } } },
+          y: { grid: { color: "rgba(255,255,255,0.04)" }, ticks: { color: "#6e7892", font: { size: 10 }, callback: v => v + "%" } }
         }
       }
     });
   }
 
-  // Per-symbol
-  const sy = document.getElementById("symbol-chart");
-  if (sy) {
-    const bySym = {};
-    DATA.trades.forEach(t => { bySym[t.symbol] = (bySym[t.symbol] || 0) + t.pnl; });
-    const labels = Object.keys(bySym).sort();
-    const values = labels.map(l => bySym[l]);
-    new Chart(sy, {
-      type: "bar",
-      data: {
-        labels,
-        datasets: [{
-          data: values,
-          backgroundColor: values.map(v => v >= 0 ? "rgba(52,211,153,0.85)" : "rgba(248,113,113,0.85)"),
-          borderRadius: 4, borderSkipped: false,
-        }]
-      },
-      options: {
-        indexAxis: "y",
-        responsive: true, maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            backgroundColor: "#111114", borderColor: "#2e2e38", borderWidth: 1, padding: 10,
-            displayColors: false, titleColor: "#b3b3bc", bodyColor: "#fff",
-            callbacks: { label: ctx => "$" + ctx.parsed.x.toLocaleString("en-US", { maximumFractionDigits: 0 }) }
-          }
-        },
-        scales: {
-          x: { grid: { color: "rgba(255,255,255,0.04)" }, ticks: { color: "#7d7d88", font: { size: 10 }, callback: v => "$" + v.toLocaleString("en-US") } },
-          y: { grid: { display: false }, ticks: { color: "#fff", font: { size: 12, weight: 600 } } }
-        }
-      }
+  // Winrate sparkline (rolling winrate over time)
+  const ws = document.getElementById("winrate-spark");
+  if (ws && DATA.trades && DATA.trades.length) {
+    let wins = 0, sparkData = [];
+    DATA.trades.forEach((t, i) => {
+      if (t.pnl > 0) wins++;
+      sparkData.push(wins / (i + 1) * 100);
     });
+    makeSparkline(ws, sparkData, "rgb(16, 185, 129)");
   }
 }
 
 // ============================================================
-// View: Strategien
+// Strategien
 // ============================================================
 function viewStrategien() {
   return `
     <div class="mb-7">
       <div class="kpi-label mb-2">Library</div>
       <h1 class="page-title">Strategien</h1>
-      <p class="page-subtitle">${DATA.strategies.length} Strategien · ${DATA.strategies.filter(s=>s.status==='active').length} aktiv</p>
+      <p class="text-sm mt-2" style="color: var(--text-mid)">${DATA.strategies.length} Strategien · ${DATA.strategies.filter(s=>s.status==='active').length} aktiv</p>
     </div>
     <div class="panel-stack">
       ${DATA.strategies.map(s => `
-        <div class="panel p-7">
+        <div class="glass p-7">
           <div class="flex items-start justify-between mb-5">
             <div>
               <div class="flex items-center gap-3 mb-2">
@@ -615,10 +784,10 @@ function viewStrategien() {
           </div>
           ${s.status === 'active' ? `
             <div class="grid grid-cols-4 gap-3 mb-7">
-              <div class="panel-soft p-4"><div class="kpi-label">Trades</div><div class="text-2xl font-bold num mt-2">${s.trades}</div></div>
-              <div class="panel-soft p-4"><div class="kpi-label">Winrate</div><div class="text-2xl font-bold num mt-2">${s.winrate}%</div></div>
-              <div class="panel-soft p-4"><div class="kpi-label">Total Return</div><div class="text-2xl font-bold num mt-2 ${cls(s.return_total)}">${fmtPct(s.return_total)}</div></div>
-              <div class="panel-soft p-4"><div class="kpi-label">Max DD</div><div class="text-2xl font-bold num mt-2 loss">${s.max_dd.toFixed(1)}%</div></div>
+              <div class="glass-soft p-4"><div class="kpi-label">Trades</div><div class="text-2xl font-bold num mt-2">${s.trades}</div></div>
+              <div class="glass-soft p-4"><div class="kpi-label">Winrate</div><div class="text-2xl font-bold num mt-2">${s.winrate}%</div></div>
+              <div class="glass-soft p-4"><div class="kpi-label">Total Return</div><div class="text-2xl font-bold num mt-2 ${cls(s.return_total)}">${fmtPct(s.return_total)}</div></div>
+              <div class="glass-soft p-4"><div class="kpi-label">Max DD</div><div class="text-2xl font-bold num mt-2 loss">${s.max_dd.toFixed(1)}%</div></div>
             </div>
           ` : ''}
           <div class="grid grid-cols-2 gap-8">
@@ -628,7 +797,7 @@ function viewStrategien() {
               <div class="kpi-label mb-3">Timeframes</div>
               <div class="grid grid-cols-4 gap-2">
                 ${Object.entries(s.timeframes).map(([k,v]) => `
-                  <div class="panel-soft p-3 text-center">
+                  <div class="glass-soft p-3 text-center">
                     <div class="kpi-label" style="font-size: 10px;">${k}</div>
                     <div class="font-bold text-sm mt-1">${v}</div>
                   </div>
@@ -640,7 +809,7 @@ function viewStrategien() {
               <ol class="space-y-3 text-sm">
                 ${s.rules.map((r,i) => `
                   <li class="flex gap-4">
-                    <span class="text-xs mono font-bold" style="color: var(--accent); padding-top: 1px; min-width: 22px;">${(i+1).toString().padStart(2,'0')}</span>
+                    <span class="text-xs mono font-bold" style="color: var(--accent-1); padding-top: 1px; min-width: 22px;">${(i+1).toString().padStart(2,'0')}</span>
                     <span style="color: var(--text); line-height: 1.6;">${r}</span>
                   </li>
                 `).join("")}
@@ -654,10 +823,9 @@ function viewStrategien() {
 }
 
 // ============================================================
-// View: Backtest Trades
+// Backtest Trades
 // ============================================================
 const TRADES_STATE = { sort: "n", asc: true, filter: { symbol: "all", result: "all", search: "" } };
-
 function filteredTrades() {
   let t = DATA.trades.slice();
   const f = TRADES_STATE.filter;
@@ -676,7 +844,6 @@ function filteredTrades() {
   });
   return t;
 }
-
 function viewTrades() {
   const trades = filteredTrades();
   const symbols = ["all", ...new Set(DATA.trades.map(t => t.symbol))];
@@ -686,7 +853,7 @@ function viewTrades() {
     <div class="mb-7">
       <div class="kpi-label mb-2">Backtest</div>
       <h1 class="page-title">Trades</h1>
-      <p class="page-subtitle">${trades.length} von ${DATA.trades.length} · ${wins} Wins · <span class="${cls(totalPnl)} font-semibold">${fmtMoney(totalPnl, true)}</span></p>
+      <p class="text-sm mt-2" style="color: var(--text-mid)">${trades.length} von ${DATA.trades.length} · ${wins} Wins · <span class="${cls(totalPnl)} font-semibold">${fmtMoney(totalPnl, true)}</span></p>
     </div>
     <div class="flex items-center gap-3 mb-5">
       <input type="text" class="field" placeholder="Suche..." value="${TRADES_STATE.filter.search}" oninput="TRADES_STATE.filter.search = this.value; render()" style="max-width: 280px">
@@ -699,7 +866,7 @@ function viewTrades() {
         <option value="loss" ${TRADES_STATE.filter.result==='loss'?'selected':''}>Verlierer</option>
       </select>
     </div>
-    <div class="panel overflow-hidden">
+    <div class="glass overflow-hidden">
       <div style="max-height: 70vh; overflow-y: auto" class="scroll-thin">
         <table class="dt">
           <thead>
@@ -728,7 +895,7 @@ function viewTrades() {
                 <td><span class="pill">${t.exit_reason}</span></td>
                 <td class="num font-semibold ${cls(t.rr)}" style="text-align: right">${t.rr >= 0 ? '+' : ''}${t.rr.toFixed(2)}</td>
                 <td class="num font-bold ${cls(t.pnl)}" style="text-align: right">${fmtMoney(t.pnl, true)}</td>
-                <td><a href="${t.png}" target="_blank" class="font-semibold" style="color: var(--accent);">PNG →</a></td>
+                <td><a href="${t.png}" target="_blank" class="font-semibold" style="color: var(--accent-1);">PNG →</a></td>
               </tr>
             `).join("")}
           </tbody>
@@ -744,7 +911,7 @@ function sortTrades(key) {
 }
 
 // ============================================================
-// View: Journal — TABLE LAYOUT
+// Journal (table layout, preserved)
 // ============================================================
 const INSTRUMENTS = ["US500", "US30", "US100", "US2000", "ES", "YM", "NQ", "RTY", "GC", "CL", "Other"];
 const SESSIONS = ["Asia", "London", "New York AM", "New York PM", "London Close", "Other"];
@@ -773,13 +940,11 @@ function filteredJournal() {
   });
   return entries;
 }
-
 function sortJournal(key) {
   if (JOURNAL_STATE.sort.key === key) JOURNAL_STATE.sort.asc = !JOURNAL_STATE.sort.asc;
   else { JOURNAL_STATE.sort.key = key; JOURNAL_STATE.sort.asc = false; }
   render();
 }
-
 function viewJournal() {
   const entries = filteredJournal();
   const total = JOURNAL_STATE.entries.length;
@@ -787,47 +952,24 @@ function viewJournal() {
   const losses = JOURNAL_STATE.entries.filter(e => e.outcome === "Loss").length;
   const totalPnl = JOURNAL_STATE.entries.reduce((s, e) => s + (parseFloat(e.pnl_dollar) || 0), 0);
   const winrate = total > 0 ? (wins / total * 100) : 0;
-  const avgRr = total > 0
-    ? JOURNAL_STATE.entries.map(e => parseFloat(e.rr_numeric || 0)).filter(v => v > 0).reduce((a,b,_,arr) => a + b/arr.length, 0)
-    : 0;
-
   return `
     <div class="flex items-end justify-between mb-7">
       <div>
         <div class="kpi-label mb-2">Trade Journal</div>
         <h1 class="page-title">Journal</h1>
-        <p class="page-subtitle">${total} ${total === 1 ? 'Eintrag' : 'Einträge'}</p>
+        <p class="text-sm mt-2" style="color: var(--text-mid)">${total} ${total === 1 ? 'Eintrag' : 'Einträge'}</p>
       </div>
       <button class="btn" onclick="openJournalForm()">+ Neuer Eintrag</button>
     </div>
-
     ${total > 0 ? `
-      <!-- Journal KPIs -->
       <div class="grid grid-cols-4 gap-4 mb-5">
-        <div class="panel p-4">
-          <div class="kpi-label">Total Entries</div>
-          <div class="kpi-value small num mt-2">${total}</div>
-        </div>
-        <div class="panel p-4">
-          <div class="kpi-label">Wins / Losses</div>
-          <div class="kpi-value small mt-2"><span class="win">${wins}</span><span style="color: var(--text-faint);"> / </span><span class="loss">${losses}</span></div>
-        </div>
-        <div class="panel p-4">
-          <div class="kpi-label">Winrate</div>
-          <div class="kpi-value small num mt-2">${winrate.toFixed(1)}<span class="kpi-unit">%</span></div>
-        </div>
-        <div class="panel p-4">
-          <div class="kpi-label">Net P&L</div>
-          <div class="kpi-value small num mt-2 ${cls(totalPnl)}">${fmtMoney(totalPnl, true)}</div>
-        </div>
+        <div class="glass p-4"><div class="kpi-label">Total Entries</div><div class="kpi-value small num mt-2">${total}</div></div>
+        <div class="glass p-4"><div class="kpi-label">Wins / Losses</div><div class="kpi-value small mt-2"><span class="win">${wins}</span><span style="color: var(--text-faint);"> / </span><span class="loss">${losses}</span></div></div>
+        <div class="glass p-4"><div class="kpi-label">Winrate</div><div class="kpi-value small num mt-2">${winrate.toFixed(1)}<span class="kpi-unit">%</span></div></div>
+        <div class="glass p-4"><div class="kpi-label">Net P&L</div><div class="kpi-value small num mt-2 ${cls(totalPnl)}">${fmtMoney(totalPnl, true)}</div></div>
       </div>
-
-      <!-- Filters -->
       <div class="flex items-center gap-3 mb-5">
-        <input type="text" class="field" placeholder="Suche in POI / Mistakes / Improvements..."
-               value="${escapeHtml(JOURNAL_STATE.filter.search)}"
-               oninput="JOURNAL_STATE.filter.search = this.value; render()"
-               style="max-width: 360px">
+        <input type="text" class="field" placeholder="Suche..." value="${escapeHtml(JOURNAL_STATE.filter.search)}" oninput="JOURNAL_STATE.filter.search = this.value; render()" style="max-width: 360px">
         <select class="field" onchange="JOURNAL_STATE.filter.instrument = this.value; render()" style="max-width: 180px">
           <option value="all">Alle Instrumente</option>
           ${INSTRUMENTS.map(i => `<option value="${i}" ${i===JOURNAL_STATE.filter.instrument?'selected':''}>${i}</option>`).join("")}
@@ -838,15 +980,14 @@ function viewJournal() {
         </select>
       </div>
     ` : ''}
-
     ${entries.length === 0 ? `
-      <div class="panel p-16 text-center">
+      <div class="glass p-16 text-center">
         <div class="text-xl font-bold mb-2" style="color: var(--text-mid);">${total === 0 ? 'Noch keine Einträge' : 'Keine Treffer'}</div>
         <p class="text-sm mb-6" style="color: var(--text-dim)">${total === 0 ? 'Starte dein Trade-Journal mit dem ersten Eintrag.' : 'Filter anpassen oder zurücksetzen.'}</p>
         ${total === 0 ? '<button class="btn" onclick="openJournalForm()">+ Ersten Eintrag erstellen</button>' : ''}
       </div>
     ` : `
-      <div class="panel overflow-hidden">
+      <div class="glass overflow-hidden">
         <div style="max-height: 70vh; overflow-y: auto; overflow-x: auto;" class="scroll-thin">
           <table class="dt">
             <thead>
@@ -875,7 +1016,6 @@ function viewJournal() {
     `}
   `;
 }
-
 function renderJournalRow(e) {
   const pnl = parseFloat(e.pnl_dollar) || 0;
   const pnlPct = parseFloat(e.pnl_pct) || 0;
@@ -894,49 +1034,28 @@ function renderJournalRow(e) {
       <td class="num font-bold ${cls(pnl)}" style="text-align: right">${e.pnl_dollar ? fmtMoney(pnl, true) : '—'}</td>
       <td class="num font-semibold ${cls(pnlPct)}" style="text-align: right">${e.pnl_pct ? (pnlPct >= 0 ? '+' : '') + pnlPct.toFixed(2) + '%' : '—'}</td>
       <td><span class="pill">${chartCount}/3</span></td>
-      <td style="text-align: right">
-        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation(); openJournalForm('${e.id}')" style="padding: 4px 10px; font-size: 11px;">Edit</button>
-      </td>
+      <td style="text-align: right"><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation(); openJournalForm('${e.id}')" style="padding: 4px 10px; font-size: 11px;">Edit</button></td>
     </tr>
   `;
 }
-
 function openJournalDetail(id) {
   const entry = JOURNAL_STATE.entries.find(e => e.id === id);
   if (!entry) return;
   JOURNAL_STATE.detailView = entry;
   renderJournalDetailModal();
 }
-
 function closeJournalDetail() {
   JOURNAL_STATE.detailView = null;
   document.getElementById("journal-modal").style.display = "none";
   document.getElementById("journal-modal").innerHTML = "";
 }
-
 function renderJournalDetailModal() {
-  const e = JOURNAL_STATE.detailView;
-  if (!e) return;
+  const e = JOURNAL_STATE.detailView; if (!e) return;
   const modal = document.getElementById("journal-modal");
-  modal.style.display = "flex";
-  modal.className = "modal-bg";
-
-  const pnl = parseFloat(e.pnl_dollar) || 0;
-  const pnlPct = parseFloat(e.pnl_pct) || 0;
-
-  const field = (label, value, mono = false) => `
-    <div>
-      <div class="kpi-label mb-2">${label}</div>
-      <div class="${mono ? 'mono num font-semibold' : 'text-sm'}" style="color: ${value ? 'var(--text)' : 'var(--text-faint)'}; line-height: 1.6;">${escapeHtml(value || '—')}</div>
-    </div>
-  `;
-  const img = (label, src) => src ? `
-    <div>
-      <div class="kpi-label mb-2">${label}</div>
-      <div class="panel-soft p-2"><img src="${src}" style="width: 100%; max-height: 360px; object-fit: contain; border-radius: 4px;"></div>
-    </div>
-  ` : '';
-
+  modal.style.display = "flex"; modal.className = "modal-bg";
+  const pnl = parseFloat(e.pnl_dollar) || 0; const pnlPct = parseFloat(e.pnl_pct) || 0;
+  const field = (label, value, mono = false) => `<div><div class="kpi-label mb-2">${label}</div><div class="${mono ? 'mono num font-semibold' : 'text-sm'}" style="color: ${value ? 'var(--text)' : 'var(--text-faint)'}; line-height: 1.6;">${escapeHtml(value || '—')}</div></div>`;
+  const img = (label, src) => src ? `<div><div class="kpi-label mb-2">${label}</div><div class="glass-soft p-2"><img src="${src}" style="width: 100%; max-height: 360px; object-fit: contain; border-radius: 4px;"></div></div>` : '';
   modal.innerHTML = `
     <div class="modal scroll-thin">
       <div class="p-7 border-b" style="border-color: var(--border)">
@@ -961,55 +1080,21 @@ function renderJournalDetailModal() {
           </div>
         </div>
       </div>
-
       <div class="p-7">
         <div class="section-title">Trade Info</div>
-        <div class="grid grid-cols-4 gap-5">
-          ${field("Datum", e.date)}
-          ${field("Session", e.session)}
-          ${field("Quarter", e.quarter)}
-          ${field("Hold Duration", e.hold_duration)}
-        </div>
-
+        <div class="grid grid-cols-4 gap-5">${field("Datum", e.date)}${field("Session", e.session)}${field("Quarter", e.quarter)}${field("Hold Duration", e.hold_duration)}</div>
         <div class="section-title">Strategy & Setup</div>
-        <div class="grid grid-cols-2 gap-5">
-          ${field("Point of Interest", e.point_of_interest)}
-          ${field("Management Strategy", e.management)}
-          ${field("Confirmations", e.confirmations)}
-          ${field("Executions", e.executions)}
-          ${field("Stop Loss Placement", e.sl_placement)}
-          ${field("Take Profit Placement", e.tp_placement)}
-        </div>
-
-        ${(e.chart_htf || e.chart_before || e.chart_after) ? `
-          <div class="section-title">Charts</div>
-          <div class="grid grid-cols-3 gap-4">
-            ${img("Higher Time Frame", e.chart_htf)}
-            ${img("Before", e.chart_before)}
-            ${img("After", e.chart_after)}
-          </div>
-        ` : ''}
-
+        <div class="grid grid-cols-2 gap-5">${field("Point of Interest", e.point_of_interest)}${field("Management Strategy", e.management)}${field("Confirmations", e.confirmations)}${field("Executions", e.executions)}${field("Stop Loss Placement", e.sl_placement)}${field("Take Profit Placement", e.tp_placement)}</div>
+        ${(e.chart_htf || e.chart_before || e.chart_after) ? `<div class="section-title">Charts</div><div class="grid grid-cols-3 gap-4">${img("Higher Time Frame", e.chart_htf)}${img("Before", e.chart_before)}${img("After", e.chart_after)}</div>` : ''}
         <div class="section-title">Reflection</div>
-        <div class="grid grid-cols-3 gap-5">
-          ${field("Emotions", e.emotions)}
-          ${field("Mistakes", e.mistakes)}
-          ${field("Improvements", e.improvements)}
-        </div>
+        <div class="grid grid-cols-3 gap-5">${field("Emotions", e.emotions)}${field("Mistakes", e.mistakes)}${field("Improvements", e.improvements)}</div>
       </div>
-    </div>
-  `;
+    </div>`;
 }
-
 function deleteJournalEntry(id) {
   JOURNAL_STATE.entries = JOURNAL_STATE.entries.filter(e => e.id !== id);
-  saveJournal();
-  render();
+  saveJournal(); render();
 }
-
-// ============================================================
-// Journal Form
-// ============================================================
 function openJournalForm(id) {
   const entry = id ? JOURNAL_STATE.entries.find(e => e.id === id) : {};
   JOURNAL_STATE.editing = { ...entry };
@@ -1018,18 +1103,12 @@ function openJournalForm(id) {
   JOURNAL_STATE.detailView = null;
   renderJournalFormModal();
 }
-
 function closeJournalForm() {
   JOURNAL_STATE.editing = null;
   document.getElementById("journal-modal").style.display = "none";
   document.getElementById("journal-modal").innerHTML = "";
 }
-
-function updateField(key, val) {
-  if (!JOURNAL_STATE.editing) return;
-  JOURNAL_STATE.editing[key] = val;
-}
-
+function updateField(key, val) { if (JOURNAL_STATE.editing) JOURNAL_STATE.editing[key] = val; }
 async function uploadField(key, fileInput) {
   if (!fileInput.files || !fileInput.files[0]) return;
   try {
@@ -1038,71 +1117,28 @@ async function uploadField(key, fileInput) {
     renderJournalFormModal();
   } catch (e) { alert("Bild konnte nicht geladen werden: " + e.message); }
 }
-
 function removeImageField(key) {
   if (!JOURNAL_STATE.editing) return;
   delete JOURNAL_STATE.editing[key];
   renderJournalFormModal();
 }
-
 function saveJournalEntry() {
-  const e = JOURNAL_STATE.editing;
-  if (!e) return;
+  const e = JOURNAL_STATE.editing; if (!e) return;
   const idx = JOURNAL_STATE.entries.findIndex(x => x.id === e.id);
   if (idx >= 0) JOURNAL_STATE.entries[idx] = e;
   else JOURNAL_STATE.entries.push(e);
-  try {
-    saveJournal();
-  } catch (err) {
-    alert("Speichern fehlgeschlagen — der lokale Speicher ist voll. Lade weniger oder kleinere Bilder hoch.");
-    return;
-  }
-  closeJournalForm();
-  render();
+  try { saveJournal(); }
+  catch (err) { alert("Speichern fehlgeschlagen — lokaler Speicher voll. Bilder kleiner."); return; }
+  closeJournalForm(); render();
 }
-
 function renderJournalFormModal() {
-  const e = JOURNAL_STATE.editing;
-  if (!e) return;
+  const e = JOURNAL_STATE.editing; if (!e) return;
   const modal = document.getElementById("journal-modal");
-  modal.style.display = "flex";
-  modal.className = "modal-bg";
-
-  const input = (key, label, type = "text", placeholder = "") => `
-    <div>
-      <label class="field-label">${label}</label>
-      <input type="${type}" class="field" value="${escapeHtml(e[key] || '')}" placeholder="${placeholder}"
-             oninput="updateField('${key}', this.value)">
-    </div>
-  `;
-  const select = (key, label, options) => `
-    <div>
-      <label class="field-label">${label}</label>
-      <select class="field" onchange="updateField('${key}', this.value)">
-        <option value="">— wählen —</option>
-        ${options.map(o => `<option value="${o}" ${e[key]===o?'selected':''}>${o}</option>`).join("")}
-      </select>
-    </div>
-  `;
-  const textarea = (key, label, placeholder = "", rows = 3) => `
-    <div>
-      <label class="field-label">${label}</label>
-      <textarea class="field" rows="${rows}" placeholder="${placeholder}"
-                oninput="updateField('${key}', this.value)">${escapeHtml(e[key] || '')}</textarea>
-    </div>
-  `;
-  const imgUpload = (key, label) => `
-    <div>
-      <label class="field-label">${label}</label>
-      <div class="img-drop ${e[key] ? 'has-image' : ''}" onclick="${e[key] ? '' : `document.getElementById('file-${key}').click()`}">
-        ${e[key]
-          ? `<img src="${e[key]}"><button class="img-remove" onclick="event.stopPropagation(); removeImageField('${key}')">×</button>`
-          : `<div><div style="color: var(--text-mid); font-size: 13px; font-weight: 500;">+ Bild hochladen</div><div style="color: var(--text-dim); font-size: 11px; margin-top: 4px;">PNG, JPG · max 1400px</div></div>`}
-      </div>
-      <input id="file-${key}" type="file" accept="image/*" style="display: none" onchange="uploadField('${key}', this)">
-    </div>
-  `;
-
+  modal.style.display = "flex"; modal.className = "modal-bg";
+  const input = (key, label, type = "text", placeholder = "") => `<div><label class="field-label">${label}</label><input type="${type}" class="field" value="${escapeHtml(e[key] || '')}" placeholder="${placeholder}" oninput="updateField('${key}', this.value)"></div>`;
+  const select = (key, label, options) => `<div><label class="field-label">${label}</label><select class="field" onchange="updateField('${key}', this.value)"><option value="">— wählen —</option>${options.map(o => `<option value="${o}" ${e[key]===o?'selected':''}>${o}</option>`).join("")}</select></div>`;
+  const textarea = (key, label, placeholder = "", rows = 3) => `<div><label class="field-label">${label}</label><textarea class="field" rows="${rows}" placeholder="${placeholder}" oninput="updateField('${key}', this.value)">${escapeHtml(e[key] || '')}</textarea></div>`;
+  const imgUpload = (key, label) => `<div><label class="field-label">${label}</label><div class="img-drop ${e[key] ? 'has-image' : ''}" onclick="${e[key] ? '' : `document.getElementById('file-${key}').click()`}">${e[key] ? `<img src="${e[key]}"><button class="img-remove" onclick="event.stopPropagation(); removeImageField('${key}')">×</button>` : `<div><div style="color: var(--text-mid); font-size: 13px; font-weight: 500;">+ Bild hochladen</div><div style="color: var(--text-dim); font-size: 11px; margin-top: 4px;">PNG, JPG · max 1400px</div></div>`}</div><input id="file-${key}" type="file" accept="image/*" style="display: none" onchange="uploadField('${key}', this)"></div>`;
   modal.innerHTML = `
     <div class="modal scroll-thin">
       <div class="p-7 border-b" style="border-color: var(--border)">
@@ -1114,61 +1150,27 @@ function renderJournalFormModal() {
           <button class="btn-ghost btn btn-sm" onclick="closeJournalForm()">✕ Schließen</button>
         </div>
       </div>
-
       <div class="p-7">
         <div class="section-title">Trade Info</div>
-        <div class="grid grid-cols-3 gap-4">
-          ${input("date", "Datum", "date")}
-          ${select("instrument", "Instrument / Future", INSTRUMENTS)}
-          ${select("session", "Session", SESSIONS)}
-          ${select("quarter", "Quarter", QUARTERS)}
-          ${select("direction", "Direction", DIRECTIONS)}
-          ${input("point_of_interest", "Point of Interest", "text", "z.B. OB auf 4H bei 5230")}
-        </div>
-
+        <div class="grid grid-cols-3 gap-4">${input("date", "Datum", "date")}${select("instrument", "Instrument / Future", INSTRUMENTS)}${select("session", "Session", SESSIONS)}${select("quarter", "Quarter", QUARTERS)}${select("direction", "Direction", DIRECTIONS)}${input("point_of_interest", "Point of Interest", "text", "z.B. OB auf 4H bei 5230")}</div>
         <div class="section-title">Strategy & Setup</div>
-        <div class="grid grid-cols-2 gap-4">
-          ${textarea("confirmations", "Confirmations", "z.B. FVG im OB, BOS auf 1H...")}
-          ${textarea("executions", "Executions", "z.B. Entry am BOS-Close, 3 Partials...")}
-          ${input("sl_placement", "Stop Loss Placement", "text", "unter OB-Low minus 0.5×ATR")}
-          ${input("tp_placement", "Take Profit Placement", "text", "TP1 1R, TP3 PAL, TP2 mid")}
-          ${textarea("management", "Management Strategy", "z.B. SL→BE bei TP1, Trail nach TP2...")}
-        </div>
-
+        <div class="grid grid-cols-2 gap-4">${textarea("confirmations", "Confirmations", "z.B. FVG im OB, BOS auf 1H...")}${textarea("executions", "Executions", "z.B. Entry am BOS-Close, 3 Partials...")}${input("sl_placement", "Stop Loss Placement", "text", "unter OB-Low minus 0.5×ATR")}${input("tp_placement", "Take Profit Placement", "text", "TP1 1R, TP3 PAL, TP2 mid")}${textarea("management", "Management Strategy", "z.B. SL→BE bei TP1, Trail nach TP2...")}</div>
         <div class="section-title">Execution</div>
-        <div class="grid grid-cols-5 gap-4">
-          ${input("hold_duration", "Hold Duration", "text", "4h 20min")}
-          ${input("rr", "Risk to Reward", "text", "1:3")}
-          ${select("outcome", "Outcome", OUTCOMES)}
-          ${input("pnl_dollar", "P&L ($)", "number", "312.50")}
-          ${input("pnl_pct", "P&L (%)", "number", "3.12")}
-        </div>
-
+        <div class="grid grid-cols-5 gap-4">${input("hold_duration", "Hold Duration", "text", "4h 20min")}${input("rr", "Risk to Reward", "text", "1:3")}${select("outcome", "Outcome", OUTCOMES)}${input("pnl_dollar", "P&L ($)", "number", "312.50")}${input("pnl_pct", "P&L (%)", "number", "3.12")}</div>
         <div class="section-title">Charts</div>
-        <div class="grid grid-cols-3 gap-4">
-          ${imgUpload("chart_htf", "Higher Time Frame")}
-          ${imgUpload("chart_before", "Chart Before")}
-          ${imgUpload("chart_after", "Chart After")}
-        </div>
-
+        <div class="grid grid-cols-3 gap-4">${imgUpload("chart_htf", "Higher Time Frame")}${imgUpload("chart_before", "Chart Before")}${imgUpload("chart_after", "Chart After")}</div>
         <div class="section-title">Reflection</div>
-        <div class="grid grid-cols-3 gap-4">
-          ${textarea("emotions", "Emotions", "Wie hast du dich gefühlt?")}
-          ${textarea("mistakes", "Mistakes", "Was war nicht regelkonform?")}
-          ${textarea("improvements", "Improvements", "Was machst du beim nächsten Trade besser?")}
-        </div>
-
+        <div class="grid grid-cols-3 gap-4">${textarea("emotions", "Emotions", "Wie hast du dich gefühlt?")}${textarea("mistakes", "Mistakes", "Was war nicht regelkonform?")}${textarea("improvements", "Improvements", "Was machst du beim nächsten Trade besser?")}</div>
         <div class="flex justify-end gap-3 mt-8 pt-5 border-t" style="border-color: var(--border)">
           <button class="btn btn-ghost" onclick="closeJournalForm()">Abbrechen</button>
           <button class="btn" onclick="saveJournalEntry()">Eintrag speichern</button>
         </div>
       </div>
-    </div>
-  `;
+    </div>`;
 }
 
 // ============================================================
-// View: Bots
+// Bots
 // ============================================================
 function viewBots() {
   return `
@@ -1176,20 +1178,18 @@ function viewBots() {
       <div>
         <div class="kpi-label mb-2">Automation</div>
         <h1 class="page-title">Trading Bots</h1>
-        <p class="page-subtitle">${STATE.bots.length} ${STATE.bots.length !== 1 ? 'Bots' : 'Bot'} · ${STATE.bots.filter(b=>b.status==='live').length} live · ${STATE.bots.filter(b=>b.status==='backtest_only').length} Backtest</p>
+        <p class="text-sm mt-2" style="color: var(--text-mid)">${STATE.bots.length} ${STATE.bots.length !== 1 ? 'Bots' : 'Bot'}</p>
       </div>
-      <button class="btn btn-ghost btn-sm" onclick="if(confirm('Alle Bot-Änderungen zurücksetzen?')) resetBots()">Reset</button>
+      <button class="btn btn-ghost btn-sm" onclick="if(confirm('Reset?')) resetBots()">Reset</button>
     </div>
     <div class="panel-stack">
       ${STATE.bots.map((b, idx) => renderBotCard(b, idx)).join("")}
-    </div>
-  `;
+    </div>`;
 }
-
 function renderBotCard(b, idx) {
   const p = b.performance;
   return `
-    <div class="panel p-7">
+    <div class="glass p-7">
       <div class="flex items-start justify-between mb-6">
         <div>
           <div class="flex items-center gap-3 mb-2">
@@ -1202,33 +1202,29 @@ function renderBotCard(b, idx) {
         <button class="btn btn-ghost btn-sm" onclick='exportBot(${idx})'>Export YAML</button>
       </div>
       <div class="grid grid-cols-5 gap-3 mb-6">
-        <div class="panel-soft p-4"><div class="kpi-label">Trades</div><div class="text-xl font-bold num mt-2">${p.trades}</div></div>
-        <div class="panel-soft p-4"><div class="kpi-label">Winrate</div><div class="text-xl font-bold num mt-2">${p.winrate}%</div></div>
-        <div class="panel-soft p-4"><div class="kpi-label">Total Return</div><div class="text-xl font-bold num mt-2 ${cls(p.total_return_pct)}">${fmtPct(p.total_return_pct)}</div></div>
-        <div class="panel-soft p-4"><div class="kpi-label">CAGR</div><div class="text-xl font-bold num mt-2 ${cls(p.cagr_pct)}">${fmtPct(p.cagr_pct)}</div></div>
-        <div class="panel-soft p-4"><div class="kpi-label">Max DD</div><div class="text-xl font-bold num mt-2 loss">${p.max_dd_pct.toFixed(1)}%</div></div>
+        <div class="glass-soft p-4"><div class="kpi-label">Trades</div><div class="text-xl font-bold num mt-2">${p.trades}</div></div>
+        <div class="glass-soft p-4"><div class="kpi-label">Winrate</div><div class="text-xl font-bold num mt-2">${p.winrate}%</div></div>
+        <div class="glass-soft p-4"><div class="kpi-label">Total Return</div><div class="text-xl font-bold num mt-2 ${cls(p.total_return_pct)}">${fmtPct(p.total_return_pct)}</div></div>
+        <div class="glass-soft p-4"><div class="kpi-label">CAGR</div><div class="text-xl font-bold num mt-2 ${cls(p.cagr_pct)}">${fmtPct(p.cagr_pct)}</div></div>
+        <div class="glass-soft p-4"><div class="kpi-label">Max DD</div><div class="text-xl font-bold num mt-2 loss">${p.max_dd_pct.toFixed(1)}%</div></div>
       </div>
       <div>
-        <div class="kpi-label mb-3">Parameter <span style="color: var(--text-dim); text-transform: none; letter-spacing: 0; font-weight: 500">— im Browser gespeichert</span></div>
+        <div class="kpi-label mb-3">Parameter</div>
         <div class="grid grid-cols-3 gap-3">
           ${Object.entries(b.params).filter(([k,v]) => typeof v !== 'object').map(([k,v]) => `
             <div>
               <label class="field-label">${k}</label>
-              <input class="field" type="${typeof v === 'number' ? 'number' : 'text'}" step="${typeof v === 'number' ? '0.1' : '1'}" value="${v}"
-                     onchange="updateBotParam(${idx}, '${k}', this.value, '${typeof v}')">
+              <input class="field" type="${typeof v === 'number' ? 'number' : 'text'}" step="${typeof v === 'number' ? '0.1' : '1'}" value="${v}" onchange="updateBotParam(${idx}, '${k}', this.value, '${typeof v}')">
             </div>
           `).join("")}
         </div>
       </div>
-    </div>
-  `;
+    </div>`;
 }
-
 function updateBotParam(botIdx, key, value, type) {
   STATE.bots[botIdx].params[key] = type === "number" ? parseFloat(value) : value;
   saveBots();
 }
-
 function exportBot(idx) {
   const b = STATE.bots[idx];
   const yaml = Object.entries(b.params).map(([k,v]) => `  ${k}: ${JSON.stringify(v)}`).join("\n");
@@ -1252,22 +1248,17 @@ function render() {
       el.addEventListener("click", (ev) => { ev.preventDefault(); navigate(el.dataset.route); });
     }
   });
-
   const root = document.getElementById("view-root");
   if (route === "dashboard") { root.innerHTML = viewDashboard(); renderDashboardCharts(); }
   else if (route === "strategien") { root.innerHTML = viewStrategien(); }
   else if (route === "trades") { root.innerHTML = viewTrades(); }
   else if (route === "journal") { root.innerHTML = viewJournal(); }
   else if (route === "bots") { root.innerHTML = viewBots(); }
-
   root.querySelectorAll("[data-route]").forEach(el => {
     el.addEventListener("click", (ev) => { ev.preventDefault(); navigate(el.dataset.route); });
   });
-
-  document.getElementById("footer-period").textContent =
-    `${DATA.kpis.data_period_start} → ${DATA.kpis.data_period_end}`;
+  document.getElementById("footer-period").textContent = `${DATA.kpis.data_period_start} → ${DATA.kpis.data_period_end}`;
 }
-
 render();
 </script>
 </body>
