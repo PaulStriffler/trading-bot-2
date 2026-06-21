@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Trading Desk · Dashboard</title>
+<title>Trading Desk · E8-Style Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -12,28 +12,32 @@
 <script src="data.js"></script>
 <style>
   :root {
-    --bg: #0a0e1a;
-    --bg-soft: #0d1220;
-    --panel: rgba(20, 27, 45, 0.55);
-    --panel-solid: #131a2c;
-    --panel-2: rgba(28, 36, 56, 0.6);
-    --panel-3: #1a2238;
-    --border: rgba(255, 255, 255, 0.07);
-    --border-strong: rgba(255, 255, 255, 0.12);
+    --bg: #07090e;
+    --bg-soft: #0a0d14;
+    --panel: #0e131c;
+    --panel-2: #131822;
+    --panel-3: #1a212e;
+    --border: rgba(255, 255, 255, 0.05);
+    --border-strong: rgba(255, 255, 255, 0.1);
+    --border-accent: rgba(20, 184, 166, 0.3);
     --text: #ffffff;
-    --text-mid: #a0a8c0;
-    --text-dim: #6e7892;
-    --text-faint: #4a5070;
-    --accent-1: #3b82f6;
-    --accent-2: #a855f7;
-    --accent-3: #06b6d4;
-    --brand: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
-    --brand-soft: linear-gradient(135deg, rgba(59,130,246,0.18) 0%, rgba(168,85,247,0.18) 100%);
-    --win: #10b981;
-    --win-bg: rgba(16, 185, 129, 0.12);
-    --win-glow: rgba(16, 185, 129, 0.35);
-    --loss: #ef4444;
-    --loss-bg: rgba(239, 68, 68, 0.12);
+    --text-mid: #b0b8c8;
+    --text-dim: #6b7585;
+    --text-faint: #4a5260;
+    /* E8 Markets palette */
+    --accent: #14b8a6;            /* primary teal */
+    --accent-glow: rgba(20, 184, 166, 0.4);
+    --accent-soft: rgba(20, 184, 166, 0.12);
+    --accent-light: #5eead4;
+    --purple: #a855f7;
+    --purple-soft: rgba(168, 85, 247, 0.15);
+    --brand-gradient: linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%);
+    --purple-gradient: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
+    --teal-gradient: linear-gradient(180deg, rgba(20,184,166,0.08), rgba(20,184,166,0) 80%);
+    --win: #14b8a6;
+    --win-bg: rgba(20, 184, 166, 0.12);
+    --loss: #f87171;
+    --loss-bg: rgba(248, 113, 113, 0.12);
     --warn: #f59e0b;
     --warn-bg: rgba(245, 158, 11, 0.12);
   }
@@ -46,122 +50,181 @@
   body {
     font-weight: 400; font-size: 14px; letter-spacing: -0.005em;
     background:
-      radial-gradient(ellipse 1200px 600px at 15% -10%, rgba(59,130,246,0.10), transparent 50%),
-      radial-gradient(ellipse 1000px 700px at 100% 15%, rgba(168,85,247,0.08), transparent 50%),
-      radial-gradient(ellipse 900px 500px at 50% 110%, rgba(6,182,212,0.05), transparent 50%),
+      radial-gradient(ellipse 900px 500px at 20% 0%, rgba(20,184,166,0.06), transparent 50%),
+      radial-gradient(ellipse 700px 500px at 100% 30%, rgba(168,85,247,0.04), transparent 50%),
       var(--bg);
     min-height: 100vh;
   }
   .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; }
   .num { font-variant-numeric: tabular-nums; }
 
-  /* Glass cards */
-  .glass {
+  /* Cards */
+  .card {
     background: var(--panel);
-    backdrop-filter: blur(20px) saturate(140%);
-    -webkit-backdrop-filter: blur(20px) saturate(140%);
     border: 1px solid var(--border);
-    border-radius: 16px;
+    border-radius: 14px;
   }
-  .glass-soft {
-    background: var(--panel-2);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid var(--border);
-    border-radius: 12px;
+  .card-glow {
+    background: var(--panel);
+    border: 1px solid var(--border-accent);
+    border-radius: 14px;
+    box-shadow: 0 0 28px rgba(20, 184, 166, 0.10), inset 0 1px 0 rgba(255,255,255,0.04);
   }
-  .solid { background: var(--panel-solid); border: 1px solid var(--border); border-radius: 16px; }
+  /* Grid + canvas safeguards — without these Chart.js can compute the wrong width */
+  .grid > * { min-width: 0; }
+  canvas { max-width: 100% !important; display: block; }
+  .chart-box { position: relative; width: 100%; }
+  .card-purple {
+    background: linear-gradient(135deg, #2a1659 0%, #1a0f3a 60%, #0e131c 100%);
+    border: 1px solid rgba(168,85,247,0.25);
+    border-radius: 14px;
+  }
+  .card-teal {
+    background: linear-gradient(135deg, #0d3d3a 0%, #0a2825 60%, #0e131c 100%);
+    border: 1px solid rgba(20,184,166,0.3);
+    border-radius: 14px;
+  }
+  .card-dark { background: var(--panel-2); border: 1px solid var(--border); border-radius: 12px; }
 
-  /* Brand-coloured accents */
-  .brand-text {
-    background: var(--brand); -webkit-background-clip: text;
-    background-clip: text; color: transparent;
-  }
-  .brand-bg { background: var(--brand); }
-  .brand-soft-bg { background: var(--brand-soft); }
-
-  /* Glow effects */
-  .glow-win {
-    box-shadow: 0 0 24px var(--win-glow), inset 0 0 1px rgba(255,255,255,0.05);
-  }
-
-  /* Typography utilities */
-  h1.page-title {
-    font-size: 32px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.1;
-  }
+  /* Typography */
   .kpi-label {
-    font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em;
-    color: var(--text-dim); font-weight: 600;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--text-dim); font-weight: 500;
   }
-  .kpi-value {
-    font-size: 40px; font-weight: 700; letter-spacing: -0.035em;
-    margin-top: 8px; line-height: 1; font-feature-settings: "tnum" 1;
+  .kpi-num {
+    font-size: 28px; font-weight: 700; letter-spacing: -0.025em;
+    margin-top: 6px; line-height: 1; font-feature-settings: "tnum" 1;
   }
-  .kpi-value.hero {
-    font-size: 56px; font-weight: 800; letter-spacing: -0.04em;
+  .kpi-num.hero { font-size: 42px; font-weight: 800; letter-spacing: -0.03em; }
+  .kpi-num.small { font-size: 22px; font-weight: 700; }
+  .kpi-unit { font-size: 14px; color: var(--text-dim); font-weight: 500; margin-left: 2px; }
+
+  .win { color: var(--win); } .loss { color: var(--loss); }
+
+  /* Top header */
+  .topbar {
+    background: rgba(10, 13, 20, 0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    height: 60px; display: flex; align-items: center;
+    padding: 0 24px; gap: 16px;
   }
-  .kpi-value.small { font-size: 26px; font-weight: 600; }
-  .kpi-unit { font-size: 18px; color: var(--text-dim); font-weight: 500; margin-left: 2px; }
-  .win { color: var(--win); }
-  .loss { color: var(--loss); }
+  .search-input {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px 8px 36px;
+    font-size: 13px; color: var(--text);
+    width: 320px; outline: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236b7585' stroke-width='2'><circle cx='11' cy='11' r='8'/><line x1='21' y1='21' x2='16.65' y2='16.65'/></svg>");
+    background-repeat: no-repeat; background-position: 12px center;
+  }
+  .search-input::placeholder { color: var(--text-faint); }
+  .icon-btn {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: var(--panel-2); border: 1px solid var(--border);
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.15s; color: var(--text-mid);
+    position: relative;
+  }
+  .icon-btn:hover { background: var(--panel-3); color: var(--text); }
+  .notif-dot {
+    position: absolute; top: 7px; right: 7px;
+    width: 7px; height: 7px; border-radius: 4px; background: var(--accent);
+    box-shadow: 0 0 6px var(--accent);
+  }
+  .account-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 14px; border-radius: 8px;
+    background: var(--panel-2); border: 1px solid var(--border);
+    font-size: 12px; font-weight: 500; color: var(--text);
+  }
+  .account-pill .badge-mini {
+    background: var(--accent-soft); color: var(--accent);
+    padding: 2px 6px; border-radius: 4px; font-size: 10px;
+    font-weight: 700; letter-spacing: 0.04em;
+  }
+  .user-chip {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 5px 12px 5px 5px;
+    border-radius: 30px;
+    background: var(--panel-2); border: 1px solid var(--border);
+    cursor: pointer;
+  }
+  .user-avatar {
+    width: 28px; height: 28px; border-radius: 14px;
+    background: linear-gradient(135deg, #14b8a6, #a855f7);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; color: #fff; font-size: 12px;
+  }
 
   /* Sidebar */
   .sidebar {
-    background: linear-gradient(180deg, rgba(13, 18, 32, 0.95), rgba(10, 14, 26, 0.95));
+    background: rgba(7, 9, 14, 0.95);
     backdrop-filter: blur(20px);
-    border-color: var(--border);
+    border-right: 1px solid var(--border);
   }
-  .brand-logo {
-    width: 38px; height: 38px; border-radius: 10px;
-    background: var(--brand);
+  .brand-logo-box {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: var(--brand-gradient);
     display: flex; align-items: center; justify-content: center;
-    font-weight: 800; color: #fff; font-size: 16px;
-    box-shadow: 0 4px 14px rgba(59,130,246,0.35);
+    font-weight: 800; color: #fff; font-size: 14px;
+    letter-spacing: -0.02em;
+  }
+  .nav-section {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--text-faint); font-weight: 600;
+    padding: 18px 20px 8px;
   }
   .nav-item {
     display: flex; align-items: center; gap: 12px;
-    padding: 11px 16px; margin: 2px 10px;
-    cursor: pointer; border-radius: 10px;
-    color: var(--text-mid); font-size: 13.5px; font-weight: 500;
-    transition: all 0.18s;
+    padding: 10px 20px; cursor: pointer;
+    color: var(--text-mid); font-size: 13px; font-weight: 500;
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
   }
-  .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+  .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.025); }
   .nav-item.active {
-    color: var(--text);
-    background: var(--brand-soft);
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+    color: var(--accent); border-left-color: var(--accent);
+    background: linear-gradient(90deg, rgba(20,184,166,0.10), transparent 80%);
   }
-  .nav-item.active .nav-icon { color: var(--accent-1); }
-  .nav-icon { width: 18px; height: 18px; flex-shrink: 0; color: var(--text-dim); }
+  .nav-item.active .nav-icon { color: var(--accent); }
+  .nav-icon { width: 16px; height: 16px; flex-shrink: 0; color: var(--text-dim); }
 
   /* Badges */
   .badge {
     display: inline-flex; align-items: center; gap: 4px;
-    padding: 3px 10px; border-radius: 6px; font-size: 11px;
-    font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    padding: 3px 9px; border-radius: 5px; font-size: 10px;
+    font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
   }
   .badge-active, .badge-live, .badge-win, .badge-long { color: var(--win); background: var(--win-bg); }
   .badge-planned, .badge-backtest { color: var(--warn); background: var(--warn-bg); }
   .badge-loss, .badge-short { color: var(--loss); background: var(--loss-bg); }
   .badge-neutral { color: var(--text-mid); background: rgba(255,255,255,0.06); }
-  .badge-brand { color: #fff; background: var(--brand-soft); border: 1px solid rgba(168,85,247,0.3); }
   .pill {
-    padding: 3px 9px; border-radius: 6px; font-size: 11px;
+    padding: 3px 9px; border-radius: 5px; font-size: 11px;
     font-weight: 500; background: rgba(255,255,255,0.05); color: var(--text-mid);
   }
-  .pill-outline {
-    background: transparent; border: 1px solid var(--border-strong);
+  .pill-outline { background: transparent; border: 1px solid var(--border-strong); }
+
+  /* Time pill (for chart range selector) */
+  .time-pill {
+    padding: 5px 11px; border-radius: 6px; font-size: 11px;
+    font-weight: 600; color: var(--text-mid); cursor: pointer;
+    transition: all 0.15s;
   }
+  .time-pill:hover { color: var(--text); }
+  .time-pill.active { color: var(--accent); background: var(--accent-soft); }
 
   /* Forms */
   input.field, select.field, textarea.field {
-    background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 8px;
+    background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px;
     padding: 10px 14px; color: var(--text); font-size: 13px; font-weight: 500;
     outline: none; transition: all 0.15s; font-family: inherit; width: 100%;
   }
   input.field:focus, select.field:focus, textarea.field:focus {
-    border-color: var(--accent-1); background: rgba(59,130,246,0.06);
-    box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+    border-color: var(--accent); background: rgba(20,184,166,0.04);
+    box-shadow: 0 0 0 3px rgba(20,184,166,0.12);
   }
   input.field::placeholder, textarea.field::placeholder { color: var(--text-faint); }
   label.field-label {
@@ -173,56 +236,56 @@
   /* Buttons */
   .btn {
     display: inline-flex; align-items: center; gap: 6px;
-    background: var(--brand); color: #fff;
-    padding: 10px 20px; border-radius: 10px;
-    font-size: 13px; font-weight: 600; cursor: pointer; border: none;
-    transition: all 0.2s; font-family: inherit;
-    box-shadow: 0 4px 14px rgba(59,130,246,0.25);
+    background: var(--accent); color: #000;
+    padding: 10px 18px; border-radius: 8px;
+    font-size: 13px; font-weight: 700; cursor: pointer; border: none;
+    transition: all 0.15s; font-family: inherit;
+    box-shadow: 0 0 16px rgba(20,184,166,0.25);
   }
-  .btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(59,130,246,0.4); }
+  .btn:hover { background: var(--accent-light); transform: translateY(-1px); }
   .btn-ghost {
-    background: rgba(255,255,255,0.04); color: var(--text);
+    background: var(--panel-2); color: var(--text);
     border: 1px solid var(--border-strong); box-shadow: none;
   }
-  .btn-ghost:hover { background: rgba(255,255,255,0.08); transform: none; box-shadow: none; }
+  .btn-ghost:hover { background: var(--panel-3); border-color: var(--text-dim); transform: none; }
   .btn-danger {
-    background: var(--loss-bg); color: var(--loss); border: 1px solid rgba(239,68,68,0.25);
+    background: var(--loss-bg); color: var(--loss); border: 1px solid rgba(248,113,113,0.25);
     box-shadow: none;
   }
-  .btn-danger:hover { background: rgba(239,68,68,0.2); transform: none; box-shadow: none; }
-  .btn-sm { padding: 7px 14px; font-size: 12px; }
+  .btn-danger:hover { background: rgba(248,113,113,0.2); transform: none; }
+  .btn-sm { padding: 7px 14px; font-size: 11px; }
 
-  /* Table */
+  /* Tables */
   table.dt { width: 100%; border-collapse: collapse; font-size: 13px; }
   table.dt th {
     text-align: left; font-weight: 600; color: var(--text-dim);
-    padding: 14px 16px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
-    border-bottom: 1px solid var(--border); background: var(--panel-solid);
+    padding: 12px 16px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em;
+    border-bottom: 1px solid var(--border); background: var(--panel);
     position: sticky; top: 0; cursor: pointer; user-select: none; white-space: nowrap;
   }
   table.dt th:hover { color: var(--text); }
   table.dt td {
-    padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.04);
+    padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.03);
     white-space: nowrap;
   }
   table.dt td.wrap { white-space: normal; max-width: 220px; }
   table.dt tbody tr { transition: background 0.1s; cursor: pointer; }
-  table.dt tbody tr:hover { background: rgba(255,255,255,0.03); }
+  table.dt tbody tr:hover { background: rgba(255,255,255,0.025); }
 
   /* Scrollbars */
   .scroll-thin::-webkit-scrollbar { width: 8px; height: 8px; }
   .scroll-thin::-webkit-scrollbar-track { background: transparent; }
-  .scroll-thin::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 4px; }
-  .scroll-thin::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
+  .scroll-thin::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.06); border-radius: 4px; }
+  .scroll-thin::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.12); }
 
   /* Modal */
   .modal-bg {
-    position: fixed; inset: 0; background: rgba(5, 7, 15, 0.85);
+    position: fixed; inset: 0; background: rgba(5, 7, 11, 0.85);
     display: flex; align-items: center; justify-content: center;
     z-index: 50; padding: 24px; backdrop-filter: blur(8px);
   }
   .modal {
-    background: var(--panel-solid); border: 1px solid var(--border-strong); border-radius: 16px;
+    background: var(--panel); border: 1px solid var(--border-strong); border-radius: 14px;
     width: 100%; max-width: 1080px; max-height: 92vh; overflow-y: auto;
     box-shadow: 0 32px 80px rgba(0,0,0,0.7);
   }
@@ -234,423 +297,517 @@
     transition: all 0.15s; background: rgba(255,255,255,0.02);
     min-height: 160px; display: flex; align-items: center; justify-content: center;
   }
-  .img-drop:hover { border-color: var(--accent-1); background: rgba(59,130,246,0.06); }
+  .img-drop:hover { border-color: var(--accent); background: var(--accent-soft); }
   .img-drop.has-image { padding: 0; background: var(--bg); position: relative; overflow: hidden; }
   .img-drop img { max-width: 100%; max-height: 240px; display: block; margin: 0 auto; border-radius: 4px; }
   .img-remove {
     position: absolute; top: 8px; right: 8px;
     background: rgba(0,0,0,0.85); color: white; border: 1px solid var(--border-strong);
     width: 28px; height: 28px; border-radius: 14px; cursor: pointer;
-    font-size: 14px; line-height: 1;
+    font-size: 14px;
   }
 
   .section-title {
-    font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em;
-    color: var(--accent-1); font-weight: 700; margin: 28px 0 14px;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--accent); font-weight: 700; margin: 24px 0 12px;
     padding-bottom: 8px; border-bottom: 1px solid var(--border);
   }
   .section-title:first-child { margin-top: 0; }
 
-  .panel-stack > .glass { margin-bottom: 16px; }
-  .panel-stack > .glass:last-child { margin-bottom: 0; }
-
-  /* Sparkline canvas height */
-  .sparkline { height: 48px !important; max-height: 48px !important; }
-
-  /* Live dot */
+  /* Status dots */
   @keyframes pulse-soft { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
-  .live-dot { width: 6px; height: 6px; border-radius: 3px; background: var(--win);
-    box-shadow: 0 0 8px var(--win); animation: pulse-soft 1.8s ease-in-out infinite; display: inline-block; }
+  .live-dot { width: 6px; height: 6px; border-radius: 3px; background: var(--accent);
+    box-shadow: 0 0 8px var(--accent); animation: pulse-soft 1.8s ease-in-out infinite; display: inline-block; }
+
+  /* Account analysis row */
+  .analysis-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 9px 12px; border-radius: 6px;
+    font-size: 12px; transition: background 0.1s;
+  }
+  .analysis-row:hover { background: rgba(255,255,255,0.02); }
+  .analysis-row .label { color: var(--text-mid); }
+  .analysis-row .value { color: var(--text); font-weight: 600; }
+  .analysis-row.highlight { background: var(--accent-soft); }
+  .analysis-row.highlight .label, .analysis-row.highlight .value { color: var(--accent); }
+
+  /* Trading day rows (Account Live Analysis card) */
+  .day-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 12px; border-radius: 8px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border);
+    transition: all 0.12s;
+  }
+  .day-row:hover { background: rgba(255, 255, 255, 0.04); }
+  .day-row.day-win { border-color: rgba(20, 184, 166, 0.22); background: rgba(20, 184, 166, 0.06); }
+  .day-row.day-loss { border-color: rgba(248, 113, 113, 0.22); background: rgba(248, 113, 113, 0.06); }
+  .day-icon {
+    width: 22px; height: 22px; border-radius: 11px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+  }
+  .day-icon-win { background: rgba(20, 184, 166, 0.18); color: var(--win); }
+  .day-icon-loss { background: rgba(248, 113, 113, 0.18); color: var(--loss); }
+  .day-icon-empty { background: rgba(255, 255, 255, 0.04); color: var(--text-faint); }
+
+  /* Live account cards */
+  .live-banner {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 18px; border-radius: 12px;
+    background: linear-gradient(135deg, rgba(20,184,166,0.12), rgba(20,184,166,0.04));
+    border: 1px solid rgba(20,184,166,0.25);
+    margin-bottom: 16px;
+  }
+  .live-banner.offline {
+    background: linear-gradient(135deg, rgba(245,158,11,0.10), rgba(245,158,11,0.03));
+    border-color: rgba(245,158,11,0.25);
+  }
+  .live-account-card {
+    display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 16px; padding: 16px 20px; border-radius: 10px;
+    background: var(--panel-2); border: 1px solid var(--border);
+    transition: all 0.15s;
+  }
+  .live-account-card:hover { border-color: var(--border-strong); }
+  .live-stat { display: flex; flex-direction: column; gap: 4px; }
+  .live-stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); font-weight: 600; }
+  .live-stat-value { font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+
+  /* Chart floating callout */
+  .chart-callout {
+    position: absolute; top: 18px; right: 18px;
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(20, 184, 166, 0.95);
+    color: #042520;
+    padding: 8px 14px; border-radius: 10px;
+    box-shadow: 0 6px 20px rgba(20, 184, 166, 0.35);
+    z-index: 5;
+  }
+  .callout-dot {
+    width: 8px; height: 8px; border-radius: 4px; background: #042520;
+    box-shadow: 0 0 0 3px rgba(4, 37, 32, 0.25);
+  }
+  .callout-amount { font-size: 14px; font-weight: 800; line-height: 1; letter-spacing: -0.02em; }
+  .callout-label { font-size: 10px; font-weight: 600; opacity: 0.7; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.06em; }
 </style>
 </head>
 <body class="min-h-screen">
 
 <div class="flex min-h-screen">
   <!-- Sidebar -->
-  <aside class="w-60 flex-shrink-0 border-r relative sidebar">
-    <div class="p-5 border-b" style="border-color: var(--border);">
-      <div class="flex items-center gap-3">
-        <div class="brand-logo">P</div>
-        <div>
-          <div class="font-bold" style="font-size: 14px; letter-spacing: -0.01em;">Trading Desk</div>
-          <div style="font-size: 11px; color: var(--text-dim); font-weight: 500;">ICT/SMC · v3 Final</div>
-        </div>
+  <aside class="w-56 flex-shrink-0 sidebar relative">
+    <div class="p-5 flex items-center gap-3 border-b" style="border-color: var(--border);">
+      <div class="brand-logo-box">E8</div>
+      <div>
+        <div class="font-bold" style="font-size: 13px; letter-spacing: -0.01em;">Trading Desk</div>
+        <div style="font-size: 10px; color: var(--text-dim);">ICT/SMC · v3</div>
       </div>
     </div>
-    <nav class="py-3">
-      <a class="nav-item" data-route="dashboard">
-        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        Dashboard
-      </a>
-      <a class="nav-item" data-route="strategien">
-        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-        Strategien
-      </a>
-      <a class="nav-item" data-route="trades">
-        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-        Backtest Trades
-      </a>
-      <a class="nav-item" data-route="journal">
-        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-        Journal
-      </a>
-      <a class="nav-item" data-route="bots">
-        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/></svg>
-        Bots
-      </a>
-    </nav>
 
-    <div class="absolute bottom-0 w-60 p-5">
-      <div class="glass-soft p-4">
-        <div class="flex items-center gap-2 mb-3">
-          <span class="live-dot"></span>
-          <div class="kpi-label" style="font-size: 9px;">Status</div>
+    <div class="nav-section">Overview</div>
+    <a class="nav-item" data-route="dashboard">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </a>
+    <a class="nav-item" data-route="strategien">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      Account Overview
+    </a>
+    <a class="nav-item" data-route="trades">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      Order List
+    </a>
+    <a class="nav-item" data-route="trades">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 8 22 12 18 16"/><polyline points="6 8 2 12 6 16"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
+      Account Live
+    </a>
+
+    <div class="nav-section">Trading</div>
+    <a class="nav-item" data-route="journal">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      Journal
+    </a>
+    <a class="nav-item" data-route="bots">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/></svg>
+      Trading Bots
+    </a>
+    <a class="nav-item" data-route="dashboard">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h18v18H3z"/><path d="M9 9h6v6H9z"/></svg>
+      Asset Drift
+    </a>
+    <a class="nav-item" data-route="dashboard">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Economic Calendar
+    </a>
+
+    <div class="nav-section">Support</div>
+    <a class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      Help Center (FAQ)
+    </a>
+
+    <div class="absolute bottom-0 w-56 p-4">
+      <div class="card-dark p-3 flex items-center gap-3">
+        <span class="live-dot"></span>
+        <div>
+          <div class="text-xs font-semibold">FTMO Swing</div>
+          <div class="text-xs" style="color: var(--text-dim);">Backtest-Modus</div>
         </div>
-        <div class="font-bold" style="font-size: 14px;">FTMO Swing $10k</div>
-        <div class="text-xs mt-1" style="color: var(--text-dim);">Backtest-Modus</div>
-        <div class="num text-xs mt-3 mono" style="color: var(--text-mid); font-size: 11px;" id="footer-period"></div>
       </div>
     </div>
   </aside>
 
   <!-- Main -->
   <main class="flex-1 overflow-x-auto scroll-thin">
-    <div id="view-root" class="p-8"></div>
+    <!-- Top bar -->
+    <div class="topbar">
+      <input class="search-input" placeholder="Search…">
+      <div class="flex-1"></div>
+      <div class="icon-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="notif-dot"></span>
+      </div>
+      <div class="account-pill">
+        E8 Account <span class="badge-mini">FUNDED</span>
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="user-chip">
+        <div class="user-avatar">P</div>
+        <div style="font-size: 12px; font-weight: 600;">Paul Striffler</div>
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+
+    <div id="view-root" class="p-6"></div>
   </main>
 </div>
 
 <div id="journal-modal" style="display:none"></div>
 
 <script>
+const STATE = { bots: loadBots(), live: null, liveErr: null };
+
 // ============================================================
-// State
+// Live MT5 data poll
 // ============================================================
-const STATE = { bots: loadBots() };
+async function pollLive() {
+  let loaded = false;
+  // 1) Try fetch (works when dashboard is served via HTTP)
+  try {
+    const r = await fetch("live.json?t=" + Date.now(), { cache: "no-store" });
+    if (r.ok) { STATE.live = await r.json(); STATE.liveErr = null; loaded = true; }
+  } catch (_) { /* fall through */ }
+  // 2) Fall back to live.js script reload (works on file://)
+  if (!loaded) {
+    await new Promise(resolve => {
+      const old = document.getElementById("live-data-script"); if (old) old.remove();
+      const s = document.createElement("script");
+      s.id = "live-data-script"; s.src = "live.js?t=" + Date.now();
+      s.onload = () => { STATE.live = window.LIVE_DATA || null; STATE.liveErr = null; resolve(); };
+      s.onerror = () => { STATE.live = null; STATE.liveErr = "no live data"; resolve(); };
+      document.head.appendChild(s);
+    });
+  }
+  const banner = document.getElementById("live-banner-slot");
+  if (banner) banner.innerHTML = renderLiveBanner();
+}
+setInterval(pollLive, 5000);
+window.addEventListener("load", pollLive);
+
 const JOURNAL_STATE = {
   entries: loadJournal(),
-  editing: null,
-  detailView: null,
+  editing: null, detailView: null,
   filter: { search: "", outcome: "all", instrument: "all" },
   sort: { key: "date", asc: false },
 };
 
-function loadBots() {
-  const saved = localStorage.getItem("bots_v2");
-  if (saved) { try { return JSON.parse(saved); } catch {} }
-  return JSON.parse(JSON.stringify(window.DATA.bots));
-}
+function loadBots() { const s = localStorage.getItem("bots_v2"); if (s) { try { return JSON.parse(s); } catch {} } return JSON.parse(JSON.stringify(window.DATA.bots)); }
 function saveBots() { localStorage.setItem("bots_v2", JSON.stringify(STATE.bots)); }
 function resetBots() { localStorage.removeItem("bots_v2"); STATE.bots = loadBots(); render(); }
-
-function loadJournal() {
-  try { return JSON.parse(localStorage.getItem("journal_v1") || "[]"); }
-  catch { return []; }
-}
+function loadJournal() { try { return JSON.parse(localStorage.getItem("journal_v1") || "[]"); } catch { return []; } }
 function saveJournal() { localStorage.setItem("journal_v1", JSON.stringify(JOURNAL_STATE.entries)); }
 
-const ROUTES = ["dashboard", "strategien", "trades", "journal", "bots"];
-function currentRoute() { const h = location.hash.replace("#", ""); return ROUTES.includes(h) ? h : "dashboard"; }
-function navigate(route) { location.hash = route; }
+const ROUTES = ["dashboard","strategien","trades","journal","bots"];
+function currentRoute() { const h = location.hash.replace("#",""); return ROUTES.includes(h) ? h : "dashboard"; }
+function navigate(r) { location.hash = r; }
 window.addEventListener("hashchange", render);
 
-const fmtMoney = (n, sign = false) => {
-  const num = Math.abs(n).toLocaleString("en-US", { maximumFractionDigits: 0 });
-  return (n < 0 ? "-" : (sign && n > 0 ? "+" : "")) + "$" + num;
-};
-const fmtPct = (n, sign = true) => (sign && n > 0 ? "+" : "") + n.toFixed(1) + "%";
-const cls = (n) => n >= 0 ? "win" : "loss";
-const arrow = (n) => n >= 0 ? "↑" : "↓";
-const uid = () => "j_" + Math.random().toString(36).slice(2, 10);
-
-function escapeHtml(s) {
-  if (s == null) return "";
-  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+const fmtMoney = (n, sign=false) => { const num = Math.abs(n).toLocaleString("en-US",{maximumFractionDigits:0}); return (n<0?"-":(sign&&n>0?"+":""))+"$"+num; };
+const fmtMoneyDec = (n) => { const sign = n<0?"-":""; return sign+"$"+Math.abs(n).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}); };
+const fmtPct = (n, sign=true) => (sign&&n>0?"+":"")+n.toFixed(2)+"%";
+const cls = n => n>=0 ? "win" : "loss";
+const arrow = n => n>=0 ? "↑" : "↓";
+const uid = () => "j_"+Math.random().toString(36).slice(2,10);
+function escapeHtml(s) { if(s==null) return ""; return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c])); }
+async function readImageAsBase64(file, maxWidth=1400) {
+  return new Promise((resolve,reject)=>{ const r = new FileReader(); r.onload=(e)=>{ const img=new Image(); img.onload=()=>{ const c=document.createElement("canvas"); const k=Math.min(1,maxWidth/img.width); c.width=img.width*k; c.height=img.height*k; c.getContext("2d").drawImage(img,0,0,c.width,c.height); resolve(c.toDataURL("image/jpeg",0.82)); }; img.onerror=reject; img.src=e.target.result; }; r.onerror=reject; r.readAsDataURL(file); });
 }
 
-async function readImageAsBase64(file, maxWidth = 1400) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        const ratio = Math.min(1, maxWidth / img.width);
-        canvas.width = img.width * ratio;
-        canvas.height = img.height * ratio;
-        canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
-        resolve(canvas.toDataURL("image/jpeg", 0.82));
-      };
-      img.onerror = reject;
-      img.src = e.target.result;
-    };
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
-
-// ============================================================
-// Chart helpers
-// ============================================================
 const chartDefaults = {
   responsive: true, maintainAspectRatio: false,
   plugins: {
     legend: { display: false },
-    tooltip: {
-      backgroundColor: "rgba(13, 18, 32, 0.95)", borderColor: "rgba(255,255,255,0.12)",
-      borderWidth: 1, padding: 10, displayColors: false,
-      titleColor: "#a0a8c0", bodyColor: "#fff",
-    }
-  },
+    tooltip: { backgroundColor: "rgba(14,19,28,0.95)", borderColor: "rgba(255,255,255,0.1)", borderWidth: 1, padding: 10, displayColors: false, titleColor: "#b0b8c8", bodyColor: "#fff" }
+  }
 };
 
-function makeSparkline(ctxEl, data, color) {
-  if (!ctxEl) return;
-  new Chart(ctxEl, {
-    type: "line",
-    data: {
-      labels: data.map((_, i) => i),
-      datasets: [{
-        data, borderColor: color, borderWidth: 1.8,
-        backgroundColor: ctx => {
-          const c = ctx.chart.ctx; const g = c.createLinearGradient(0, 0, 0, 50);
-          g.addColorStop(0, color.replace(")", ", 0.35)").replace("rgb", "rgba")); g.addColorStop(1, color.replace(")", ", 0)").replace("rgb", "rgba"));
-          return g;
-        },
-        fill: true, tension: 0.35, pointRadius: 0,
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false }, tooltip: { enabled: false } },
-      scales: { x: { display: false }, y: { display: false } },
-      elements: { point: { radius: 0 } },
-    }
-  });
+// ============================================================
+// Live banner — connected MT5 accounts
+// ============================================================
+function renderLiveBanner() {
+  const live = STATE.live;
+  if (!live || !live.accounts || !live.accounts.length) {
+    return `
+      <div class="live-banner offline">
+        <div class="flex items-center gap-3">
+          <span class="live-dot" style="background: var(--warn); box-shadow: 0 0 8px var(--warn);"></span>
+          <div>
+            <div class="text-sm font-bold">Live-Bridge offline</div>
+            <div class="text-xs mt-1" style="color: var(--text-dim);">
+              Starte <span class="mono" style="color: var(--accent);">python -m bridge.mt5_sync</span> auf Windows um Live-Daten zu sehen
+              (oder <span class="mono" style="color: var(--accent);">python -m bridge.mock_sync</span> für Demo-Daten).
+            </div>
+          </div>
+        </div>
+        <a href="../bridge/README.md" class="text-xs font-semibold" style="color: var(--accent);">Setup →</a>
+      </div>`;
+  }
+  const T = live.totals || { balance: 0, equity: 0, open_pnl: 0 };
+  const ts = new Date(live.ts);
+  const ago = Math.max(0, Math.round((Date.now() - ts.getTime()) / 1000));
+  return `
+    <div class="live-banner">
+      <div class="flex items-center gap-4">
+        <span class="live-dot"></span>
+        <div>
+          <div class="text-sm font-bold">${live.accounts.length} Live Account${live.accounts.length>1?'s':''} verbunden</div>
+          <div class="text-xs mt-1" style="color: var(--text-mid);">
+            Aktualisiert vor ${ago}s · Letzter Sync ${ts.toLocaleTimeString()}
+          </div>
+        </div>
+      </div>
+      <div class="flex items-center gap-6">
+        <div class="text-right">
+          <div class="kpi-label" style="font-size: 9px;">Total Balance</div>
+          <div class="font-bold num text-base mt-1">${fmtMoneyDec(T.balance)}</div>
+        </div>
+        <div class="text-right">
+          <div class="kpi-label" style="font-size: 9px;">Total Equity</div>
+          <div class="font-bold num text-base mt-1">${fmtMoneyDec(T.equity)}</div>
+        </div>
+        <div class="text-right">
+          <div class="kpi-label" style="font-size: 9px;">Open P&L</div>
+          <div class="font-bold num text-base mt-1 ${cls(T.open_pnl)}">${T.open_pnl>=0?'+':''}${fmtMoneyDec(T.open_pnl)}</div>
+        </div>
+      </div>
+    </div>
+    <div class="grid gap-3 mb-4" style="grid-template-columns: repeat(${Math.min(live.accounts.length, 2)}, 1fr);">
+      ${live.accounts.map(a => a.error ? `
+        <div class="live-account-card" style="border-color: rgba(248,113,113,0.3);">
+          <div style="grid-column: 1 / -1;">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="badge badge-loss">Error</span>
+              <span class="font-bold">${escapeHtml(a.label || a.id)}</span>
+            </div>
+            <div class="text-xs mono" style="color: var(--loss);">${escapeHtml(a.error)}</div>
+          </div>
+        </div>
+      ` : `
+        <div class="live-account-card">
+          <div style="grid-column: 1 / -1;" class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-sm">${escapeHtml(a.label)}</span>
+              <span class="badge badge-active">${escapeHtml(a.broker || 'MT5')}</span>
+              <span class="text-xs mono" style="color: var(--text-dim);">#${a.login}</span>
+            </div>
+            <div class="text-xs" style="color: var(--text-dim);">${escapeHtml(a.server)} · 1:${a.leverage}</div>
+          </div>
+          <div class="live-stat">
+            <div class="live-stat-label">Balance</div>
+            <div class="live-stat-value">${fmtMoneyDec(a.balance)}</div>
+          </div>
+          <div class="live-stat">
+            <div class="live-stat-label">Equity</div>
+            <div class="live-stat-value">${fmtMoneyDec(a.equity)}</div>
+          </div>
+          <div class="live-stat">
+            <div class="live-stat-label">Open P&L</div>
+            <div class="live-stat-value ${cls(a.open_pnl)}">${a.open_pnl>=0?'+':''}${fmtMoneyDec(a.open_pnl)}</div>
+          </div>
+          <div class="live-stat">
+            <div class="live-stat-label">Open Positions</div>
+            <div class="live-stat-value">${a.positions_count}</div>
+          </div>
+        </div>
+      `).join("")}
+    </div>
+  `;
 }
 
 // ============================================================
-// Dashboard
+// Dashboard — E8 Markets style
 // ============================================================
 function viewDashboard() {
   const k = DATA.kpis;
-  const main = DATA.strategies[0];
-  const last3 = DATA.last3;
+  const trades = DATA.trades;
+  const wins = trades.filter(t => t.pnl > 0);
+  const losses = trades.filter(t => t.pnl < 0);
+  const avgWin = wins.length ? wins.reduce((s,t)=>s+t.pnl,0) / wins.length : 0;
+  const avgLoss = losses.length ? losses.reduce((s,t)=>s+t.pnl,0) / losses.length : 0;
+  const rrAvg = Math.abs(avgWin / (avgLoss || -1));
+  // Recent gain (last vs ~30 trades ago) for the floating chart callout
+  const ec = DATA.equity_curve;
+  const recentGain = ec.length > 30 ? (ec[ec.length-1].equity - ec[ec.length-30].equity) : (k.end_equity - k.starting_equity);
 
-  // Per-symbol P&L for the breakdown
-  const bySym = {};
-  DATA.trades.forEach(t => {
-    if (!bySym[t.symbol]) bySym[t.symbol] = { pnl: 0, wins: 0, total: 0 };
-    bySym[t.symbol].pnl += t.pnl;
-    bySym[t.symbol].total += 1;
-    if (t.pnl > 0) bySym[t.symbol].wins += 1;
+  // Trading days (Mon-Fri) of the most recent week with trades in it
+  const sortedTrades = [...trades].sort((a,b) => new Date(b.entry_time) - new Date(a.entry_time));
+  const recentTrade = sortedTrades[0];
+  let weekStart = new Date();
+  if (recentTrade) {
+    const dt = new Date(recentTrade.entry_time);
+    weekStart = new Date(dt); weekStart.setDate(dt.getDate() - dt.getDay() + 1); // Mon
+  }
+  const dayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+  const tradingDays = dayNames.map((name, i) => {
+    const d = new Date(weekStart); d.setDate(weekStart.getDate() + i);
+    const dStr = d.toISOString().slice(0, 10);
+    const dayTrades = trades.filter(t => t.entry_time.slice(0,10) === dStr);
+    const dayPnl = dayTrades.reduce((s,t) => s+t.pnl, 0);
+    return { name, date: dStr, count: dayTrades.length, pnl: dayPnl };
   });
-  const symbolsSorted = Object.entries(bySym).sort((a, b) => b[1].pnl - a[1].pnl);
 
   return `
-    <!-- Top bar -->
-    <div class="flex items-center justify-between mb-7">
-      <div>
-        <div class="kpi-label mb-2 flex items-center gap-2">
-          <span class="live-dot"></span> Live Dashboard
-        </div>
-        <h1 class="page-title">Welcome back, <span class="brand-text">Paul</span></h1>
-        <p class="text-sm mt-2" style="color: var(--text-mid);">
-          ${main.name} · ${k.timeframe_entry || '1H'} Entries · Backtest ${k.data_period_start} → ${k.data_period_end}
-        </p>
-      </div>
-      <div class="flex gap-2">
-        <span class="badge badge-brand">v3 FINAL</span>
-        <span class="badge badge-backtest">Backtest</span>
-      </div>
-    </div>
+    <div id="live-banner-slot">${renderLiveBanner()}</div>
 
-    <!-- Hero card: total equity + sparkline -->
-    <div class="glass p-7 mb-4 relative overflow-hidden">
-      <div class="absolute top-0 right-0 w-96 h-96 rounded-full" style="background: radial-gradient(circle, rgba(59,130,246,0.18), transparent 70%); pointer-events: none;"></div>
-      <div class="grid grid-cols-2 gap-8 relative z-10">
-        <div>
-          <div class="kpi-label">Account Equity</div>
-          <div class="kpi-value hero num mt-3 ${cls(k.total_return_pct)}">
-            $${k.end_equity.toLocaleString()}
-          </div>
-          <div class="flex items-center gap-3 mt-4">
-            <span class="badge ${cls(k.total_return_pct) === 'win' ? 'badge-win' : 'badge-loss'}" style="font-size: 13px; padding: 6px 12px;">
-              ${arrow(k.total_return_pct)} ${Math.abs(k.total_return_pct).toFixed(2)}%
-            </span>
-            <span class="text-sm num" style="color: var(--text-mid);">
-              ${arrow(k.total_return_pct)} $${Math.abs(k.end_equity - k.starting_equity).toLocaleString()} seit Start
-            </span>
-          </div>
-          <div class="flex items-center gap-6 mt-6 pt-6 border-t" style="border-color: var(--border);">
+    <div class="grid gap-4" style="grid-template-columns: 1.6fr 1fr;">
+      <!-- ===== LEFT: BALANCE CHART CARD ===== -->
+      <div class="card-glow p-5 relative overflow-hidden">
+        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: var(--teal-gradient); pointer-events: none;"></div>
+        <div class="relative">
+          <div class="flex items-start justify-between mb-5">
             <div>
-              <div class="kpi-label">Start</div>
-              <div class="text-xl font-bold num mt-1">$${k.starting_equity.toLocaleString()}</div>
+              <div class="kpi-label">Balance</div>
+              <div class="flex items-baseline gap-2 mt-2">
+                <div class="kpi-num hero">${fmtMoneyDec(k.end_equity)}</div>
+                <span class="badge ${cls(k.total_return_pct) === 'win' ? 'badge-win' : 'badge-loss'}" style="padding: 4px 8px;">
+                  ${arrow(k.total_return_pct)} ${Math.abs(k.total_return_pct).toFixed(2)}%
+                </span>
+              </div>
             </div>
-            <div>
-              <div class="kpi-label">CAGR</div>
-              <div class="text-xl font-bold num mt-1 ${cls(k.cagr_pct)}">${arrow(k.cagr_pct)} ${Math.abs(k.cagr_pct).toFixed(2)}%</div>
-            </div>
-            <div>
-              <div class="kpi-label">Periode</div>
-              <div class="text-xl font-bold num mt-1">${k.data_years}<span class="kpi-unit">J</span></div>
+            <div class="flex gap-1">
+              <span class="time-pill">24H</span>
+              <span class="time-pill">1W</span>
+              <span class="time-pill">1M</span>
+              <span class="time-pill">6M</span>
+              <span class="time-pill">1Y</span>
+              <span class="time-pill active">ALL</span>
             </div>
           </div>
-        </div>
-        <div>
-          <div class="kpi-label">Equity Trend</div>
-          <canvas id="hero-spark" style="height: 200px; margin-top: 8px;"></canvas>
-        </div>
-      </div>
-    </div>
-
-    <!-- 4 KPI cards with sparklines -->
-    <div class="grid grid-cols-4 gap-4 mb-4">
-      <div class="glass p-5">
-        <div class="flex items-start justify-between">
-          <div>
-            <div class="kpi-label">Total Trades</div>
-            <div class="kpi-value small num mt-2">${k.trades}</div>
-          </div>
-          <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: rgba(59,130,246,0.12); color: var(--accent-1);">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-          </div>
-        </div>
-        <div class="text-xs mt-3" style="color: var(--text-mid);">
-          <span class="win font-semibold">${k.wins}W</span> · <span class="loss font-semibold">${k.losses}L</span>
-        </div>
-      </div>
-      <div class="glass p-5">
-        <div class="flex items-start justify-between">
-          <div>
-            <div class="kpi-label">Winrate</div>
-            <div class="kpi-value small num mt-2">${k.winrate.toFixed(1)}<span class="kpi-unit">%</span></div>
-          </div>
-          <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: rgba(16,185,129,0.12); color: var(--win);">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-        </div>
-        <canvas id="winrate-spark" class="sparkline" style="margin-top: 8px;"></canvas>
-      </div>
-      <div class="glass p-5">
-        <div class="flex items-start justify-between">
-          <div>
-            <div class="kpi-label">Max Drawdown</div>
-            <div class="kpi-value small num mt-2 loss">↓ ${Math.abs(k.max_dd_pct).toFixed(1)}<span class="kpi-unit">%</span></div>
-          </div>
-          <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: rgba(239,68,68,0.12); color: var(--loss);">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg>
-          </div>
-        </div>
-        <div class="text-xs mt-3" style="color: var(--text-mid);">Peak-to-Trough</div>
-      </div>
-      <div class="glass p-5">
-        <div class="flex items-start justify-between">
-          <div>
-            <div class="kpi-label">Journal Entries</div>
-            <div class="kpi-value small num mt-2">${JOURNAL_STATE.entries.length}</div>
-          </div>
-          <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: rgba(168,85,247,0.12); color: var(--accent-2);">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-          </div>
-        </div>
-        <div class="text-xs mt-3"><a data-route="journal" class="font-semibold" style="color: var(--accent-1); cursor: pointer;">Journal öffnen →</a></div>
-      </div>
-    </div>
-
-    <!-- Equity curve (big) + Performance breakdown -->
-    <div class="grid gap-4 mb-4" style="grid-template-columns: 1.6fr 1fr;">
-      <div class="glass p-6">
-        <div class="flex items-center justify-between mb-5">
-          <div>
-            <div class="kpi-label">Performance Chart</div>
-            <div class="text-lg font-bold mt-1">Equity Curve · Compound</div>
-          </div>
-          <div class="flex gap-2">
-            <span class="pill pill-outline">All</span>
-            <span class="pill">1Y</span>
-            <span class="pill">6M</span>
-          </div>
-        </div>
-        <canvas id="equity-chart" style="max-height: 300px;"></canvas>
-      </div>
-      <div class="glass p-6">
-        <div class="flex items-center justify-between mb-5">
-          <div>
-            <div class="kpi-label">Symbol Breakdown</div>
-            <div class="text-lg font-bold mt-1">P&L pro Markt</div>
-          </div>
-        </div>
-        <div class="space-y-3">
-          ${symbolsSorted.map(([sym, s], i) => {
-            const maxAbs = Math.max(...symbolsSorted.map(([_, v]) => Math.abs(v.pnl)));
-            const widthPct = (Math.abs(s.pnl) / maxAbs) * 100;
-            return `
+          <div class="chart-box" style="height: 240px;">
+            <canvas id="balance-chart"></canvas>
+            <!-- Floating callout in the chart -->
+            <div class="chart-callout">
+              <div class="callout-dot"></div>
               <div>
-                <div class="flex items-center justify-between mb-2">
-                  <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs"
-                         style="background: rgba(59,130,246,0.12); color: var(--accent-1);">${sym.slice(2,4)}</div>
-                    <div>
-                      <div class="font-bold text-sm">${sym}</div>
-                      <div class="text-xs" style="color: var(--text-dim);">${s.total} Trades · ${Math.round(s.wins/s.total*100)}% WR</div>
-                    </div>
+                <div class="callout-amount">${arrow(recentGain)} $${Math.abs(recentGain).toLocaleString("en-US",{maximumFractionDigits:0})}</div>
+                <div class="callout-label">recent gain</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== RIGHT: ACCOUNT LIVE ANALYSIS ===== -->
+      <div class="card-glow p-5 relative overflow-hidden">
+        <div style="position: absolute; top: 0; right: -40px; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, rgba(20,184,166,0.12), transparent 70%); pointer-events: none;"></div>
+        <div class="relative">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <div class="kpi-label">Account Live Analysis</div>
+              <div class="text-base font-bold mt-1">Trading Days</div>
+            </div>
+            <span class="badge badge-active">${k.data_years}y</span>
+          </div>
+          <div class="space-y-2">
+            ${tradingDays.map(d => `
+              <div class="day-row ${d.count > 0 ? (d.pnl >= 0 ? 'day-win' : 'day-loss') : ''}">
+                <div class="flex items-center gap-3">
+                  <div class="day-icon ${d.count > 0 ? (d.pnl >= 0 ? 'day-icon-win' : 'day-icon-loss') : 'day-icon-empty'}">
+                    ${d.count > 0
+                      ? `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>`
+                      : '·'}
                   </div>
-                  <div class="text-right">
-                    <div class="num font-bold text-sm ${cls(s.pnl)}">${fmtMoney(s.pnl, true)}</div>
+                  <div>
+                    <div class="font-semibold text-xs">${d.name}</div>
+                    <div class="text-xs mono" style="color: var(--text-dim);">${d.date}</div>
                   </div>
                 </div>
-                <div class="w-full h-1.5 rounded-full overflow-hidden" style="background: rgba(255,255,255,0.05);">
-                  <div class="h-full rounded-full" style="width: ${widthPct}%; background: ${s.pnl >= 0 ? 'linear-gradient(90deg, var(--win), #34d399)' : 'linear-gradient(90deg, var(--loss), #f87171)'}; box-shadow: 0 0 8px ${s.pnl >= 0 ? 'rgba(16,185,129,0.5)' : 'rgba(239,68,68,0.5)'};"></div>
+                <div class="text-right num font-bold text-xs ${d.count > 0 ? cls(d.pnl) : ''}" style="${d.count === 0 ? 'color: var(--text-faint);' : ''}">
+                  ${d.count > 0 ? fmtMoney(d.pnl, true) : '—'}
+                  <div class="text-xs mt-0.5" style="color: var(--text-dim); font-weight: 500;">${d.count} ${d.count === 1 ? 'trade' : 'trades'}</div>
                 </div>
               </div>
-            `;
-          }).join("")}
+            `).join("")}
+          </div>
+          <div class="mt-4 pt-3 border-t flex items-center justify-between" style="border-color: var(--border);">
+            <div>
+              <div class="kpi-label" style="font-size: 10px;">Total this period</div>
+              <div class="text-base font-bold num mt-1 ${cls(tradingDays.reduce((s,d)=>s+d.pnl,0))}">
+                ${fmtMoney(tradingDays.reduce((s,d)=>s+d.pnl,0), true)}
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="kpi-label" style="font-size: 10px;">Account size</div>
+              <div class="text-base font-bold num mt-1">${fmtMoney(k.starting_equity)}</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Yearly chart + Recent trades -->
-    <div class="grid gap-4 mb-4" style="grid-template-columns: 1fr 1.6fr;">
-      <div class="glass p-6">
-        <div class="flex items-center justify-between mb-5">
-          <div>
-            <div class="kpi-label">Per Year</div>
-            <div class="text-lg font-bold mt-1">Yearly Returns</div>
-          </div>
-        </div>
-        <canvas id="yearly-chart" style="max-height: 280px;"></canvas>
+    <!-- ===== STATS ROW (4 columns) ===== -->
+    <div class="grid grid-cols-4 gap-4 mt-4">
+      <div class="card p-5">
+        <div class="kpi-label">Average Win</div>
+        <div class="kpi-num win mt-3">${fmtMoneyDec(avgWin)}</div>
+        <div class="text-xs mt-3" style="color: var(--text-dim);">${wins.length} winning trades</div>
       </div>
-      <div class="glass p-6">
-        <div class="flex items-center justify-between mb-5">
-          <div>
-            <div class="kpi-label">Recent</div>
-            <div class="text-lg font-bold mt-1">Letzte Trades</div>
-          </div>
-          <a data-route="trades" class="text-xs font-semibold" style="color: var(--accent-1); cursor: pointer;">Alle ansehen →</a>
-        </div>
-        <div class="space-y-2">
-          ${last3.map(t => `
-            <div class="glass-soft p-4 flex items-center justify-between" style="transition: all 0.15s;">
-              <div class="flex items-center gap-4">
-                <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xs"
-                     style="background: ${t.direction === 'long' ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)'};
-                            color: ${t.direction === 'long' ? 'var(--win)' : 'var(--loss)'};">
-                  ${t.symbol.slice(2,4)}
-                </div>
-                <div>
-                  <div class="flex items-center gap-2">
-                    <span class="font-bold">${t.symbol}</span>
-                    <span class="badge ${t.direction === 'long' ? 'badge-long' : 'badge-short'}">${t.direction === 'long' ? '↑ Long' : '↓ Short'}</span>
-                  </div>
-                  <div class="text-xs mt-1 mono" style="color: var(--text-dim);">${t.entry_time.slice(0,10)} · ${escapeHtml(t.exit_reason)}</div>
-                </div>
-              </div>
-              <div class="text-right">
-                <div class="num font-bold ${cls(t.pnl)}" style="font-size: 16px;">${fmtMoney(t.pnl, true)}</div>
-                <div class="num text-xs mt-1" style="color: var(--text-mid);">R ${t.rr >= 0 ? '+' : ''}${t.rr.toFixed(2)}</div>
-              </div>
-            </div>
-          `).join("")}
+      <div class="card p-5">
+        <div class="kpi-label">Average Loss</div>
+        <div class="kpi-num loss mt-3">${fmtMoneyDec(avgLoss)}</div>
+        <div class="text-xs mt-3" style="color: var(--text-dim);">${losses.length} losing trades</div>
+      </div>
+      <div class="card p-5">
+        <div class="kpi-label">Win Ratio</div>
+        <div class="kpi-num mt-3">${k.winrate.toFixed(0)}<span class="kpi-unit">%</span></div>
+        <div class="text-xs mt-3" style="color: var(--text-dim);">${k.wins} / ${k.trades} trades</div>
+      </div>
+      <div class="card p-5">
+        <div class="kpi-label">Risk Reward</div>
+        <div class="kpi-num mt-3">1 : ${rrAvg.toFixed(2)}</div>
+        <div class="text-xs mt-3" style="color: var(--text-dim);">avg win ÷ avg loss</div>
+      </div>
+    </div>
+
+    <!-- ===== STRATEGY PRESET ROW ===== -->
+    <div class="grid grid-cols-3 gap-4 mt-4">
+      <div class="card p-5">
+        <div class="kpi-label">Setup Trading Trigger</div>
+        <div class="text-base font-bold mt-2" style="color: var(--text-mid);">Weekly Bias</div>
+        <div class="kpi-num small mt-3">1 Day</div>
+      </div>
+      <div class="card p-5">
+        <div class="kpi-label">Profit Target</div>
+        <div class="text-base font-bold mt-2" style="color: var(--text-mid);">TP3 / PAL</div>
+        <div class="kpi-num small mt-3">US\$10,800</div>
+      </div>
+      <div class="card-glow p-5 relative overflow-hidden">
+        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: var(--teal-gradient); pointer-events: none;"></div>
+        <div class="relative">
+          <div class="kpi-label" style="color: var(--accent-light);">Initial Balance Loss</div>
+          <div class="text-base font-bold mt-2" style="color: var(--text);">Kill Switch</div>
+          <div class="kpi-num small mt-3 win">US\$0.00</div>
         </div>
       </div>
     </div>
@@ -658,38 +815,8 @@ function viewDashboard() {
 }
 
 function renderDashboardCharts() {
-  // Hero sparkline
-  const hero = document.getElementById("hero-spark");
-  if (hero) {
-    const data = DATA.equity_curve;
-    new Chart(hero, {
-      type: "line",
-      data: {
-        labels: data.map(p => p.date),
-        datasets: [{
-          data: data.map(p => p.equity),
-          borderColor: "#3b82f6", borderWidth: 2.5,
-          backgroundColor: ctx => {
-            const c = ctx.chart.ctx; const g = c.createLinearGradient(0, 0, 0, 200);
-            g.addColorStop(0, "rgba(59,130,246,0.45)"); g.addColorStop(1, "rgba(168,85,247,0)");
-            return g;
-          },
-          fill: true, tension: 0.3, pointRadius: 0, pointHoverRadius: 4,
-        }]
-      },
-      options: {
-        ...chartDefaults,
-        scales: { x: { display: false }, y: { display: false } },
-        plugins: { ...chartDefaults.plugins, tooltip: {
-          ...chartDefaults.plugins.tooltip,
-          callbacks: { label: ctx => "$" + ctx.parsed.y.toLocaleString("en-US", { maximumFractionDigits: 0 }) }
-        }}
-      }
-    });
-  }
-
-  // Equity curve (big)
-  const eq = document.getElementById("equity-chart"); if (eq) {
+  const eq = document.getElementById("balance-chart");
+  if (eq) {
     const data = DATA.equity_curve;
     new Chart(eq, {
       type: "line",
@@ -697,14 +824,16 @@ function renderDashboardCharts() {
         labels: data.map(p => p.date),
         datasets: [{
           data: data.map(p => p.equity),
-          borderColor: "#3b82f6", borderWidth: 2.5,
+          borderColor: "#14b8a6", borderWidth: 2.5,
           backgroundColor: ctx => {
-            const c = ctx.chart.ctx; const g = c.createLinearGradient(0, 0, 0, 300);
-            g.addColorStop(0, "rgba(59,130,246,0.35)"); g.addColorStop(0.5, "rgba(168,85,247,0.15)"); g.addColorStop(1, "rgba(168,85,247,0)");
+            const c = ctx.chart.ctx;
+            const g = c.createLinearGradient(0, 0, 0, 280);
+            g.addColorStop(0, "rgba(20,184,166,0.4)");
+            g.addColorStop(1, "rgba(20,184,166,0)");
             return g;
           },
-          fill: true, tension: 0.3, pointRadius: 0, pointHoverRadius: 5,
-          pointHoverBackgroundColor: "#3b82f6",
+          fill: true, tension: 0.35, pointRadius: 0,
+          pointHoverRadius: 5, pointHoverBackgroundColor: "#14b8a6",
         }]
       },
       options: {
@@ -714,49 +843,43 @@ function renderDashboardCharts() {
           callbacks: { label: ctx => "$" + ctx.parsed.y.toLocaleString("en-US", { maximumFractionDigits: 0 }) }
         }},
         scales: {
-          x: { grid: { color: "rgba(255,255,255,0.03)" }, ticks: { color: "#6e7892", maxTicksLimit: 8, font: { size: 10, weight: 500 } } },
-          y: { grid: { color: "rgba(255,255,255,0.04)" }, ticks: { color: "#6e7892", font: { size: 10, weight: 500 }, callback: v => "$" + (v/1000).toFixed(1) + "K" } }
+          x: { grid: { color: "rgba(255,255,255,0.02)" }, ticks: { color: "#6b7585", maxTicksLimit: 8, font: { size: 10 } } },
+          y: { grid: { color: "rgba(255,255,255,0.03)" }, ticks: { color: "#6b7585", font: { size: 10 }, callback: v => "$" + (v/1000).toFixed(1) + "K" } }
         }
       }
     });
   }
 
-  // Yearly bars
-  const yr = document.getElementById("yearly-chart");
-  if (yr && DATA.yearly) {
-    new Chart(yr, {
-      type: "bar",
-      data: {
-        labels: DATA.yearly.map(y => y.year),
-        datasets: [{
-          data: DATA.yearly.map(y => y["return_%"]),
-          backgroundColor: DATA.yearly.map(y => y["return_%"] >= 0 ? "rgba(16,185,129,0.9)" : "rgba(239,68,68,0.9)"),
-          borderRadius: 6, borderSkipped: false,
-        }]
-      },
-      options: {
-        ...chartDefaults,
-        plugins: { ...chartDefaults.plugins, tooltip: {
-          ...chartDefaults.plugins.tooltip,
-          callbacks: { label: ctx => `${ctx.parsed.y >= 0 ? '+' : ''}${ctx.parsed.y.toFixed(2)}%` }
-        }},
-        scales: {
-          x: { grid: { display: false }, ticks: { color: "#a0a8c0", font: { size: 11, weight: 600 } } },
-          y: { grid: { color: "rgba(255,255,255,0.04)" }, ticks: { color: "#6e7892", font: { size: 10 }, callback: v => v + "%" } }
-        }
-      }
+  const list = document.getElementById("symbol-list");
+  if (list) {
+    const bySym = {};
+    DATA.trades.forEach(t => {
+      if (!bySym[t.symbol]) bySym[t.symbol] = { pnl: 0, wins: 0, total: 0 };
+      bySym[t.symbol].pnl += t.pnl; bySym[t.symbol].total += 1;
+      if (t.pnl > 0) bySym[t.symbol].wins += 1;
     });
-  }
-
-  // Winrate sparkline (rolling winrate over time)
-  const ws = document.getElementById("winrate-spark");
-  if (ws && DATA.trades && DATA.trades.length) {
-    let wins = 0, sparkData = [];
-    DATA.trades.forEach((t, i) => {
-      if (t.pnl > 0) wins++;
-      sparkData.push(wins / (i + 1) * 100);
-    });
-    makeSparkline(ws, sparkData, "rgb(16, 185, 129)");
+    const arr = Object.entries(bySym).sort((a,b) => b[1].pnl - a[1].pnl);
+    const maxAbs = Math.max(...arr.map(([,v]) => Math.abs(v.pnl))) || 1;
+    list.innerHTML = arr.map(([sym, s]) => {
+      const w = (Math.abs(s.pnl) / maxAbs) * 100;
+      return `
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <div class="flex items-center gap-2">
+              <div class="w-7 h-7 rounded-md flex items-center justify-center font-bold text-xs"
+                   style="background: var(--accent-soft); color: var(--accent);">${sym.slice(2,4)}</div>
+              <div>
+                <div class="font-bold text-xs">${sym}</div>
+                <div class="text-xs" style="color: var(--text-dim); font-size: 10px;">${s.total} trades · ${Math.round(s.wins/s.total*100)}% WR</div>
+              </div>
+            </div>
+            <div class="num font-bold text-xs ${cls(s.pnl)}">${fmtMoney(s.pnl, true)}</div>
+          </div>
+          <div class="w-full h-1 rounded-full overflow-hidden" style="background: rgba(255,255,255,0.05);">
+            <div class="h-full rounded-full" style="width: ${w}%; background: ${s.pnl >= 0 ? 'linear-gradient(90deg, var(--accent), var(--accent-light))' : 'linear-gradient(90deg, var(--loss), #fca5a5)'};"></div>
+          </div>
+        </div>`;
+    }).join("");
   }
 }
 
@@ -765,61 +888,58 @@ function renderDashboardCharts() {
 // ============================================================
 function viewStrategien() {
   return `
-    <div class="mb-7">
-      <div class="kpi-label mb-2">Library</div>
-      <h1 class="page-title">Strategien</h1>
-      <p class="text-sm mt-2" style="color: var(--text-mid)">${DATA.strategies.length} Strategien · ${DATA.strategies.filter(s=>s.status==='active').length} aktiv</p>
+    <div class="mb-6">
+      <div class="kpi-label">Library</div>
+      <h1 class="text-2xl font-bold mt-1 tracking-tight">Strategien</h1>
+      <p class="text-sm mt-1" style="color: var(--text-mid);">${DATA.strategies.length} Strategien · ${DATA.strategies.filter(s=>s.status==='active').length} aktiv</p>
     </div>
-    <div class="panel-stack">
+    <div class="space-y-4">
       ${DATA.strategies.map(s => `
-        <div class="glass p-7">
+        <div class="card p-6">
           <div class="flex items-start justify-between mb-5">
             <div>
               <div class="flex items-center gap-3 mb-2">
-                <h2 class="font-bold" style="font-size: 22px; letter-spacing: -0.01em;">${s.name}</h2>
+                <h2 class="font-bold text-xl">${s.name}</h2>
                 <span class="badge ${s.status === 'active' ? 'badge-active' : 'badge-planned'}">${s.status === 'active' ? 'Aktiv' : 'Geplant'}</span>
               </div>
-              <p class="leading-relaxed max-w-3xl" style="color: var(--text-mid);">${s.description}</p>
+              <p style="color: var(--text-mid); line-height: 1.6;" class="max-w-3xl">${s.description}</p>
             </div>
           </div>
           ${s.status === 'active' ? `
-            <div class="grid grid-cols-4 gap-3 mb-7">
-              <div class="glass-soft p-4"><div class="kpi-label">Trades</div><div class="text-2xl font-bold num mt-2">${s.trades}</div></div>
-              <div class="glass-soft p-4"><div class="kpi-label">Winrate</div><div class="text-2xl font-bold num mt-2">${s.winrate}%</div></div>
-              <div class="glass-soft p-4"><div class="kpi-label">Total Return</div><div class="text-2xl font-bold num mt-2 ${cls(s.return_total)}">${fmtPct(s.return_total)}</div></div>
-              <div class="glass-soft p-4"><div class="kpi-label">Max DD</div><div class="text-2xl font-bold num mt-2 loss">${s.max_dd.toFixed(1)}%</div></div>
+            <div class="grid grid-cols-4 gap-3 mb-6">
+              <div class="card-dark p-4"><div class="kpi-label">Trades</div><div class="kpi-num small num mt-2">${s.trades}</div></div>
+              <div class="card-dark p-4"><div class="kpi-label">Winrate</div><div class="kpi-num small num mt-2">${s.winrate}%</div></div>
+              <div class="card-dark p-4"><div class="kpi-label">Total Return</div><div class="kpi-num small num mt-2 ${cls(s.return_total)}">${fmtPct(s.return_total)}</div></div>
+              <div class="card-dark p-4"><div class="kpi-label">Max DD</div><div class="kpi-num small num mt-2 loss">${s.max_dd.toFixed(1)}%</div></div>
             </div>
           ` : ''}
-          <div class="grid grid-cols-2 gap-8">
+          <div class="grid grid-cols-2 gap-6">
             <div>
               <div class="kpi-label mb-3">Märkte</div>
               <div class="flex gap-2 flex-wrap mb-5">${s.markets.map(m => `<span class="pill pill-outline">${m}</span>`).join("")}</div>
               <div class="kpi-label mb-3">Timeframes</div>
               <div class="grid grid-cols-4 gap-2">
                 ${Object.entries(s.timeframes).map(([k,v]) => `
-                  <div class="glass-soft p-3 text-center">
-                    <div class="kpi-label" style="font-size: 10px;">${k}</div>
+                  <div class="card-dark p-3 text-center">
+                    <div class="kpi-label" style="font-size: 9px;">${k}</div>
                     <div class="font-bold text-sm mt-1">${v}</div>
-                  </div>
-                `).join("")}
+                  </div>`).join("")}
               </div>
             </div>
             <div>
               <div class="kpi-label mb-3">Regeln</div>
-              <ol class="space-y-3 text-sm">
+              <ol class="space-y-2 text-sm">
                 ${s.rules.map((r,i) => `
-                  <li class="flex gap-4">
-                    <span class="text-xs mono font-bold" style="color: var(--accent-1); padding-top: 1px; min-width: 22px;">${(i+1).toString().padStart(2,'0')}</span>
-                    <span style="color: var(--text); line-height: 1.6;">${r}</span>
-                  </li>
-                `).join("")}
+                  <li class="flex gap-3">
+                    <span class="mono font-bold text-xs" style="color: var(--accent); padding-top: 1px; min-width: 22px;">${(i+1).toString().padStart(2,'0')}</span>
+                    <span style="color: var(--text); line-height: 1.55;">${r}</span>
+                  </li>`).join("")}
               </ol>
             </div>
           </div>
         </div>
       `).join("")}
-    </div>
-  `;
+    </div>`;
 }
 
 // ============================================================
@@ -832,30 +952,23 @@ function filteredTrades() {
   if (f.symbol !== "all") t = t.filter(x => x.symbol === f.symbol);
   if (f.result === "win") t = t.filter(x => x.pnl > 0);
   if (f.result === "loss") t = t.filter(x => x.pnl < 0);
-  if (f.search) {
-    const q = f.search.toLowerCase();
-    t = t.filter(x => (x.symbol+x.exit_reason+x.confluences).toLowerCase().includes(q));
-  }
+  if (f.search) { const q = f.search.toLowerCase(); t = t.filter(x => (x.symbol+x.exit_reason+x.confluences).toLowerCase().includes(q)); }
   const key = TRADES_STATE.sort;
-  t.sort((a,b) => {
-    const va = a[key], vb = b[key];
-    if (typeof va === "string") return TRADES_STATE.asc ? va.localeCompare(vb) : vb.localeCompare(va);
-    return TRADES_STATE.asc ? va - vb : vb - va;
-  });
+  t.sort((a,b) => { const va=a[key], vb=b[key]; if (typeof va==="string") return TRADES_STATE.asc ? va.localeCompare(vb) : vb.localeCompare(va); return TRADES_STATE.asc ? va-vb : vb-va; });
   return t;
 }
 function viewTrades() {
   const trades = filteredTrades();
   const symbols = ["all", ...new Set(DATA.trades.map(t => t.symbol))];
-  const totalPnl = trades.reduce((a,b)=>a+b.pnl, 0);
-  const wins = trades.filter(t => t.pnl > 0).length;
+  const totalPnl = trades.reduce((a,b)=>a+b.pnl,0);
+  const wins = trades.filter(t=>t.pnl>0).length;
   return `
-    <div class="mb-7">
-      <div class="kpi-label mb-2">Backtest</div>
-      <h1 class="page-title">Trades</h1>
-      <p class="text-sm mt-2" style="color: var(--text-mid)">${trades.length} von ${DATA.trades.length} · ${wins} Wins · <span class="${cls(totalPnl)} font-semibold">${fmtMoney(totalPnl, true)}</span></p>
+    <div class="mb-6">
+      <div class="kpi-label">Backtest</div>
+      <h1 class="text-2xl font-bold mt-1 tracking-tight">Trades</h1>
+      <p class="text-sm mt-1" style="color: var(--text-mid);">${trades.length} von ${DATA.trades.length} · ${wins} Wins · <span class="${cls(totalPnl)} font-semibold">${fmtMoney(totalPnl, true)}</span></p>
     </div>
-    <div class="flex items-center gap-3 mb-5">
+    <div class="flex items-center gap-3 mb-4">
       <input type="text" class="field" placeholder="Suche..." value="${TRADES_STATE.filter.search}" oninput="TRADES_STATE.filter.search = this.value; render()" style="max-width: 280px">
       <select class="field" onchange="TRADES_STATE.filter.symbol = this.value; render()" style="max-width: 180px">
         ${symbols.map(s => `<option value="${s}" ${s===TRADES_STATE.filter.symbol?'selected':''}>${s === 'all' ? 'Alle Symbole' : s}</option>`).join("")}
@@ -866,23 +979,18 @@ function viewTrades() {
         <option value="loss" ${TRADES_STATE.filter.result==='loss'?'selected':''}>Verlierer</option>
       </select>
     </div>
-    <div class="glass overflow-hidden">
+    <div class="card overflow-hidden">
       <div style="max-height: 70vh; overflow-y: auto" class="scroll-thin">
         <table class="dt">
-          <thead>
-            <tr>
-              <th onclick="sortTrades('n')">#</th>
-              <th onclick="sortTrades('entry_time')">Entry</th>
-              <th onclick="sortTrades('symbol')">Symbol</th>
-              <th onclick="sortTrades('direction')">Side</th>
-              <th onclick="sortTrades('entry')">Preis</th>
-              <th>Confluences</th>
-              <th onclick="sortTrades('exit_reason')">Exit</th>
-              <th onclick="sortTrades('rr')" style="text-align: right">R</th>
-              <th onclick="sortTrades('pnl')" style="text-align: right">P&L</th>
-              <th>Chart</th>
-            </tr>
-          </thead>
+          <thead><tr>
+            <th onclick="sortTrades('n')">#</th><th onclick="sortTrades('entry_time')">Entry</th>
+            <th onclick="sortTrades('symbol')">Symbol</th><th onclick="sortTrades('direction')">Side</th>
+            <th onclick="sortTrades('entry')">Preis</th><th>Confluences</th>
+            <th onclick="sortTrades('exit_reason')">Exit</th>
+            <th onclick="sortTrades('rr')" style="text-align: right">R</th>
+            <th onclick="sortTrades('pnl')" style="text-align: right">P&L</th>
+            <th>Chart</th>
+          </tr></thead>
           <tbody>
             ${trades.map(t => `
               <tr>
@@ -895,80 +1003,58 @@ function viewTrades() {
                 <td><span class="pill">${t.exit_reason}</span></td>
                 <td class="num font-semibold ${cls(t.rr)}" style="text-align: right">${t.rr >= 0 ? '+' : ''}${t.rr.toFixed(2)}</td>
                 <td class="num font-bold ${cls(t.pnl)}" style="text-align: right">${fmtMoney(t.pnl, true)}</td>
-                <td><a href="${t.png}" target="_blank" class="font-semibold" style="color: var(--accent-1);">PNG →</a></td>
-              </tr>
-            `).join("")}
+                <td><a href="${t.png}" target="_blank" class="font-semibold" style="color: var(--accent);">PNG →</a></td>
+              </tr>`).join("")}
           </tbody>
         </table>
       </div>
-    </div>
-  `;
+    </div>`;
 }
-function sortTrades(key) {
-  if (TRADES_STATE.sort === key) TRADES_STATE.asc = !TRADES_STATE.asc;
-  else { TRADES_STATE.sort = key; TRADES_STATE.asc = true; }
-  render();
-}
+function sortTrades(key) { if (TRADES_STATE.sort===key) TRADES_STATE.asc=!TRADES_STATE.asc; else { TRADES_STATE.sort=key; TRADES_STATE.asc=true; } render(); }
 
 // ============================================================
-// Journal (table layout, preserved)
+// Journal
 // ============================================================
-const INSTRUMENTS = ["US500", "US30", "US100", "US2000", "ES", "YM", "NQ", "RTY", "GC", "CL", "Other"];
-const SESSIONS = ["Asia", "London", "New York AM", "New York PM", "London Close", "Other"];
-const QUARTERS = ["Q1 (Jan-Mar)", "Q2 (Apr-Jun)", "Q3 (Jul-Sep)", "Q4 (Oct-Dec)"];
-const OUTCOMES = ["Win", "Loss", "Break-even"];
-const DIRECTIONS = ["Long", "Short"];
-
+const INSTRUMENTS = ["US500","US30","US100","US2000","ES","YM","NQ","RTY","GC","CL","Other"];
+const SESSIONS = ["Asia","London","New York AM","New York PM","London Close","Other"];
+const QUARTERS = ["Q1 (Jan-Mar)","Q2 (Apr-Jun)","Q3 (Jul-Sep)","Q4 (Oct-Dec)"];
+const OUTCOMES = ["Win","Loss","Break-even"];
+const DIRECTIONS = ["Long","Short"];
 function filteredJournal() {
   let entries = JOURNAL_STATE.entries.slice();
   const f = JOURNAL_STATE.filter;
   if (f.outcome !== "all") entries = entries.filter(e => e.outcome === f.outcome);
   if (f.instrument !== "all") entries = entries.filter(e => e.instrument === f.instrument);
-  if (f.search) {
-    const q = f.search.toLowerCase();
-    entries = entries.filter(e =>
-      (e.instrument + " " + e.point_of_interest + " " + e.mistakes + " " + e.improvements + " " + e.confirmations).toLowerCase().includes(q)
-    );
-  }
+  if (f.search) { const q = f.search.toLowerCase(); entries = entries.filter(e => (e.instrument+" "+e.point_of_interest+" "+e.mistakes+" "+e.improvements+" "+e.confirmations).toLowerCase().includes(q)); }
   const key = JOURNAL_STATE.sort.key;
-  entries.sort((a, b) => {
-    const va = (a[key] || ""), vb = (b[key] || "");
-    if (key === "pnl_dollar" || key === "pnl_pct") {
-      return JOURNAL_STATE.sort.asc ? (parseFloat(va) || 0) - (parseFloat(vb) || 0) : (parseFloat(vb) || 0) - (parseFloat(va) || 0);
-    }
-    return JOURNAL_STATE.sort.asc ? String(va).localeCompare(String(vb)) : String(vb).localeCompare(String(va));
-  });
+  entries.sort((a,b) => { const va=(a[key]||""), vb=(b[key]||""); if (key==="pnl_dollar"||key==="pnl_pct") return JOURNAL_STATE.sort.asc ? (parseFloat(va)||0)-(parseFloat(vb)||0) : (parseFloat(vb)||0)-(parseFloat(va)||0); return JOURNAL_STATE.sort.asc ? String(va).localeCompare(String(vb)) : String(vb).localeCompare(String(va)); });
   return entries;
 }
-function sortJournal(key) {
-  if (JOURNAL_STATE.sort.key === key) JOURNAL_STATE.sort.asc = !JOURNAL_STATE.sort.asc;
-  else { JOURNAL_STATE.sort.key = key; JOURNAL_STATE.sort.asc = false; }
-  render();
-}
+function sortJournal(key) { if (JOURNAL_STATE.sort.key===key) JOURNAL_STATE.sort.asc=!JOURNAL_STATE.sort.asc; else { JOURNAL_STATE.sort.key=key; JOURNAL_STATE.sort.asc=false; } render(); }
 function viewJournal() {
   const entries = filteredJournal();
   const total = JOURNAL_STATE.entries.length;
   const wins = JOURNAL_STATE.entries.filter(e => e.outcome === "Win").length;
   const losses = JOURNAL_STATE.entries.filter(e => e.outcome === "Loss").length;
-  const totalPnl = JOURNAL_STATE.entries.reduce((s, e) => s + (parseFloat(e.pnl_dollar) || 0), 0);
-  const winrate = total > 0 ? (wins / total * 100) : 0;
+  const totalPnl = JOURNAL_STATE.entries.reduce((s,e) => s + (parseFloat(e.pnl_dollar) || 0), 0);
+  const winrate = total > 0 ? (wins/total*100) : 0;
   return `
-    <div class="flex items-end justify-between mb-7">
+    <div class="flex items-end justify-between mb-6">
       <div>
-        <div class="kpi-label mb-2">Trade Journal</div>
-        <h1 class="page-title">Journal</h1>
-        <p class="text-sm mt-2" style="color: var(--text-mid)">${total} ${total === 1 ? 'Eintrag' : 'Einträge'}</p>
+        <div class="kpi-label">Trade Journal</div>
+        <h1 class="text-2xl font-bold mt-1 tracking-tight">Journal</h1>
+        <p class="text-sm mt-1" style="color: var(--text-mid);">${total} ${total===1?'Eintrag':'Einträge'}</p>
       </div>
       <button class="btn" onclick="openJournalForm()">+ Neuer Eintrag</button>
     </div>
     ${total > 0 ? `
-      <div class="grid grid-cols-4 gap-4 mb-5">
-        <div class="glass p-4"><div class="kpi-label">Total Entries</div><div class="kpi-value small num mt-2">${total}</div></div>
-        <div class="glass p-4"><div class="kpi-label">Wins / Losses</div><div class="kpi-value small mt-2"><span class="win">${wins}</span><span style="color: var(--text-faint);"> / </span><span class="loss">${losses}</span></div></div>
-        <div class="glass p-4"><div class="kpi-label">Winrate</div><div class="kpi-value small num mt-2">${winrate.toFixed(1)}<span class="kpi-unit">%</span></div></div>
-        <div class="glass p-4"><div class="kpi-label">Net P&L</div><div class="kpi-value small num mt-2 ${cls(totalPnl)}">${fmtMoney(totalPnl, true)}</div></div>
+      <div class="grid grid-cols-4 gap-4 mb-4">
+        <div class="card p-4"><div class="kpi-label">Total Entries</div><div class="kpi-num small num mt-2">${total}</div></div>
+        <div class="card p-4"><div class="kpi-label">Wins / Losses</div><div class="kpi-num small mt-2"><span class="win">${wins}</span><span style="color: var(--text-faint);"> / </span><span class="loss">${losses}</span></div></div>
+        <div class="card p-4"><div class="kpi-label">Winrate</div><div class="kpi-num small num mt-2">${winrate.toFixed(1)}<span class="kpi-unit">%</span></div></div>
+        <div class="card p-4"><div class="kpi-label">Net P&L</div><div class="kpi-num small num mt-2 ${cls(totalPnl)}">${fmtMoney(totalPnl, true)}</div></div>
       </div>
-      <div class="flex items-center gap-3 mb-5">
+      <div class="flex items-center gap-3 mb-4">
         <input type="text" class="field" placeholder="Suche..." value="${escapeHtml(JOURNAL_STATE.filter.search)}" oninput="JOURNAL_STATE.filter.search = this.value; render()" style="max-width: 360px">
         <select class="field" onchange="JOURNAL_STATE.filter.instrument = this.value; render()" style="max-width: 180px">
           <option value="all">Alle Instrumente</option>
@@ -981,45 +1067,39 @@ function viewJournal() {
       </div>
     ` : ''}
     ${entries.length === 0 ? `
-      <div class="glass p-16 text-center">
+      <div class="card p-16 text-center">
         <div class="text-xl font-bold mb-2" style="color: var(--text-mid);">${total === 0 ? 'Noch keine Einträge' : 'Keine Treffer'}</div>
         <p class="text-sm mb-6" style="color: var(--text-dim)">${total === 0 ? 'Starte dein Trade-Journal mit dem ersten Eintrag.' : 'Filter anpassen oder zurücksetzen.'}</p>
         ${total === 0 ? '<button class="btn" onclick="openJournalForm()">+ Ersten Eintrag erstellen</button>' : ''}
       </div>
     ` : `
-      <div class="glass overflow-hidden">
+      <div class="card overflow-hidden">
         <div style="max-height: 70vh; overflow-y: auto; overflow-x: auto;" class="scroll-thin">
           <table class="dt">
-            <thead>
-              <tr>
-                <th onclick="sortJournal('date')">Datum</th>
-                <th onclick="sortJournal('instrument')">Instrument</th>
-                <th onclick="sortJournal('session')">Session</th>
-                <th onclick="sortJournal('quarter')">Quarter</th>
-                <th onclick="sortJournal('direction')">Side</th>
-                <th>Point of Interest</th>
-                <th onclick="sortJournal('hold_duration')">Hold</th>
-                <th onclick="sortJournal('rr')">R:R</th>
-                <th onclick="sortJournal('outcome')">Outcome</th>
-                <th onclick="sortJournal('pnl_dollar')" style="text-align: right">P&L $</th>
-                <th onclick="sortJournal('pnl_pct')" style="text-align: right">P&L %</th>
-                <th>Charts</th>
-                <th style="text-align: right">Aktionen</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${entries.map(e => renderJournalRow(e)).join("")}
-            </tbody>
+            <thead><tr>
+              <th onclick="sortJournal('date')">Datum</th>
+              <th onclick="sortJournal('instrument')">Instrument</th>
+              <th onclick="sortJournal('session')">Session</th>
+              <th onclick="sortJournal('quarter')">Quarter</th>
+              <th onclick="sortJournal('direction')">Side</th>
+              <th>Point of Interest</th>
+              <th onclick="sortJournal('hold_duration')">Hold</th>
+              <th onclick="sortJournal('rr')">R:R</th>
+              <th onclick="sortJournal('outcome')">Outcome</th>
+              <th onclick="sortJournal('pnl_dollar')" style="text-align: right">P&L $</th>
+              <th onclick="sortJournal('pnl_pct')" style="text-align: right">P&L %</th>
+              <th>Charts</th>
+              <th style="text-align: right">Aktionen</th>
+            </tr></thead>
+            <tbody>${entries.map(e => renderJournalRow(e)).join("")}</tbody>
           </table>
         </div>
-      </div>
-    `}
-  `;
+      </div>`}`;
 }
 function renderJournalRow(e) {
   const pnl = parseFloat(e.pnl_dollar) || 0;
   const pnlPct = parseFloat(e.pnl_pct) || 0;
-  const chartCount = ["chart_htf", "chart_before", "chart_after"].filter(k => e[k]).length;
+  const chartCount = ["chart_htf","chart_before","chart_after"].filter(k => e[k]).length;
   return `
     <tr onclick="openJournalDetail('${e.id}')">
       <td class="num mono font-semibold">${e.date || '—'}</td>
@@ -1035,35 +1115,24 @@ function renderJournalRow(e) {
       <td class="num font-semibold ${cls(pnlPct)}" style="text-align: right">${e.pnl_pct ? (pnlPct >= 0 ? '+' : '') + pnlPct.toFixed(2) + '%' : '—'}</td>
       <td><span class="pill">${chartCount}/3</span></td>
       <td style="text-align: right"><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation(); openJournalForm('${e.id}')" style="padding: 4px 10px; font-size: 11px;">Edit</button></td>
-    </tr>
-  `;
+    </tr>`;
 }
-function openJournalDetail(id) {
-  const entry = JOURNAL_STATE.entries.find(e => e.id === id);
-  if (!entry) return;
-  JOURNAL_STATE.detailView = entry;
-  renderJournalDetailModal();
-}
-function closeJournalDetail() {
-  JOURNAL_STATE.detailView = null;
-  document.getElementById("journal-modal").style.display = "none";
-  document.getElementById("journal-modal").innerHTML = "";
-}
+function openJournalDetail(id) { const e = JOURNAL_STATE.entries.find(x => x.id === id); if (!e) return; JOURNAL_STATE.detailView = e; renderJournalDetailModal(); }
+function closeJournalDetail() { JOURNAL_STATE.detailView = null; document.getElementById("journal-modal").style.display = "none"; document.getElementById("journal-modal").innerHTML = ""; }
 function renderJournalDetailModal() {
   const e = JOURNAL_STATE.detailView; if (!e) return;
-  const modal = document.getElementById("journal-modal");
-  modal.style.display = "flex"; modal.className = "modal-bg";
+  const modal = document.getElementById("journal-modal"); modal.style.display = "flex"; modal.className = "modal-bg";
   const pnl = parseFloat(e.pnl_dollar) || 0; const pnlPct = parseFloat(e.pnl_pct) || 0;
   const field = (label, value, mono = false) => `<div><div class="kpi-label mb-2">${label}</div><div class="${mono ? 'mono num font-semibold' : 'text-sm'}" style="color: ${value ? 'var(--text)' : 'var(--text-faint)'}; line-height: 1.6;">${escapeHtml(value || '—')}</div></div>`;
-  const img = (label, src) => src ? `<div><div class="kpi-label mb-2">${label}</div><div class="glass-soft p-2"><img src="${src}" style="width: 100%; max-height: 360px; object-fit: contain; border-radius: 4px;"></div></div>` : '';
+  const img = (label, src) => src ? `<div><div class="kpi-label mb-2">${label}</div><div class="card-dark p-2"><img src="${src}" style="width: 100%; max-height: 360px; object-fit: contain; border-radius: 4px;"></div></div>` : '';
   modal.innerHTML = `
     <div class="modal scroll-thin">
-      <div class="p-7 border-b" style="border-color: var(--border)">
+      <div class="p-6 border-b" style="border-color: var(--border)">
         <div class="flex items-center justify-between">
           <div>
             <div class="kpi-label mb-1">Journal Entry · ${e.date || ''}</div>
             <div class="flex items-center gap-3">
-              <h2 class="font-bold" style="font-size: 24px;">${escapeHtml(e.instrument || '—')}</h2>
+              <h2 class="font-bold text-xl">${escapeHtml(e.instrument || '—')}</h2>
               ${e.direction ? `<span class="badge ${e.direction === 'Long' ? 'badge-long' : 'badge-short'}">${e.direction === 'Long' ? '↑ Long' : '↓ Short'}</span>` : ''}
               ${e.outcome ? `<span class="badge ${e.outcome === 'Win' ? 'badge-win' : e.outcome === 'Loss' ? 'badge-loss' : 'badge-neutral'}">${e.outcome}</span>` : ''}
             </div>
@@ -1080,87 +1149,70 @@ function renderJournalDetailModal() {
           </div>
         </div>
       </div>
-      <div class="p-7">
+      <div class="p-6">
         <div class="section-title">Trade Info</div>
-        <div class="grid grid-cols-4 gap-5">${field("Datum", e.date)}${field("Session", e.session)}${field("Quarter", e.quarter)}${field("Hold Duration", e.hold_duration)}</div>
+        <div class="grid grid-cols-4 gap-4">${field("Datum", e.date)}${field("Session", e.session)}${field("Quarter", e.quarter)}${field("Hold Duration", e.hold_duration)}</div>
         <div class="section-title">Strategy & Setup</div>
-        <div class="grid grid-cols-2 gap-5">${field("Point of Interest", e.point_of_interest)}${field("Management Strategy", e.management)}${field("Confirmations", e.confirmations)}${field("Executions", e.executions)}${field("Stop Loss Placement", e.sl_placement)}${field("Take Profit Placement", e.tp_placement)}</div>
+        <div class="grid grid-cols-2 gap-4">${field("Point of Interest", e.point_of_interest)}${field("Management Strategy", e.management)}${field("Confirmations", e.confirmations)}${field("Executions", e.executions)}${field("Stop Loss Placement", e.sl_placement)}${field("Take Profit Placement", e.tp_placement)}</div>
         ${(e.chart_htf || e.chart_before || e.chart_after) ? `<div class="section-title">Charts</div><div class="grid grid-cols-3 gap-4">${img("Higher Time Frame", e.chart_htf)}${img("Before", e.chart_before)}${img("After", e.chart_after)}</div>` : ''}
         <div class="section-title">Reflection</div>
-        <div class="grid grid-cols-3 gap-5">${field("Emotions", e.emotions)}${field("Mistakes", e.mistakes)}${field("Improvements", e.improvements)}</div>
+        <div class="grid grid-cols-3 gap-4">${field("Emotions", e.emotions)}${field("Mistakes", e.mistakes)}${field("Improvements", e.improvements)}</div>
       </div>
     </div>`;
 }
-function deleteJournalEntry(id) {
-  JOURNAL_STATE.entries = JOURNAL_STATE.entries.filter(e => e.id !== id);
-  saveJournal(); render();
-}
+function deleteJournalEntry(id) { JOURNAL_STATE.entries = JOURNAL_STATE.entries.filter(e => e.id !== id); saveJournal(); render(); }
 function openJournalForm(id) {
-  const entry = id ? JOURNAL_STATE.entries.find(e => e.id === id) : {};
-  JOURNAL_STATE.editing = { ...entry };
+  const e = id ? JOURNAL_STATE.entries.find(x => x.id === id) : {};
+  JOURNAL_STATE.editing = { ...e };
   if (!JOURNAL_STATE.editing.id) JOURNAL_STATE.editing.id = uid();
   if (!JOURNAL_STATE.editing.date) JOURNAL_STATE.editing.date = new Date().toISOString().slice(0,10);
   JOURNAL_STATE.detailView = null;
   renderJournalFormModal();
 }
-function closeJournalForm() {
-  JOURNAL_STATE.editing = null;
-  document.getElementById("journal-modal").style.display = "none";
-  document.getElementById("journal-modal").innerHTML = "";
-}
+function closeJournalForm() { JOURNAL_STATE.editing = null; document.getElementById("journal-modal").style.display = "none"; document.getElementById("journal-modal").innerHTML = ""; }
 function updateField(key, val) { if (JOURNAL_STATE.editing) JOURNAL_STATE.editing[key] = val; }
-async function uploadField(key, fileInput) {
-  if (!fileInput.files || !fileInput.files[0]) return;
-  try {
-    const dataUrl = await readImageAsBase64(fileInput.files[0]);
-    JOURNAL_STATE.editing[key] = dataUrl;
-    renderJournalFormModal();
-  } catch (e) { alert("Bild konnte nicht geladen werden: " + e.message); }
+async function uploadField(key, fi) {
+  if (!fi.files || !fi.files[0]) return;
+  try { JOURNAL_STATE.editing[key] = await readImageAsBase64(fi.files[0]); renderJournalFormModal(); }
+  catch (e) { alert("Bild konnte nicht geladen werden: " + e.message); }
 }
-function removeImageField(key) {
-  if (!JOURNAL_STATE.editing) return;
-  delete JOURNAL_STATE.editing[key];
-  renderJournalFormModal();
-}
+function removeImageField(key) { if (JOURNAL_STATE.editing) { delete JOURNAL_STATE.editing[key]; renderJournalFormModal(); } }
 function saveJournalEntry() {
   const e = JOURNAL_STATE.editing; if (!e) return;
   const idx = JOURNAL_STATE.entries.findIndex(x => x.id === e.id);
-  if (idx >= 0) JOURNAL_STATE.entries[idx] = e;
-  else JOURNAL_STATE.entries.push(e);
-  try { saveJournal(); }
-  catch (err) { alert("Speichern fehlgeschlagen — lokaler Speicher voll. Bilder kleiner."); return; }
+  if (idx >= 0) JOURNAL_STATE.entries[idx] = e; else JOURNAL_STATE.entries.push(e);
+  try { saveJournal(); } catch { alert("Speicher voll — kleinere Bilder bitte."); return; }
   closeJournalForm(); render();
 }
 function renderJournalFormModal() {
   const e = JOURNAL_STATE.editing; if (!e) return;
-  const modal = document.getElementById("journal-modal");
-  modal.style.display = "flex"; modal.className = "modal-bg";
-  const input = (key, label, type = "text", placeholder = "") => `<div><label class="field-label">${label}</label><input type="${type}" class="field" value="${escapeHtml(e[key] || '')}" placeholder="${placeholder}" oninput="updateField('${key}', this.value)"></div>`;
-  const select = (key, label, options) => `<div><label class="field-label">${label}</label><select class="field" onchange="updateField('${key}', this.value)"><option value="">— wählen —</option>${options.map(o => `<option value="${o}" ${e[key]===o?'selected':''}>${o}</option>`).join("")}</select></div>`;
-  const textarea = (key, label, placeholder = "", rows = 3) => `<div><label class="field-label">${label}</label><textarea class="field" rows="${rows}" placeholder="${placeholder}" oninput="updateField('${key}', this.value)">${escapeHtml(e[key] || '')}</textarea></div>`;
-  const imgUpload = (key, label) => `<div><label class="field-label">${label}</label><div class="img-drop ${e[key] ? 'has-image' : ''}" onclick="${e[key] ? '' : `document.getElementById('file-${key}').click()`}">${e[key] ? `<img src="${e[key]}"><button class="img-remove" onclick="event.stopPropagation(); removeImageField('${key}')">×</button>` : `<div><div style="color: var(--text-mid); font-size: 13px; font-weight: 500;">+ Bild hochladen</div><div style="color: var(--text-dim); font-size: 11px; margin-top: 4px;">PNG, JPG · max 1400px</div></div>`}</div><input id="file-${key}" type="file" accept="image/*" style="display: none" onchange="uploadField('${key}', this)"></div>`;
+  const modal = document.getElementById("journal-modal"); modal.style.display = "flex"; modal.className = "modal-bg";
+  const input = (k,l,t="text",p="") => `<div><label class="field-label">${l}</label><input type="${t}" class="field" value="${escapeHtml(e[k]||'')}" placeholder="${p}" oninput="updateField('${k}', this.value)"></div>`;
+  const select = (k,l,opts) => `<div><label class="field-label">${l}</label><select class="field" onchange="updateField('${k}', this.value)"><option value="">— wählen —</option>${opts.map(o => `<option value="${o}" ${e[k]===o?'selected':''}>${o}</option>`).join("")}</select></div>`;
+  const ta = (k,l,p="",r=3) => `<div><label class="field-label">${l}</label><textarea class="field" rows="${r}" placeholder="${p}" oninput="updateField('${k}', this.value)">${escapeHtml(e[k]||'')}</textarea></div>`;
+  const img = (k,l) => `<div><label class="field-label">${l}</label><div class="img-drop ${e[k]?'has-image':''}" onclick="${e[k]?'':`document.getElementById('file-${k}').click()`}">${e[k]?`<img src="${e[k]}"><button class="img-remove" onclick="event.stopPropagation(); removeImageField('${k}')">×</button>`:`<div><div style="color: var(--text-mid); font-size: 13px; font-weight: 500;">+ Bild hochladen</div><div style="color: var(--text-dim); font-size: 11px; margin-top: 4px;">PNG, JPG · max 1400px</div></div>`}</div><input id="file-${k}" type="file" accept="image/*" style="display:none" onchange="uploadField('${k}', this)"></div>`;
   modal.innerHTML = `
     <div class="modal scroll-thin">
-      <div class="p-7 border-b" style="border-color: var(--border)">
+      <div class="p-6 border-b" style="border-color: var(--border)">
         <div class="flex items-center justify-between">
           <div>
             <div class="kpi-label mb-1">Journal Entry</div>
-            <h2 class="font-bold" style="font-size: 22px;">${JOURNAL_STATE.entries.find(x => x.id === e.id) ? 'Eintrag bearbeiten' : 'Neuer Eintrag'}</h2>
+            <h2 class="font-bold text-xl">${JOURNAL_STATE.entries.find(x => x.id === e.id) ? 'Eintrag bearbeiten' : 'Neuer Eintrag'}</h2>
           </div>
           <button class="btn-ghost btn btn-sm" onclick="closeJournalForm()">✕ Schließen</button>
         </div>
       </div>
-      <div class="p-7">
+      <div class="p-6">
         <div class="section-title">Trade Info</div>
-        <div class="grid grid-cols-3 gap-4">${input("date", "Datum", "date")}${select("instrument", "Instrument / Future", INSTRUMENTS)}${select("session", "Session", SESSIONS)}${select("quarter", "Quarter", QUARTERS)}${select("direction", "Direction", DIRECTIONS)}${input("point_of_interest", "Point of Interest", "text", "z.B. OB auf 4H bei 5230")}</div>
+        <div class="grid grid-cols-3 gap-4">${input("date","Datum","date")}${select("instrument","Instrument / Future",INSTRUMENTS)}${select("session","Session",SESSIONS)}${select("quarter","Quarter",QUARTERS)}${select("direction","Direction",DIRECTIONS)}${input("point_of_interest","Point of Interest","text","z.B. OB auf 4H bei 5230")}</div>
         <div class="section-title">Strategy & Setup</div>
-        <div class="grid grid-cols-2 gap-4">${textarea("confirmations", "Confirmations", "z.B. FVG im OB, BOS auf 1H...")}${textarea("executions", "Executions", "z.B. Entry am BOS-Close, 3 Partials...")}${input("sl_placement", "Stop Loss Placement", "text", "unter OB-Low minus 0.5×ATR")}${input("tp_placement", "Take Profit Placement", "text", "TP1 1R, TP3 PAL, TP2 mid")}${textarea("management", "Management Strategy", "z.B. SL→BE bei TP1, Trail nach TP2...")}</div>
+        <div class="grid grid-cols-2 gap-4">${ta("confirmations","Confirmations","z.B. FVG im OB, BOS auf 1H...")}${ta("executions","Executions","z.B. Entry am BOS-Close, 3 Partials...")}${input("sl_placement","Stop Loss Placement","text","unter OB-Low minus 0.5×ATR")}${input("tp_placement","Take Profit Placement","text","TP1 1R, TP3 PAL, TP2 mid")}${ta("management","Management Strategy","z.B. SL→BE bei TP1, Trail nach TP2...")}</div>
         <div class="section-title">Execution</div>
-        <div class="grid grid-cols-5 gap-4">${input("hold_duration", "Hold Duration", "text", "4h 20min")}${input("rr", "Risk to Reward", "text", "1:3")}${select("outcome", "Outcome", OUTCOMES)}${input("pnl_dollar", "P&L ($)", "number", "312.50")}${input("pnl_pct", "P&L (%)", "number", "3.12")}</div>
+        <div class="grid grid-cols-5 gap-4">${input("hold_duration","Hold Duration","text","4h 20min")}${input("rr","Risk to Reward","text","1:3")}${select("outcome","Outcome",OUTCOMES)}${input("pnl_dollar","P&L ($)","number","312.50")}${input("pnl_pct","P&L (%)","number","3.12")}</div>
         <div class="section-title">Charts</div>
-        <div class="grid grid-cols-3 gap-4">${imgUpload("chart_htf", "Higher Time Frame")}${imgUpload("chart_before", "Chart Before")}${imgUpload("chart_after", "Chart After")}</div>
+        <div class="grid grid-cols-3 gap-4">${img("chart_htf","Higher Time Frame")}${img("chart_before","Chart Before")}${img("chart_after","Chart After")}</div>
         <div class="section-title">Reflection</div>
-        <div class="grid grid-cols-3 gap-4">${textarea("emotions", "Emotions", "Wie hast du dich gefühlt?")}${textarea("mistakes", "Mistakes", "Was war nicht regelkonform?")}${textarea("improvements", "Improvements", "Was machst du beim nächsten Trade besser?")}</div>
+        <div class="grid grid-cols-3 gap-4">${ta("emotions","Emotions","Wie hast du dich gefühlt?")}${ta("mistakes","Mistakes","Was war nicht regelkonform?")}${ta("improvements","Improvements","Was machst du beim nächsten Trade besser?")}</div>
         <div class="flex justify-end gap-3 mt-8 pt-5 border-t" style="border-color: var(--border)">
           <button class="btn btn-ghost" onclick="closeJournalForm()">Abbrechen</button>
           <button class="btn" onclick="saveJournalEntry()">Eintrag speichern</button>
@@ -1174,26 +1226,24 @@ function renderJournalFormModal() {
 // ============================================================
 function viewBots() {
   return `
-    <div class="flex items-end justify-between mb-7">
+    <div class="flex items-end justify-between mb-6">
       <div>
-        <div class="kpi-label mb-2">Automation</div>
-        <h1 class="page-title">Trading Bots</h1>
-        <p class="text-sm mt-2" style="color: var(--text-mid)">${STATE.bots.length} ${STATE.bots.length !== 1 ? 'Bots' : 'Bot'}</p>
+        <div class="kpi-label">Automation</div>
+        <h1 class="text-2xl font-bold mt-1 tracking-tight">Trading Bots</h1>
+        <p class="text-sm mt-1" style="color: var(--text-mid);">${STATE.bots.length} ${STATE.bots.length !== 1 ? 'Bots' : 'Bot'}</p>
       </div>
       <button class="btn btn-ghost btn-sm" onclick="if(confirm('Reset?')) resetBots()">Reset</button>
     </div>
-    <div class="panel-stack">
-      ${STATE.bots.map((b, idx) => renderBotCard(b, idx)).join("")}
-    </div>`;
+    <div class="space-y-4">${STATE.bots.map((b, idx) => renderBotCard(b, idx)).join("")}</div>`;
 }
 function renderBotCard(b, idx) {
   const p = b.performance;
   return `
-    <div class="glass p-7">
-      <div class="flex items-start justify-between mb-6">
+    <div class="card p-6">
+      <div class="flex items-start justify-between mb-5">
         <div>
           <div class="flex items-center gap-3 mb-2">
-            <h2 class="font-bold" style="font-size: 22px; letter-spacing: -0.01em;">${b.name}</h2>
+            <h2 class="font-bold text-xl">${b.name}</h2>
             <span class="badge ${b.status === 'live' ? 'badge-live' : 'badge-backtest'}">${b.status === 'live' ? 'Live' : 'Backtest'}</span>
           </div>
           <p class="text-sm" style="color: var(--text-mid)">${b.description}</p>
@@ -1201,38 +1251,32 @@ function renderBotCard(b, idx) {
         </div>
         <button class="btn btn-ghost btn-sm" onclick='exportBot(${idx})'>Export YAML</button>
       </div>
-      <div class="grid grid-cols-5 gap-3 mb-6">
-        <div class="glass-soft p-4"><div class="kpi-label">Trades</div><div class="text-xl font-bold num mt-2">${p.trades}</div></div>
-        <div class="glass-soft p-4"><div class="kpi-label">Winrate</div><div class="text-xl font-bold num mt-2">${p.winrate}%</div></div>
-        <div class="glass-soft p-4"><div class="kpi-label">Total Return</div><div class="text-xl font-bold num mt-2 ${cls(p.total_return_pct)}">${fmtPct(p.total_return_pct)}</div></div>
-        <div class="glass-soft p-4"><div class="kpi-label">CAGR</div><div class="text-xl font-bold num mt-2 ${cls(p.cagr_pct)}">${fmtPct(p.cagr_pct)}</div></div>
-        <div class="glass-soft p-4"><div class="kpi-label">Max DD</div><div class="text-xl font-bold num mt-2 loss">${p.max_dd_pct.toFixed(1)}%</div></div>
+      <div class="grid grid-cols-5 gap-3 mb-5">
+        <div class="card-dark p-4"><div class="kpi-label">Trades</div><div class="kpi-num small num mt-2">${p.trades}</div></div>
+        <div class="card-dark p-4"><div class="kpi-label">Winrate</div><div class="kpi-num small num mt-2">${p.winrate}%</div></div>
+        <div class="card-dark p-4"><div class="kpi-label">Total Return</div><div class="kpi-num small num mt-2 ${cls(p.total_return_pct)}">${fmtPct(p.total_return_pct)}</div></div>
+        <div class="card-dark p-4"><div class="kpi-label">CAGR</div><div class="kpi-num small num mt-2 ${cls(p.cagr_pct)}">${fmtPct(p.cagr_pct)}</div></div>
+        <div class="card-dark p-4"><div class="kpi-label">Max DD</div><div class="kpi-num small num mt-2 loss">${p.max_dd_pct.toFixed(1)}%</div></div>
       </div>
       <div>
         <div class="kpi-label mb-3">Parameter</div>
         <div class="grid grid-cols-3 gap-3">
           ${Object.entries(b.params).filter(([k,v]) => typeof v !== 'object').map(([k,v]) => `
-            <div>
-              <label class="field-label">${k}</label>
+            <div><label class="field-label">${k}</label>
               <input class="field" type="${typeof v === 'number' ? 'number' : 'text'}" step="${typeof v === 'number' ? '0.1' : '1'}" value="${v}" onchange="updateBotParam(${idx}, '${k}', this.value, '${typeof v}')">
-            </div>
-          `).join("")}
+            </div>`).join("")}
         </div>
       </div>
     </div>`;
 }
-function updateBotParam(botIdx, key, value, type) {
-  STATE.bots[botIdx].params[key] = type === "number" ? parseFloat(value) : value;
-  saveBots();
-}
+function updateBotParam(idx, k, v, t) { STATE.bots[idx].params[k] = t === "number" ? parseFloat(v) : v; saveBots(); }
 function exportBot(idx) {
   const b = STATE.bots[idx];
   const yaml = Object.entries(b.params).map(([k,v]) => `  ${k}: ${JSON.stringify(v)}`).join("\n");
   const text = `# ${b.name}\nstrategy: ${b.strategy_id}\nparams:\n${yaml}\n`;
   const blob = new Blob([text], { type: "text/yaml" });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url; a.download = `${b.id}.yaml`; a.click();
+  const a = document.createElement("a"); a.href = url; a.download = `${b.id}.yaml`; a.click();
   URL.revokeObjectURL(url);
 }
 
@@ -1254,10 +1298,7 @@ function render() {
   else if (route === "trades") { root.innerHTML = viewTrades(); }
   else if (route === "journal") { root.innerHTML = viewJournal(); }
   else if (route === "bots") { root.innerHTML = viewBots(); }
-  root.querySelectorAll("[data-route]").forEach(el => {
-    el.addEventListener("click", (ev) => { ev.preventDefault(); navigate(el.dataset.route); });
-  });
-  document.getElementById("footer-period").textContent = `${DATA.kpis.data_period_start} → ${DATA.kpis.data_period_end}`;
+  root.querySelectorAll("[data-route]").forEach(el => el.addEventListener("click", (ev) => { ev.preventDefault(); navigate(el.dataset.route); }));
 }
 render();
 </script>
