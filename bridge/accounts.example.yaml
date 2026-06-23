@@ -1,0 +1,20 @@
+# MT5 / FTMO account configuration
+# Copy to accounts.yaml and fill in your credentials.
+# Each account needs its own MT5 terminal installation (different folders).
+
+accounts:
+  - id: ftmo-swing-10k
+    label: FTMO Swing $10k
+    broker: FTMO
+    # Path to MT5 terminal64.exe — required if you have multiple MT5 installs
+    terminal_path: "C:/Program Files/MetaTrader 5 FTMO/terminal64.exe"
+    # Optional — if MT5 is already logged in via the GUI, leave these blank
+    login: 1234567
+    password: "your-password"
+    server: "FTMO-Demo2"
+
+  - id: personal-mt5
+    label: Personal MT5
+    broker: IC Markets
+    terminal_path: "C:/Program Files/MetaTrader 5/terminal64.exe"
+    # login / password / server can be omitted if terminal is already logged in

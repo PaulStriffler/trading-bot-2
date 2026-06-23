@@ -12,12 +12,15 @@ venv/
 # Data caches (raw market data, large)
 data/raw/
 data/cache/
-*.parquet
-*.csv
+data/**/*.parquet
+data/**/*.csv
 
-# Backtest outputs
+# Production backtest outputs (large)
 backtest/results/
 *.log
+
+# POC results — small enough to commit (HTML viewer, CSV trade log, PNG screenshots)
+!backtest/quick/results/
 
 # Dashboard
 dashboard/frontend/node_modules/
